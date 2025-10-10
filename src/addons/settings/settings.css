@@ -17,6 +17,10 @@
 @import "../../css/colors.css";
 @import "../../css/filters.css";
 
+*{
+    transition: all 0.2s ease-in-out;
+}
+
 body {
     background-color: $page-background;
     color: $page-foreground;
@@ -190,6 +194,7 @@ a:active, a:focus {
 }
 .addon-group-name:hover .addon-group-expand-container {
     background: $ui-black-transparent;
+    transform: scale(1.1);
 }
 .addon-group-expand-icon {
     width: 100%;

@@ -406,17 +406,19 @@ const convertWebmToMp4 = async (webmBlob) => {
           let blob = new Blob(recordBuffer, { type: recorder.mimeType });
           let finalExtension = recorder.mimeType.split(";")[0].split("/")[1];
           
-          // Convert to MP4 if requested and not native
-          if (selectedFormat === "mp4" && !recorder.mimeType.includes("mp4")) {
+          // Convert WebM to MP4 if user selected MP4
+          if (selectedFormat === "mp4") {
             try {
               recordTextSpan.textContent = msg("converting");
+              console.log('Converting WebM to MP4...');
               blob = await convertWebmToMp4(blob);
               finalExtension = "mp4";
+              console.log('Conversion complete!');
             } catch (e) {
               console.error("WebM to MP4 conversion failed", e);
               alert(msg("conversion-failed"));
-              // Fall back to original format
-              finalExtension = recorder.mimeType.split(";")[0].split("/")[1];
+              // Fall back to WebM
+              finalExtension = "webm";
             }
           }
           
@@ -491,20 +493,11 @@ const convertWebmToMp4 = async (webmBlob) => {
 const selectedFormat = opts.format || defaultFileExtension;
 let recordMimeType;
 
-if (selectedFormat === "mp4") {
-  // Try MP4 with specific codec support for audio
-  const mp4WithCodecs = "video/mp4; codecs=avc1,mp4a.40.2";
-  if (MediaRecorder.isTypeSupported(mp4WithCodecs)) {
-    recordMimeType = mp4WithCodecs;
-  } else if (MediaRecorder.isTypeSupported("video/mp4")) {
-    recordMimeType = "video/mp4";
-  } else {
-    // Fall back to WebM if MP4 not supported
-    recordMimeType = supportedMimeTypes.find(m => m.startsWith("video/webm")) || defaultMimeType;
-  }
-} else {
-  recordMimeType = supportedMimeTypes.find(m => m.startsWith("video/webm")) || defaultMimeType;
-}
+// ALWAYS record as WebM (it works!), convert to MP4 later if needed
+recordMimeType = supportedMimeTypes.find(m => m.startsWith("video/webm")) || defaultMimeType;
+
+console.log(`Recording as ${recordMimeType}, will convert to ${selectedFormat} if needed`);
+
       
       recorder = new MediaRecorder(stream, { mimeType: recordMimeType });
       recorder.ondataavailable = (e) => {

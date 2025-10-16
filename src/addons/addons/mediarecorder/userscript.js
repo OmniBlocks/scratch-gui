@@ -353,17 +353,21 @@ const convertWebmToMp4 = async (webmBlob) => {
     // Convert with H.264 encoding
     console.log('Starting ffmpeg encoding...');
     await ffmpeg.exec([
-      '-i', inputName,
-      '-c:v', 'libx264',
-      '-preset', 'ultrafast',
-      '-crf', '23',
-      '-pix_fmt', 'yuv420p',
-      '-r', fps.toString(),
-      '-g', '30',
-      '-movflags', '+faststart',
-      '-c:a', 'aac', '-b:a', '128k',
-      outputName
-    ]);
+  '-fflags', '+genpts',              // Regenerate presentation timestamps
+  '-i', inputName,
+  '-c:v', 'libx264',
+  '-preset', 'ultrafast',
+  '-crf', '23',
+  '-pix_fmt', 'yuv420p',
+  '-r', fps.toString(),
+  '-video_track_timescale', '90000', // Normalize to 90kHz timescale
+  '-g', '30',
+  '-muxpreload', '0',                // Eliminate muxer preload delay
+  '-muxdelay', '0',                  // Eliminate muxer delay
+  '-movflags', '+faststart',
+  '-c:a', 'aac', '-b:a', '128k',
+  outputName
+]);
     console.log('Encoding complete');
     
     // Read output using v0.12 API

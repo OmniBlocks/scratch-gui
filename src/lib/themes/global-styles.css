@@ -35,3 +35,10 @@
     --editorDarkMode-page: $ui-primary;
     --editorDarkMode-highlightText: $looks-secondary;
 }
+
+/* Accessibility: Disable animations for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  [class*="backpack_backpack-list"] {
+    transition: none !important;
+  }
+}

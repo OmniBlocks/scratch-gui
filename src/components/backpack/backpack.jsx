@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import {FormattedMessage, defineMessages, injectIntl, intlShape} from 'react-intl';
@@ -56,7 +56,44 @@ const Backpack = ({
     onMouseEnter,
     onMouseLeave,
     onMore
-}) => (
+}) => {
+    // Animation state management
+    const [shouldRenderList, setShouldRenderList] = useState(expanded);
+    const [isAnimating, setIsAnimating] = useState(expanded);
+
+    // Handle expand/collapse animation
+    useEffect(() => {
+        let timeoutId;
+        let isMounted = true;
+
+        if (expanded) {
+            // Expanding: render DOM first, then trigger animation
+            setShouldRenderList(true);
+            requestAnimationFrame(() => {
+                if (isMounted) {
+                    setIsAnimating(true);
+                }
+            });
+        } else {
+            // Collapsing: trigger animation first, then remove from DOM
+            setIsAnimating(false);
+            timeoutId = setTimeout(() => {
+                if (isMounted) {
+                    setShouldRenderList(false);
+                }
+            }, 250); // Match CSS animation duration
+        }
+
+        // Cleanup timeout on unmount or prop change
+        return () => {
+            isMounted = false;
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
+        };
+    }, [expanded]);
+
+    return (
     <div className={styles.backpackContainer}>
         <div
             className={styles.backpackHeader}
@@ -81,10 +118,11 @@ const Backpack = ({
                 </ComingSoonTooltip>
             )}
         </div>
-        {expanded ? (
+        {shouldRenderList ? (
             <div
                 className={classNames(styles.backpackList, {
-                    [styles.dragOver]: dragOver || blockDragOver
+                    [styles.dragOver]: dragOver || blockDragOver,
+                    [styles.expanded]: isAnimating
                 })}
                 ref={containerRef}
                 onMouseEnter={onMouseEnter}
@@ -156,7 +194,8 @@ const Backpack = ({
             </div>
         ) : null}
     </div>
-);
+    );
+};
 
 Backpack.propTypes = {
     blockDragOver: PropTypes.bool,

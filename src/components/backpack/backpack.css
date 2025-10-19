@@ -34,13 +34,34 @@
     align-items: center;
     border-right: 1px solid $ui-black-transparent;
     min-height: 5.5rem;
-    max-height: 0;
+    max-height: 6rem; /* Default to expanded state */
     overflow: hidden;
-    transition: max-height 0.25s ease-in-out;
 }
 
-.backpack-list.expanded {
-    max-height: 6rem;
+.backpack-list.expanding {
+    animation: expand-backpack 0.25s ease-in-out forwards;
+}
+
+.backpack-list.collapsing {
+    animation: collapse-backpack 0.25s ease-in-out forwards;
+}
+
+@keyframes expand-backpack {
+    from {
+        max-height: 0;
+    }
+    to {
+        max-height: 6rem;
+    }
+}
+
+@keyframes collapse-backpack {
+    from {
+        max-height: 6rem;
+    }
+    to {
+        max-height: 0;
+    }
 }
 
 /* Absolute position the inner list to allow scrolling inside flex sized container */

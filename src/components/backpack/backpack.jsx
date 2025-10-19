@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import {FormattedMessage, defineMessages, injectIntl, intlShape} from 'react-intl';
@@ -59,141 +59,150 @@ const Backpack = ({
 }) => {
     // Animation state management
     const [shouldRenderList, setShouldRenderList] = useState(expanded);
-    const [isAnimating, setIsAnimating] = useState(expanded);
+    const [animationClass, setAnimationClass] = useState('');
+    const listRef = useRef(null);
+    const isInitialMount = useRef(true);
 
     // Handle expand/collapse animation
     useEffect(() => {
-        let timeoutId;
-        let isMounted = true;
+        // Skip animation on initial mount
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+            return;
+        }
 
         if (expanded) {
             // Expanding: render DOM first, then trigger animation
             setShouldRenderList(true);
+            // Use requestAnimationFrame to ensure DOM is rendered before adding animation class
             requestAnimationFrame(() => {
-                if (isMounted) {
-                    setIsAnimating(true);
-                }
+                setAnimationClass('expanding');
             });
         } else {
-            // Collapsing: trigger animation first, then remove from DOM
-            setIsAnimating(false);
-            timeoutId = setTimeout(() => {
-                if (isMounted) {
-                    setShouldRenderList(false);
-                }
-            }, 250); // Match CSS animation duration
+            // Collapsing: trigger animation first, then remove from DOM after animation
+            setAnimationClass('collapsing');
         }
-
-        // Cleanup timeout on unmount or prop change
-        return () => {
-            isMounted = false;
-            if (timeoutId) {
-                clearTimeout(timeoutId);
-            }
-        };
     }, [expanded]);
 
+    // Handle animation end events
+    const handleAnimationEnd = (event) => {
+        // Make sure this is the animation we care about, not a child animation
+        if (event.target === listRef.current) {
+            if (event.animationName === 'collapse-backpack') {
+                // Animation finished collapsing, now remove from DOM
+                setShouldRenderList(false);
+            }
+            // Clear animation class after animation completes
+            setAnimationClass('');
+        }
+    };
+
     return (
-    <div className={styles.backpackContainer}>
-        <div
-            className={styles.backpackHeader}
-            onClick={onToggle}
-        >
-            {onToggle ? (
-                <FormattedMessage
-                    defaultMessage="Backpack"
-                    description="Button to open the backpack"
-                    id="gui.backpack.header"
-                />
-            ) : (
-                <ComingSoonTooltip
-                    place="top"
-                    tooltipId="backpack-tooltip"
-                >
+        <div className={styles.backpackContainer}>
+            <div
+                className={styles.backpackHeader}
+                onClick={onToggle}
+            >
+                {onToggle ? (
                     <FormattedMessage
                         defaultMessage="Backpack"
                         description="Button to open the backpack"
                         id="gui.backpack.header"
                     />
-                </ComingSoonTooltip>
-            )}
-        </div>
-        {shouldRenderList ? (
-            <div
-                className={classNames(styles.backpackList, {
-                    [styles.dragOver]: dragOver || blockDragOver,
-                    [styles.expanded]: isAnimating
-                })}
-                ref={containerRef}
-                onMouseEnter={onMouseEnter}
-                onMouseLeave={onMouseLeave}
-            >
-                {/* eslint-disable-next-line no-negated-condition */}
-                {error !== false ? (
-                    <div className={styles.statusMessage}>
-                        <FormattedMessage
-                            defaultMessage="Error loading backpack"
-                            description="Error backpack message"
-                            id="gui.backpack.errorBackpack"
-                        />
-                        <div className={styles.errorMessage}>{error}</div>
-                    </div>
                 ) : (
-                    loading ? (
-                        <div className={styles.statusMessage}>
-                            <FormattedMessage
-                                defaultMessage="Loading..."
-                                description="Loading backpack message"
-                                id="gui.backpack.loadingBackpack"
-                            />
-                        </div>
-                    ) : (
-                        contents.length > 0 ? (
-                            <div className={styles.backpackListInner}>
-                                {contents.map(item => (
-                                    <SpriteSelectorItem
-                                        className={styles.backpackItem}
-                                        costumeURL={item.thumbnailUrl}
-                                        details={item.name}
-                                        dragPayload={item}
-                                        dragType={dragTypeMap[item.type]}
-                                        id={item.id}
-                                        key={item.id}
-                                        name={intl.formatMessage(labelMap[item.type])}
-                                        selected={false}
-                                        onClick={noop}
-                                        onDeleteButtonClick={onDelete}
-                                        // Currently, renaming sprites is not supported.
-                                        onRenameButtonClick={item.type === 'sprite' ? null : onRename}
-                                    />
-                                ))}
-                                {showMore && (
-                                    <button
-                                        className={styles.more}
-                                        onClick={onMore}
-                                    >
-                                        <FormattedMessage
-                                            defaultMessage="More"
-                                            description="Load more from backpack"
-                                            id="gui.backpack.more"
-                                        />
-                                    </button>
-                                )}
-                            </div>
-                        ) : (
-                            <div className={styles.statusMessage}>
-                                <FormattedMessage
-                                    defaultMessage="Backpack is empty"
-                                    description="Empty backpack message"
-                                    id="gui.backpack.emptyBackpack"
-                                />
-                            </div>
-                        )
-                    )
+                    <ComingSoonTooltip
+                        place="top"
+                        tooltipId="backpack-tooltip"
+                    >
+                        <FormattedMessage
+                            defaultMessage="Backpack"
+                            description="Button to open the backpack"
+                            id="gui.backpack.header"
+                        />
+                    </ComingSoonTooltip>
                 )}
             </div>
-        ) : null}
-    </div>
+            {shouldRenderList ? (
+                <div
+                    ref={(node) => {
+                        listRef.current = node;
+                        if (containerRef) containerRef(node);
+                    }}
+                    className={classNames(styles.backpackList, {
+                        [styles.dragOver]: dragOver || blockDragOver,
+                        [styles.expanding]: animationClass === 'expanding',
+                        [styles.collapsing]: animationClass === 'collapsing'
+                    })}
+                    onAnimationEnd={handleAnimationEnd}
+                    onMouseEnter={onMouseEnter}
+                    onMouseLeave={onMouseLeave}
+                >
+                    {/* eslint-disable-next-line no-negated-condition */}
+                    {error !== false ? (
+                        <div className={styles.statusMessage}>
+                            <FormattedMessage
+                                defaultMessage="Error loading backpack"
+                                description="Error backpack message"
+                                id="gui.backpack.errorBackpack"
+                            />
+                            <div className={styles.errorMessage}>{error}</div>
+                        </div>
+                    ) : (
+                        loading ? (
+                            <div className={styles.statusMessage}>
+                                <FormattedMessage
+                                    defaultMessage="Loading..."
+                                    description="Loading backpack message"
+                                    id="gui.backpack.loadingBackpack"
+                                />
+                            </div>
+                        ) : (
+                            contents.length > 0 ? (
+                                <div className={styles.backpackListInner}>
+                                    {contents.map(item => (
+                                        <SpriteSelectorItem
+                                            className={styles.backpackItem}
+                                            costumeURL={item.thumbnailUrl}
+                                            details={item.name}
+                                            dragPayload={item}
+                                            dragType={dragTypeMap[item.type]}
+                                            id={item.id}
+                                            key={item.id}
+                                            name={intl.formatMessage(labelMap[item.type])}
+                                            selected={false}
+                                            onClick={noop}
+                                            onDeleteButtonClick={onDelete}
+                                            // Currently, renaming sprites is not supported.
+                                            onRenameButtonClick={item.type === 'sprite' ? null : onRename}
+                                        />
+                                    ))}
+                                    {showMore && (
+                                        <button
+                                            className={styles.more}
+                                            onClick={onMore}
+                                        >
+                                            <FormattedMessage
+                                                defaultMessage="More"
+                                                description="Load more from backpack"
+                                                id="gui.backpack.more"
+                                            />
+                                        </button>
+                                    )}
+                                </div>
+                            ) : (
+                                <div className={styles.statusMessage}>
+                                    <FormattedMessage
+                                        defaultMessage="Backpack is empty"
+                                        description="Empty backpack message"
+                                        id="gui.backpack.emptyBackpack"
+                                    />
+                                </div>
+                            )
+                        )
+                    )}
+                </div>
+            ) : null}
+        </div>
     );
 };
 

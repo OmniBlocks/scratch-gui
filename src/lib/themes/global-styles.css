@@ -29,6 +29,11 @@ oblivion and back so just disabling all animations if they have that setting on 
         transition: none !important;
         animation: none !important; /* yes i'm turning off all animations, so what it's better than getting molded into a sphere by angry users*/
     }
+    /* Specifically disable backpack animations for accessibility */
+    [class*="backpack_backpack-list"] {
+        animation: none !important;
+        max-height: 6rem !important; /* Show expanded state immediately */
+    }
 }
 /* ScratchAdddons editor-dark-mode compatibility */
 :root {
@@ -42,5 +47,3 @@ oblivion and back so just disabling all animations if they have that setting on 
     --editorDarkMode-page: $ui-primary;
     --editorDarkMode-highlightText: $looks-secondary;
 }
-
-

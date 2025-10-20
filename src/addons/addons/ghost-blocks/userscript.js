@@ -1,7 +1,15 @@
 export default async function ({ addon, console }) {
-  const ScratchBlocks = await addon.tab.traps.getBlockly();
-  const workspace = addon.tab.traps.getWorkspace();
-  const vm = addon.tab.traps.vm;
+  let ScratchBlocks, workspace, vm;
+  
+  // Add error handling for asynchronous calls
+  try {
+    ScratchBlocks = await addon.tab.traps.getBlockly();
+    workspace = addon.tab.traps.getWorkspace();
+    vm = addon.tab.traps.vm;
+  } catch (e) {
+    console.error('Failed to initialize ghost blocks addon:', e);
+    return; // Exit if we can't get required dependencies
+  }
   
   let ghostContainer = null;
   let currentDraggedBlockId = null;
@@ -17,7 +25,7 @@ export default async function ({ addon, console }) {
       // Clone the SVG element
       const clonedSvg = blockSvg.cloneNode(true);
       
-      // Create container for the ghost
+      // Create container for the ghost (HTML div element)
       const container = document.createElement('div');
       container.className = 'sa-ghost-block-container';
       container.appendChild(clonedSvg);
@@ -48,7 +56,7 @@ export default async function ({ addon, console }) {
     }
   };
   
-  // Remove ghost element
+  // Remove ghost element - Fixed implementation
   const removeGhost = () => {
     if (ghostContainer && ghostContainer.parentNode) {
       ghostContainer.parentNode.removeChild(ghostContainer);
@@ -70,13 +78,10 @@ export default async function ({ addon, console }) {
         ghostContainer = createGhost(block);
         
         if (ghostContainer) {
-          // Insert ghost into the workspace
-          const workspaceDiv = workspace.getInjectionDiv();
-          const blockCanvas = workspaceDiv.querySelector('.blocklyBlockCanvas') || 
-                             workspaceDiv.querySelector('.blocklyWorkspace');
-          
-          if (blockCanvas) {
-            blockCanvas.appendChild(ghostContainer);
+          // Fixed: Insert ghost into the injection div instead of SVG canvas
+          const injectionDiv = workspace.getInjectionDiv();
+          if (injectionDiv) {
+            injectionDiv.appendChild(ghostContainer);
           }
         }
       } catch (e) {

@@ -1,0 +1,17 @@
+.sa-ghost-block-container {
+  position: absolute;
+  pointer-events: none;
+  z-index: 45; /* Between workspace and drag layer */
+  opacity: calc(var(--ghostBlocks-opacity) / 100);
+  transition: opacity 0.1s ease;
+}
+
+.sa-ghost-block-container svg {
+  display: block;
+  overflow: visible;
+}
+
+/* Ensure ghost is hidden when addon is disabled */
+[data-addon-disabled="ghost-blocks"] .sa-ghost-block-container {
+  display: none;
+}

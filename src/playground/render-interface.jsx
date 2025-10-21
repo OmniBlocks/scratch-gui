@@ -21,6 +21,7 @@ import {connect} from 'react-redux';
 import {compose} from 'redux';
 import {FormattedMessage, defineMessages, injectIntl, intlShape} from 'react-intl';
 import {getIsLoading} from '../reducers/project-state.js';
+import {openWelcomeModal, closeWelcomeModal} from '../reducers/modals.js';
 import AppStateHOC from '../lib/app-state-hoc.jsx';
 import ErrorBoundaryHOC from '../lib/error-boundary-hoc.jsx';
 import TWProjectMetaFetcherHOC from '../lib/tw-project-meta-fetcher-hoc.jsx';
@@ -35,6 +36,7 @@ import ProjectInput from '../components/tw-project-input/project-input.jsx';
 import FeaturedProjects from '../components/tw-featured-projects/featured-projects.jsx';
 import Description from '../components/tw-description/description.jsx';
 import BrowserModal from '../components/browser-modal/browser-modal.jsx';
+import WelcomeModal from '../components/welcome-modal/welcome-modal.jsx';
 import CloudVariableBadge from '../containers/tw-cloud-variable-badge.jsx';
 import {isBrowserSupported} from '../lib/tw-environment-support-prober';
 import AddonChannels from '../addons/channels';
@@ -46,6 +48,7 @@ import {APP_NAME, APP_VERSION} from '../lib/brand.js';
 import styles from './interface.css';
 
 const isInvalidEmbed = window.parent !== window;
+const WELCOME_SEEN_KEY = 'tw_welcome_seen';
 
 const handleClickAddonSettings = addonId => {
     // addonId might be a string of the addon to focus on, undefined, or an event (treat like undefined)
@@ -239,10 +242,26 @@ class Interface extends React.Component {
     constructor (props) {
         super(props);
         this.handleUpdateProjectTitle = this.handleUpdateProjectTitle.bind(this);
+        this.handleCloseWelcomeModal = this.handleCloseWelcomeModal.bind(this);
+    }
+    componentDidMount () {
+        // Check if user has seen welcome message before
+        const hasSeenWelcome = localStorage.getItem(WELCOME_SEEN_KEY);
+        if (!hasSeenWelcome && this.props.onOpenWelcomeModal) {
+            // Show welcome modal for first-time users
+            this.props.onOpenWelcomeModal();
+        }
     }
     componentDidUpdate (prevProps) {
         if (prevProps.isLoading && !this.props.isLoading) {
             loadServiceWorker();
+        }
+    }
+    handleCloseWelcomeModal () {
+        // Mark welcome as seen and close modal
+        localStorage.setItem(WELCOME_SEEN_KEY, 'true');
+        if (this.props.onCloseWelcomeModal) {
+            this.props.onCloseWelcomeModal();
         }
     }
     handleUpdateProjectTitle (title, isDefault) {
@@ -267,6 +286,9 @@ class Interface extends React.Component {
             isPlayerOnly,
             isRtl,
             projectId,
+            welcomeModalVisible,
+            onOpenWelcomeModal,
+            onCloseWelcomeModal,
             /* eslint-enable no-unused-vars */
             ...props
         } = this.props;
@@ -310,6 +332,11 @@ class Interface extends React.Component {
                             {isBrowserSupported() ? null : (
                                 <BrowserModal isRtl={isRtl} />
                             )}
+                            <WelcomeModal
+                                isOpen={welcomeModalVisible}
+                                isRtl={isRtl}
+                                onClose={this.handleCloseWelcomeModal}
+                            />
                             <div className={styles.section}>
                                 <ProjectInput />
                             </div>
@@ -418,7 +445,10 @@ Interface.propTypes = {
     isLoading: PropTypes.bool,
     isPlayerOnly: PropTypes.bool,
     isRtl: PropTypes.bool,
-    projectId: PropTypes.string
+    projectId: PropTypes.string,
+    welcomeModalVisible: PropTypes.bool,
+    onOpenWelcomeModal: PropTypes.func,
+    onCloseWelcomeModal: PropTypes.func
 };
 
 const mapStateToProps = state => ({
@@ -429,10 +459,14 @@ const mapStateToProps = state => ({
     isLoading: getIsLoading(state.scratchGui.projectState.loadingState),
     isPlayerOnly: state.scratchGui.mode.isPlayerOnly,
     isRtl: state.locales.isRtl,
-    projectId: state.scratchGui.projectState.projectId
+    projectId: state.scratchGui.projectState.projectId,
+    welcomeModalVisible: state.scratchGui.modals.welcomeModal
 });
 
-const mapDispatchToProps = () => ({});
+const mapDispatchToProps = dispatch => ({
+    onOpenWelcomeModal: () => dispatch(openWelcomeModal()),
+    onCloseWelcomeModal: () => dispatch(closeWelcomeModal())
+});
 
 const ConnectedInterface = injectIntl(connect(
     mapStateToProps,

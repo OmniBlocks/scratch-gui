@@ -1,4 +1,5 @@
 @import "../../css/colors.css";
+@import "../../css/default-colors.css";
 @import "../../css/units.css";
 @import "../../css/typography.css";
 @import "../../css/z-index.css";
@@ -66,7 +67,7 @@
     background-color: $control-primary;
     border: none;
     border-radius: $space;
-    color: $text-primary-on-dark;
+    color: $ui-white-default;
     cursor: pointer;
     font-size: 1rem;
     font-weight: bold;

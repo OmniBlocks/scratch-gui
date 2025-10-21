@@ -179,6 +179,7 @@ export {
     openBackdropLibrary,
     openCostumeLibrary,
     openExtensionLibrary,
+    openWelcomeModal,
     openLoadingProject,
     openSoundLibrary,
     openSpriteLibrary,
@@ -209,5 +210,6 @@ export {
     closeRestorePointModal,
     closeFontsModal,
     closeUnknownPlatformModal,
-    closeInvalidProjectModal
+    closeInvalidProjectModal,
+    closeWelcomeModal
 };

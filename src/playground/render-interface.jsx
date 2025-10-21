@@ -459,14 +459,10 @@ const mapStateToProps = state => ({
     isLoading: getIsLoading(state.scratchGui.projectState.loadingState),
     isPlayerOnly: state.scratchGui.mode.isPlayerOnly,
     isRtl: state.locales.isRtl,
-    projectId: state.scratchGui.projectState.projectId,
-    welcomeModalVisible: state.scratchGui.modals.welcomeModal
+    projectId: state.scratchGui.projectState.projectId
 });
 
-const mapDispatchToProps = dispatch => ({
-    onOpenWelcomeModal: () => dispatch(openWelcomeModal()),
-    onCloseWelcomeModal: () => dispatch(closeWelcomeModal())
-});
+const mapDispatchToProps = () => ({});
 
 const ConnectedInterface = injectIntl(connect(
     mapStateToProps,

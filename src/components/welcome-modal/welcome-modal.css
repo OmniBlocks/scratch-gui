@@ -33,7 +33,7 @@
     justify-content: center;
     width: 100%;
     height: 100px;
-    background-color: $control-primary;
+    background-color: $motion-primary;
     font-size: 3rem;
 }
 
@@ -63,7 +63,7 @@
 }
 
 .close-button {
-    background-color: $control-primary;
+    background-color: $motion-primary;
     border: none;
     border-radius: $space;
     color: $ui-white;

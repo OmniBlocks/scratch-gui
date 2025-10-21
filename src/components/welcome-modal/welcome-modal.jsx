@@ -5,6 +5,7 @@ import Box from '../box/box.jsx';
 import {defineMessages, injectIntl, intlShape, FormattedMessage} from 'react-intl';
 import {APP_NAME} from '../../lib/brand.js';
 
+import boxyIcon from '../../lib/default-project/Boxy.svg';
 import styles from './welcome-modal.css';
 
 const messages = defineMessages({
@@ -53,7 +54,7 @@ const WelcomeModal = ({intl, isOpen, onClose, ...props}) => {
         >
             <div dir={props.isRtl ? 'rtl' : 'ltr'}>
                 <Box className={styles.illustration}>
-                    <span>🎉</span>
+                    <img src={boxyIcon} alt="Boxy mascot" width="60" height="60" />
                 </Box>
 
                 <Box className={styles.body}>

@@ -173,13 +173,15 @@ const closeUnknownPlatformModal = function () {
 const closeInvalidProjectModal = function () {
     return closeModal(MODAL_INVALID_PROJECT);
 };
+const closeWelcomeModal = function () {
+    return closeModal(MODAL_WELCOME);
+};
 export {
     reducer as default,
     initialState as modalsInitialState,
     openBackdropLibrary,
     openCostumeLibrary,
     openExtensionLibrary,
-    openWelcomeModal,
     openLoadingProject,
     openSoundLibrary,
     openSpriteLibrary,
@@ -210,6 +212,5 @@ export {
     closeRestorePointModal,
     closeFontsModal,
     closeUnknownPlatformModal,
-    closeInvalidProjectModal,
-    closeWelcomeModal
+    closeInvalidProjectModal
 };

@@ -2,6 +2,7 @@
 @import "../../css/units.css";
 @import "../../css/default-colors.css";
 @import "../../css/z-index.css";
+@import "../../css/animations.css";
 
 .stage {
     /*
@@ -30,12 +31,26 @@
     color-scheme: light;
     color: $text-primary-default;
     
+    /* Enhanced animations and transitions */
+    transition: all var(--duration-normal) var(--ease-out-circ);
+    
+    /* Subtle entrance animation */
+    animation: scaleIn var(--duration-slow) var(--ease-out-back);
+}
+
+/* Enhanced hover effect for interactive stage */
+.stage:hover {
+    border-color: rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
 }
 
 .stage.full-screen {
     border: $stage-full-screen-border-width solid $ui-black-transparent;
-    transition: all 0.1s ease-in-out;
+    transition: all var(--duration-normal) var(--ease-out-expo);
     
+    /* Dramatic entrance for fullscreen */
+    animation: zoomIn var(--duration-slow) var(--ease-out-back);
 }
 
 .with-color-picker {

@@ -1,4 +1,5 @@
 @import "../../css/colors.css";
+@import "../../css/animations.css";
 
 .container {
     display: flex;
@@ -9,22 +10,66 @@
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: $looks-secondary;
     border-radius: 0.5rem;
+    
+    /* Enhanced animations and transitions */
+    transition: all var(--duration-fast) var(--ease-out-circ);
+    transform: translateY(0) scale(1);
+    will-change: transform;
+    
+    /* Subtle entrance animation with stagger */
+    animation: scaleIn var(--duration-normal) var(--ease-out-back);
 }
 
 .container + .container {
     margin-top: 1.25rem;
+    animation-delay: 0.1s; /* Stagger animation for multiple buttons */
+}
+
+/* Enhanced hover effects */
+.container:hover {
+    transform: translateY(-3px) scale(1.05);
+    background-color: $looks-light-transparent;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Icon wiggle on hover for playfulness */
+.container:hover .title {
+    animation: wiggle var(--duration-normal) ease-in-out;
+}
+
+/* Active/pressed state with bounce */
+.container:active {
+    background-color: $looks-light-transparent;
+    transform: translateY(-1px) scale(0.95);
+    transition-duration: var(--duration-fast);
+}
+
+/* Focus state for accessibility */
+.container:focus {
+    outline: 2px solid $looks-secondary;
+    outline-offset: 2px;
+    animation: pulse var(--duration-normal) ease-in-out;
 }
 
 .title {
     margin-top: 0.5rem;
     text-align: center;
+    transition: all var(--duration-fast) ease;
 }
 
 .disabled {
     opacity: 0.5;
     pointer-events: none;
+    filter: grayscale(0.5);
+    transition: all var(--duration-normal) ease;
 }
 
-.container:active {
-    background-color: $looks-light-transparent;
+/* Special success state animation */
+.container.success {
+    animation: tada var(--duration-slower) ease-out;
+}
+
+/* Special error state animation */
+.container.error {
+    animation: shake var(--duration-normal) ease-in-out;
 }

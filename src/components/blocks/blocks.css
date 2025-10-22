@@ -1,11 +1,19 @@
 @import "../../css/units.css";
 @import "../../css/colors.css";
 @import "../../css/z-index.css";
+@import "../../css/animations.css";
 
 .blocks {
     height: 100%;
+    
+    /* Smooth entrance animation */
+    animation: slideInRight var(--duration-slow) var(--ease-out-back);
+    
+    /* Enhanced transitions */
+    transition: all var(--duration-normal) var(--ease-out-circ);
 }
 
+/* Enhanced drag-over effect with pulsing */
 .drag-over:after {
     content: '';
     position: absolute;
@@ -15,7 +23,15 @@
     height: 100%;
     opacity: 0.75;
     background-color: $drop-highlight;
-    transition: all 0.25s ease;
+    transition: all var(--duration-normal) ease;
+    
+    /* Pulsing animation for drag feedback */
+    animation: pulse 1s ease-in-out infinite;
+}
+
+/* Smooth hover effect for blocks area */
+.blocks:hover {
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.05);
 }
 
 .blocks :global(.injectionDiv){

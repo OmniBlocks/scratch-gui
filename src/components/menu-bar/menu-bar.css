@@ -1,6 +1,7 @@
 @import "../../css/colors.css";
 @import "../../css/units.css";
 @import "../../css/z-index.css";
+@import "../../css/animations.css";
 
 .menu-bar {
     display: flex;
@@ -32,6 +33,9 @@
     background-color: $menu-bar-background;
     background-image: $menu-bar-background-image;
     color: $menu-bar-foreground;
+    
+    /* Enhanced entrance animation */
+    animation: slideInDown var(--duration-normal) var(--ease-out-back);
 }
 
 .main-menu {
@@ -42,18 +46,33 @@
     align-items: center;
     flex-grow: 1;
     gap: 0.5rem;
-    
 }
 .inactive {
     opacity: 0;
+    transition: opacity var(--duration-normal) ease;
 }
+
 .scratch-logo {
-    height:  1.6rem;
+    height: 1.6rem;
     vertical-align: middle;
+    transition: all var(--duration-fast) var(--ease-out-circ);
+    
+    /* Subtle entrance animation */
+    animation: scaleIn var(--duration-normal) var(--ease-out-back);
 }
 
 .scratch-logo.clickable {
     cursor: pointer;
+}
+
+/* Enhanced logo hover effect */
+.scratch-logo.clickable:hover {
+    transform: scale(1.1) rotate(5deg);
+    filter: brightness(1.1);
+}
+
+.scratch-logo.clickable:active {
+    transform: scale(0.95) rotate(-2deg);
 }
 
 .menu-bar-item {
@@ -65,16 +84,39 @@
     align-items: center;
     white-space: nowrap;
     height: $menu-bar-height;
-    transition: all 0.1s ease-in-out;
+    transition: all var(--duration-fast) var(--ease-out-circ);
+    
+    /* Staggered entrance animation */
+    animation: slideInLeft var(--duration-normal) var(--ease-out-back);
+    transform: translateX(0);
 }
+
+/* Stagger menu items */
+.menu-bar-item:nth-child(1) { animation-delay: 0.1s; }
+.menu-bar-item:nth-child(2) { animation-delay: 0.2s; }
+.menu-bar-item:nth-child(3) { animation-delay: 0.3s; }
+.menu-bar-item:nth-child(4) { animation-delay: 0.4s; }
+.menu-bar-item:nth-child(5) { animation-delay: 0.5s; }
 
 .menu-bar-item.hoverable {
     cursor: pointer;
 }
 
+/* Enhanced hover effects */
+.menu-bar-item.hoverable:hover {
+    background-color: $ui-black-transparent;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
 .menu-bar-item.active,
 .menu-bar-item.hoverable:hover {
     background-color: $ui-black-transparent;
+}
+
+/* Active state with subtle press animation */
+.menu-bar-item.active {
+    animation: pulse var(--duration-normal) ease-in-out;
 }
 
 .menu-bar-item.growable {

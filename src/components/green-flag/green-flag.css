@@ -1,4 +1,5 @@
 @import "../../css/colors.css";
+@import "../../css/animations.css";
 
 .green-flag {
     width: 2rem;
@@ -8,13 +9,59 @@
     user-select: none;
     user-drag: none;
     cursor: pointer;
-    transition: all 0.2s ease-in-out;
+    transition: all var(--duration-fast) var(--ease-out-circ);
+    
+    /* Subtle entrance animation */
+    animation: bounceIn var(--duration-normal) var(--ease-bounce);
+    
+    /* Enhanced visual effects */
+    position: relative;
+    overflow: visible;
 }
 
+/* Exciting hover effect with lift and glow */
 .green-flag:hover {
     background-color: $looks-light-transparent;
+    transform: translateY(-3px) scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 200, 0, 0.3);
+    
+    /* Flag wave animation on hover */
+    animation: float 2s ease-in-out infinite;
 }
 
+/* Active state with celebration animation */
 .green-flag.is-active {
     background-color: $looks-transparent;
+    animation: tada var(--duration-slower) var(--ease-bounce);
+    box-shadow: 0 0 30px rgba(0, 200, 0, 0.6);
+}
+
+/* Click animation */
+.green-flag:active {
+    transform: translateY(-1px) scale(0.95);
+    animation: heartbeat 0.6s ease-in-out;
+}
+
+/* Special success pulse when project starts */
+.green-flag.success-pulse {
+    animation: pulse 0.8s ease-in-out 3;
+}
+
+/* Ripple effect on click */
+.green-flag::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(0, 200, 0, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width var(--duration-normal) ease, height var(--duration-normal) ease;
+}
+
+.green-flag:active::after {
+    width: 60px;
+    height: 60px;
 }

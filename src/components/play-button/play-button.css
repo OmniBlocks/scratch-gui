@@ -1,6 +1,7 @@
 
 @import "../../css/colors.css";
 @import "../../css/units.css";
+@import "../../css/animations.css";
 
 .play-button {
     display: flex;
@@ -16,7 +17,14 @@
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     user-select: none;
     cursor: pointer;
-    transition: all 0.15s ease-out;
+    transition: all var(--duration-fast) var(--ease-out-circ);
+    
+    /* Enhanced entrance animation */
+    animation: bounceIn var(--duration-normal) var(--ease-bounce);
+    
+    /* Enhanced visual effects */
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .play-button {
@@ -25,12 +33,68 @@
     z-index: auto;
 }
 
-.play-button:focus {
-    outline: none;
+/* Exciting hover effects */
+.play-button:hover {
+    transform: scale(1.15) translateY(-2px);
+    background-color: lighten($sound-primary, 10%);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    
+    /* Pulsing glow effect */
+    animation: pulse 1.5s ease-in-out infinite;
 }
 
+/* Active/pressed state */
+.play-button:active {
+    transform: scale(0.95) translateY(0);
+    animation: heartbeat 0.4s ease-in-out;
+}
+
+.play-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
+    animation: glow var(--duration-normal) ease-in-out;
+}
+
+/* Icon animations */
 .play-icon {
-  width: 50%;
+    width: 50%;
+    transition: all var(--duration-fast) var(--ease-out-circ);
+}
+
+/* Icon hover effect */
+.play-button:hover .play-icon {
+    transform: scale(1.1);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* Special playing state animation */
+.play-button.playing {
+    animation: spin 2s linear infinite;
+    background: linear-gradient(45deg, $sound-primary, lighten($sound-primary, 20%));
+}
+
+/* Success state when audio starts */
+.play-button.success {
+    animation: tada var(--duration-slower) var(--ease-bounce);
+}
+
+/* Ripple effect on click */
+.play-button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    transform: translate(-50%, -50%);
+    transition: width var(--duration-normal) ease, height var(--duration-normal) ease;
+}
+
+.play-button:active::after {
+    width: 50px;
+    height: 50px;
 }
 
 [dir="ltr"] .play-button {

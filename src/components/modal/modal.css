@@ -1,26 +1,27 @@
 @import "../../css/colors.css";
 @import "../../css/units.css";
 @import "../../css/z-index.css";
+@import "../../css/animations.css";
 
 @keyframes ModalIn {
     from {
         opacity: 0;
-        transform: scale(0.8)
+        transform: scale(0.8) translateY(-20px);
     }
     to {
         opacity: 1;
-        transform: scale(1);
+        transform: scale(1) translateY(0);
     }
 }
 
 @keyframes ModalOut {
     from {
         opacity: 1;
-        transform: scale(1)
+        transform: scale(1) translateY(0);
     }
     to {
         opacity: 0;
-        transform: scale(0.8);
+        transform: scale(0.8) translateY(-20px);
     }
 }
 
@@ -31,14 +32,14 @@
     }
     to {
         background-color: $ui-modal-overlay;
-        backdrop-filter: blur(2px);
+        backdrop-filter: blur(4px);
     }
 }
 
 @keyframes OverLayOut {
     from {
       background-color: $ui-modal-overlay;
-      backdrop-filter: blur(2px);
+      backdrop-filter: blur(4px);
     }
     to {
       background-color: rgba(0, 0, 0, 0);
@@ -46,9 +47,28 @@
     }
 }
 
+/* Enhanced modal entrance with bounce */
+@keyframes ModalBounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3) translateY(-50px);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.05) translateY(5px);
+    }
+    70% {
+        transform: scale(0.95) translateY(-2px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
 .modal-overlay {
-    animation: OverLayIn 0.2s ease-in-out forwards;
-    transition: background-color 0.2s ease-in-out forwards;
+    animation: OverLayIn var(--duration-normal) var(--ease-out-circ) forwards;
+    transition: background-color var(--duration-normal) var(--ease-out-circ) forwards;
     position: fixed;
     top: 0;
     left: 0;
@@ -58,7 +78,7 @@
     background-color: $ui-modal-overlay;
     color: $ui-modal-foreground;
     
-    backdrop-filter: blur(2px);
+    backdrop-filter: blur(4px);
 }
 
 .modal-content * {
@@ -66,7 +86,7 @@
 }
 
 .modal-content {
-    animation: ModalIn 0.2s ease-in-out forwards;
+    animation: ModalIn var(--duration-normal) var(--ease-out-back) forwards;
     margin: 100px auto;
     outline: none;
     border: 4px solid $ui-white-transparent;
@@ -76,6 +96,21 @@
 
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     overflow: hidden;
+    
+    /* Enhanced shadow and transitions */
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    transition: all var(--duration-fast) var(--ease-out-circ);
+}
+
+/* Special bounce entrance for important modals */
+.modal-content.bounce-entrance {
+    animation: ModalBounceIn var(--duration-slow) var(--ease-bounce) forwards;
+}
+
+/* Hover effect for interactive modals */
+.modal-content:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
 }
 
 .modal-content.full-screen {

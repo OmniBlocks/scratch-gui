@@ -14,7 +14,13 @@ detect_unicode() {
 }
 UNICODE_OK="$(detect_unicode)"
 
+# Keep the original gif spinners for GitHub comments, but also provide terminal spinners
+# The original gif spinners are:
+# initial_spinner: https://lh5.googleusercontent.com/proxy/OUqG0HgVNVMNorlPCmI4VgJa-3h7uHLkkMy9vdJ0eRsQlvJBytFUS-HvuW-O9EJd-c9xB7KAqlwby4Fzp59g1705FzBuP-F8dC1ZaBQtmLeCu5i6FfSd6Mmzh8mjOwgrEYZwy5UStg
+# checklist_spinner: https://github.com/user-attachments/assets/881cd049-000f-4b24-a868-9831c3ea9019
+
 if [ "$UNICODE_OK" = "1" ]; then
+  # Use the iconic ⠋ spinner that matches the original workflow personality
   SPIN=( '⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏' )
   FILLED='█'; EMPTY='░'; CHECK='✓'
 else

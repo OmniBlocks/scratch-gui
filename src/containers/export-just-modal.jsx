@@ -128,13 +128,14 @@ class ExportJustModal extends React.Component {
             this.props.onClose();
         } catch (err) {
             console.error('Export error:', err);
+            const errorMessage = err.message || `Error exporting ${this.state.exportType}`;
             this.setState({
-                error: err.message || `Error exporting ${this.state.exportType}`,
+                error: errorMessage,
                 isExporting: false,
                 progress: 0
             });
             // Keep modal open to show error - could add error display to UI
-            alert(this.state.error); // Temporary error display
+            alert(errorMessage);
         }
     }
 

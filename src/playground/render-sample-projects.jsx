@@ -4,7 +4,7 @@
 
 import React, {useState} from 'react';
 import {APP_NAME} from '../lib/brand.js';
-import styles from './interface.css';
+import styles from './landing-page.css';
 
 const SampleProjectsPage = () => {
     const [selectedCategory, setSelectedCategory] = useState('all');
@@ -12,67 +12,105 @@ const SampleProjectsPage = () => {
     const sampleProjects = [
         {
             id: 1,
-            title: "Animated Cat",
-            description: "A simple animation featuring a walking cat sprite",
-            category: "animation",
-            difficulty: "Beginner",
-            thumbnail: "🐱",
-            projectUrl: "./editor.html?project=cat-animation"
+            title: "3D Platformer Engine",
+            description: "Advanced 3D platformer with physics, collision detection, and dynamic lighting systems",
+            category: "game",
+            difficulty: "Advanced",
+            thumbnail: "🎮",
+            projectUrl: "./editor.html?project=3d-platformer"
         },
         {
             id: 2,
-            title: "Pong Game",
-            description: "Classic Pong game with paddle controls and scoring",
-            category: "game",
-            difficulty: "Intermediate",
-            thumbnail: "🏓",
-            projectUrl: "./editor.html?project=pong-game"
+            title: "Neural Network Visualizer",
+            description: "Interactive machine learning visualization with real-time training and backpropagation",
+            category: "simulation",
+            difficulty: "Expert",
+            thumbnail: "🧠",
+            projectUrl: "./editor.html?project=neural-network"
         },
         {
             id: 3,
-            title: "Music Maker",
-            description: "Create your own music with interactive instruments",
+            title: "Procedural Music Generator",
+            description: "AI-powered music composition with multiple instruments and dynamic arrangement",
             category: "music",
-            difficulty: "Beginner",
+            difficulty: "Advanced",
             thumbnail: "🎵",
-            projectUrl: "./editor.html?project=music-maker"
+            projectUrl: "./editor.html?project=music-generator"
         },
         {
             id: 4,
-            title: "Maze Runner",
-            description: "Navigate through a challenging maze puzzle",
-            category: "game",
-            difficulty: "Advanced",
-            thumbnail: "🌀",
-            projectUrl: "./editor.html?project=maze-runner"
+            title: "Physics Sandbox",
+            description: "Real-time physics simulation with fluid dynamics, particle systems, and soft body physics",
+            category: "simulation",
+            difficulty: "Expert",
+            thumbnail: "⚛️",
+            projectUrl: "./editor.html?project=physics-sandbox"
         },
         {
             id: 5,
-            title: "Digital Art Canvas",
-            description: "Draw and create digital artwork with various tools",
-            category: "art",
-            difficulty: "Intermediate",
-            thumbnail: "🎨",
-            projectUrl: "./editor.html?project=art-canvas"
+            title: "Multiplayer Battle Arena",
+            description: "Real-time multiplayer game with networking, matchmaking, and competitive ranking",
+            category: "game",
+            difficulty: "Expert",
+            thumbnail: "⚔️",
+            projectUrl: "./editor.html?project=battle-arena"
         },
         {
             id: 6,
-            title: "Story Adventure",
-            description: "Interactive storytelling with multiple choice paths",
-            category: "story",
-            difficulty: "Beginner",
-            thumbnail: "📚",
-            projectUrl: "./editor.html?project=story-adventure"
+            title: "Ray Tracer Renderer",
+            description: "Advanced 3D rendering engine with ray tracing, global illumination, and material shaders",
+            category: "graphics",
+            difficulty: "Expert",
+            thumbnail: "🌟",
+            projectUrl: "./editor.html?project=ray-tracer"
+        },
+        {
+            id: 7,
+            title: "Blockchain Simulator",
+            description: "Cryptocurrency and blockchain technology demonstration with mining and transactions",
+            category: "simulation",
+            difficulty: "Advanced",
+            thumbnail: "⛓️",
+            projectUrl: "./editor.html?project=blockchain-sim"
+        },
+        {
+            id: 8,
+            title: "Advanced Animation Studio",
+            description: "Professional-grade animation tools with keyframes, tweening, and bone rigging",
+            category: "animation",
+            difficulty: "Advanced",
+            thumbnail: "🎬",
+            projectUrl: "./editor.html?project=animation-studio"
+        },
+        {
+            id: 9,
+            title: "Compiler & Interpreter",
+            description: "Build your own programming language with lexer, parser, and runtime execution",
+            category: "programming",
+            difficulty: "Expert",
+            thumbnail: "🔧",
+            projectUrl: "./editor.html?project=compiler"
+        },
+        {
+            id: 10,
+            title: "Virtual Reality Experience",
+            description: "Immersive VR environment with spatial audio, hand tracking, and haptic feedback",
+            category: "vr",
+            difficulty: "Expert",
+            thumbnail: "🥽",
+            projectUrl: "./editor.html?project=vr-experience"
         }
     ];
 
     const categories = [
         { id: 'all', name: 'All Projects' },
         { id: 'game', name: 'Games' },
-        { id: 'animation', name: 'Animations' },
+        { id: 'simulation', name: 'Simulations' },
         { id: 'music', name: 'Music' },
-        { id: 'art', name: 'Art' },
-        { id: 'story', name: 'Stories' }
+        { id: 'graphics', name: 'Graphics' },
+        { id: 'animation', name: 'Animations' },
+        { id: 'programming', name: 'Programming' },
+        { id: 'vr', name: 'Virtual Reality' }
     ];
 
     const filteredProjects = selectedCategory === 'all' 
@@ -92,6 +130,7 @@ const SampleProjectsPage = () => {
             case 'Beginner': return '#4CAF50';
             case 'Intermediate': return '#FF9800';
             case 'Advanced': return '#F44336';
+            case 'Expert': return '#9C27B0';
             default: return '#757575';
         }
     };
@@ -186,7 +225,7 @@ const SampleProjectsPage = () => {
                 </main>
 
                 <footer className={styles.footer}>
-                    <p>&copy; 2024 {APP_NAME}. Empowering creativity through code.</p>
+                    <p>&copy; {new Date().getFullYear()} {APP_NAME}. Empowering creativity through code.</p>
                 </footer>
             </div>
         </div>

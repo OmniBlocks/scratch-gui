@@ -217,7 +217,7 @@ module.exports = [
                 chunks: ['player'],
                 template: 'src/playground/index.ejs',
                 filename: 'player.html',
-                title: `${APP_NAME} - The Ultimate MultiLanguage IDE`,
+                title: `${APP_NAME} - The Ultimate MultiLanguage IDE | Editor`,
                 ...htmlWebpackPluginCommon
             }),
             new HtmlWebpackPlugin({

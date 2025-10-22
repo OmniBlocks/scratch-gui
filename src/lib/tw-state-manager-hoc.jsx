@@ -101,6 +101,7 @@ class FileHashRouter extends HashRouter {
         this.playerPath = location.pathname.substring(0, location.pathname.lastIndexOf('/') + 1);
         this.editorPath = `${this.playerPath}editor.html`;
         this.fullscreenPath = `${this.playerPath}fullscreen.html`;
+        this.sampleProjectsPath = `${this.playerPath}sample-projects.html`;
     }
 
     onpathchange () {
@@ -114,6 +115,9 @@ class FileHashRouter extends HashRouter {
             this.onSetIsFullScreen(false);
         } else if (pathName === this.fullscreenPath) {
             this.onSetIsFullScreen(true);
+        } else if (pathName === this.sampleProjectsPath) {
+            // Sample projects page - treat as standalone page
+            // Don't change player/fullscreen state
         }
     }
 
@@ -196,6 +200,9 @@ class WildcardRouter extends Router {
             } else if (type === 'editor') {
                 this.onSetIsPlayerOnly(false);
                 this.onSetIsFullScreen(false);
+            } else if (type === 'sample-projects') {
+                // Sample projects page - treat as standalone page
+                // Don't change player/fullscreen state
             } else {
                 this.onSetIsPlayerOnly(true);
                 this.onSetIsFullScreen(false);

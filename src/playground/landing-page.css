@@ -1,0 +1,411 @@
+/* Landing Page Styles */
+@import "../css/colors.css";
+
+.landingPage {
+    min-height: 100vh;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: $text-primary;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.landingPage .header {
+    text-align: center;
+    padding: 4rem 2rem 2rem;
+    color: white;
+}
+
+.headerImagePlaceholder {
+    margin-bottom: 2rem;
+}
+
+.logoPlaceholder {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+}
+
+.landingPage .title {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.landingPage .subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.landingPage .main {
+    background: $page-background;
+    margin: 0;
+    padding: 0;
+}
+
+.landingPage .hero {
+    padding: 4rem 2rem;
+    text-align: center;
+    background: $page-background;
+}
+
+.landingPage .heroContent h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: $text-primary;
+}
+
+.landingPage .heroContent p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    color: $text-primary-transparent;
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.primaryButton {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: $ui-white;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-weight: bold;
+}
+
+.primaryButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.secondaryButton {
+    background: transparent;
+    color: $text-primary;
+    border: 2px solid $text-primary;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: bold;
+}
+
+.secondaryButton:hover {
+    background: $text-primary;
+    color: $ui-white;
+    transform: translateY(-2px);
+}
+
+.features {
+    padding: 4rem 2rem;
+    background: $ui-tertiary;
+    text-align: center;
+}
+
+.features h2 {
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: $text-primary;
+}
+
+.featureGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.featureCard {
+    background: $page-background;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: $shadow;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.featureCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.featureCard h3 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    color: $text-primary;
+}
+
+.featureCard p {
+    color: $text-primary-transparent;
+    line-height: 1.5;
+}
+
+.getStarted {
+    padding: 4rem 2rem;
+    text-align: center;
+    background: $page-background;
+}
+
+.getStarted h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: $text-primary;
+}
+
+.getStarted p {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    color: $text-primary-transparent;
+}
+
+.landingPage .footer {
+    background: $text-primary;
+    color: $ui-white;
+    text-align: center;
+    padding: 2rem;
+    margin: 0;
+    border: none;
+}
+
+/* Sample Projects Page Styles */
+.sampleProjectsPage {
+    min-height: 100vh;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: $text-primary;
+    background: $page-background;
+}
+
+.sampleProjectsPage .header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: $ui-white;
+    padding: 2rem;
+}
+
+.headerContent {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.backButton {
+    background: rgba(255,255,255,0.2);
+    color: $ui-white;
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    transition: background 0.2s;
+}
+
+.backButton:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+.sampleProjectsPage .title {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.sampleProjectsPage .subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.sampleProjectsPage .main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.filters {
+    margin-bottom: 3rem;
+}
+
+.filters h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.categoryButtons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.categoryButton {
+    background: $page-background;
+    color: $text-primary;
+    border: 2px solid $ui-tertiary;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.categoryButton:hover {
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.categoryButton.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: $ui-white;
+    border-color: transparent;
+}
+
+.projectGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.projectCard {
+    background: $page-background;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: $shadow;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.projectCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.projectThumbnail {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.thumbnailEmoji {
+    font-size: 3rem;
+}
+
+.projectInfo {
+    padding: 1.5rem;
+}
+
+.projectTitle {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    color: $text-primary;
+}
+
+.projectDescription {
+    color: $text-primary-transparent;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.projectMeta {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.difficulty {
+    font-weight: bold;
+}
+
+.category {
+    color: $text-primary-transparent;
+    text-transform: capitalize;
+}
+
+.openProjectButton {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: $ui-white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    font-weight: bold;
+    width: 100%;
+}
+
+.openProjectButton:hover {
+    transform: translateY(-2px);
+}
+
+.noProjects {
+    text-align: center;
+    padding: 3rem;
+    color: $text-primary-transparent;
+}
+
+.createOwn {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: $page-background;
+    border-radius: 15px;
+    box-shadow: $shadow;
+}
+
+.createOwn h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: $text-primary;
+}
+
+.createOwn p {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    color: $text-primary-transparent;
+}
+
+.sampleProjectsPage .footer {
+    background: $text-primary;
+    color: $ui-white;
+    text-align: center;
+    padding: 2rem;
+    margin-top: 2rem;
+    border: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .landingPage .title {
+        font-size: 2.5rem;
+    }
+    
+    .landingPage .heroContent h2 {
+        font-size: 2rem;
+    }
+    
+    .featureGrid {
+        grid-template-columns: 1fr;
+    }
+    
+    .buttonGroup {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .categoryButtons {
+        justify-content: center;
+    }
+    
+    .projectGrid {
+        grid-template-columns: 1fr;
+    }
+}

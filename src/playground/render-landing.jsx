@@ -4,7 +4,7 @@
 
 import React from 'react';
 import {APP_NAME} from '../lib/brand.js';
-import styles from './interface.css';
+import styles from './landing-page.css';
 
 const LandingPage = () => {
     const handleGetStarted = () => {
@@ -19,6 +19,12 @@ const LandingPage = () => {
         <div className={styles.container}>
             <div className={styles.landingPage}>
                 <header className={styles.header}>
+                    <div className={styles.headerImagePlaceholder}>
+                        {/* Placeholder for boxy image - replace with actual image */}
+                        <div className={styles.logoPlaceholder}>
+                            📦 {/* Temporary placeholder - replace with actual logo */}
+                        </div>
+                    </div>
                     <h1 className={styles.title}>{APP_NAME}</h1>
                     <p className={styles.subtitle}>
                         The Ultimate MultiLanguage IDE - Create, Code, and Share Your Projects
@@ -56,7 +62,7 @@ const LandingPage = () => {
                         <div className={styles.featureGrid}>
                             <div className={styles.featureCard}>
                                 <h3>🚀 Fast Performance</h3>
-                                <p>Optimized compiler for lightning-fast project execution</p>
+                                <p>Optimized compiler for lightning-fast project execution (powered by TurboWarp)</p>
                             </div>
                             <div className={styles.featureCard}>
                                 <h3>🎨 Modern Interface</h3>
@@ -75,7 +81,7 @@ const LandingPage = () => {
 
                     <section className={styles.getStarted}>
                         <h2>Ready to Start Creating?</h2>
-                        <p>Join thousands of creators building amazing projects with {APP_NAME}</p>
+                        <p>Join creators building amazing projects with {APP_NAME}</p>
                         <button 
                             className={styles.primaryButton}
                             onClick={handleGetStarted}
@@ -86,7 +92,7 @@ const LandingPage = () => {
                 </main>
 
                 <footer className={styles.footer}>
-                    <p>&copy; 2024 {APP_NAME}. Built with ❤️ for creators everywhere.</p>
+                    <p>&copy; {new Date().getFullYear()} {APP_NAME}. Built with ❤️ for creators everywhere.</p>
                 </footer>
             </div>
         </div>

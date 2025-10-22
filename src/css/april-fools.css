@@ -1,0 +1,334 @@
+/* April Fools CSS Styles */
+
+/* Confetti Animation */
+.confetti-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    overflow: hidden;
+}
+
+.confetti-piece {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: #ff6b6b;
+    animation: confetti-fall 3s linear infinite;
+    transform-origin: center;
+}
+
+@keyframes confetti-fall {
+    0% {
+        transform: translateY(-100vh) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+/* Rainbow Mode */
+.april-fools-rainbow {
+    animation: rainbow-background 3s linear infinite;
+}
+
+.april-fools-rainbow .menu-bar_menu-bar_JcuHF {
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff9ff3);
+    background-size: 400% 400%;
+    animation: rainbow-gradient 2s ease infinite;
+}
+
+.april-fools-rainbow .gui_editor-wrapper_2DYcj {
+    border: 3px solid;
+    border-image: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff9ff3) 1;
+    animation: rainbow-border 2s linear infinite;
+}
+
+@keyframes rainbow-gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes rainbow-border {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+}
+
+@keyframes rainbow-background {
+    0% { filter: hue-rotate(0deg) brightness(1); }
+    25% { filter: hue-rotate(90deg) brightness(1.1); }
+    50% { filter: hue-rotate(180deg) brightness(1); }
+    75% { filter: hue-rotate(270deg) brightness(1.1); }
+    100% { filter: hue-rotate(360deg) brightness(1); }
+}
+
+/* Upside Down Mode */
+.april-fools-upside-down {
+    transform: rotate(180deg);
+    transition: transform 1s ease-in-out;
+}
+
+.april-fools-upside-down * {
+    transform: rotate(180deg);
+}
+
+/* Cat Mode */
+.april-fools-cat-mode .sprite-selector-item_sprite-name_3YjIB::after {
+    content: " 🐱";
+}
+
+.april-fools-cat-mode .stage-header_stage-size-row_14N65::before {
+    content: "😸 ";
+}
+
+.april-fools-cat-mode .menu-bar_scratch-logo_K5nzZ {
+    filter: hue-rotate(45deg) saturate(1.5);
+}
+
+/* Dancing Sprites */
+.april-fools-dancing .sprite-selector-item_sprite-info_3EyZh {
+    animation: sprite-dance 2s ease-in-out infinite;
+}
+
+@keyframes sprite-dance {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    25% { transform: translateY(-5px) rotate(2deg); }
+    50% { transform: translateY(0px) rotate(0deg); }
+    75% { transform: translateY(-3px) rotate(-2deg); }
+}
+
+/* Silly Tooltips Enhancement */
+.april-fools-silly .react-tooltip {
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4) !important;
+    border-radius: 15px !important;
+    font-family: 'Comic Sans MS', cursive, sans-serif !important;
+    font-weight: bold !important;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3) !important;
+}
+
+.april-fools-silly .react-tooltip::after {
+    border-top-color: #ff6b6b !important;
+}
+
+/* Funny Block Names Animation */
+.april-fools-funny-blocks .blocklyText {
+    animation: text-wiggle 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes text-wiggle {
+    0% { transform: rotate(-1deg); }
+    100% { transform: rotate(1deg); }
+}
+
+/* Loading Animation */
+.april-fools-loading {
+    position: relative;
+}
+
+.april-fools-loading::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.april-fools-loading::after {
+    content: "🐱 Teaching cats to code... 🐱";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 24px;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    z-index: 10001;
+    animation: loading-bounce 1s ease-in-out infinite;
+}
+
+@keyframes loading-bounce {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.1); }
+}
+
+/* Error Message Styling */
+.april-fools-error {
+    background: linear-gradient(45deg, #ff9a9e, #fecfef) !important;
+    border: 2px solid #ff6b6b !important;
+    border-radius: 15px !important;
+    font-family: 'Comic Sans MS', cursive, sans-serif !important;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3) !important;
+}
+
+.april-fools-error::before {
+    content: "🤔 ";
+}
+
+/* Sparkle Effect */
+.april-fools-sparkles {
+    position: relative;
+    overflow: visible;
+}
+
+.april-fools-sparkles::before,
+.april-fools-sparkles::after {
+    content: "✨";
+    position: absolute;
+    animation: sparkle 2s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.april-fools-sparkles::before {
+    top: -10px;
+    left: -10px;
+    animation-delay: 0s;
+}
+
+.april-fools-sparkles::after {
+    bottom: -10px;
+    right: -10px;
+    animation-delay: 1s;
+}
+
+@keyframes sparkle {
+    0%, 100% { 
+        opacity: 0;
+        transform: scale(0.5) rotate(0deg);
+    }
+    50% { 
+        opacity: 1;
+        transform: scale(1) rotate(180deg);
+    }
+}
+
+/* Wobble Effect for Buttons */
+.april-fools-wobble button,
+.april-fools-wobble .button {
+    animation: wobble 2s ease-in-out infinite;
+}
+
+@keyframes wobble {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(1deg); }
+    75% { transform: rotate(-1deg); }
+}
+
+/* Pulse Effect for Important Elements */
+.april-fools-pulse .green-flag,
+.april-fools-pulse .stop-all {
+    animation: pulse-glow 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+    0%, 100% { 
+        box-shadow: 0 0 5px rgba(76, 151, 255, 0.5);
+        transform: scale(1);
+    }
+    50% { 
+        box-shadow: 0 0 20px rgba(76, 151, 255, 0.8);
+        transform: scale(1.05);
+    }
+}
+
+/* Floating Animation */
+.april-fools-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Shake Animation for Errors */
+.april-fools-shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* Zoom In Effect */
+.april-fools-zoom-in {
+    animation: zoom-in 0.3s ease-out;
+}
+
+@keyframes zoom-in {
+    0% { 
+        transform: scale(0.8);
+        opacity: 0.8;
+    }
+    100% { 
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Slide In Effect */
+.april-fools-slide-in {
+    animation: slide-in 0.5s ease-out;
+}
+
+@keyframes slide-in {
+    0% { 
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    100% { 
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .confetti-piece {
+        width: 8px;
+        height: 8px;
+    }
+    
+    .april-fools-loading::after {
+        font-size: 18px;
+    }
+    
+    .april-fools-upside-down {
+        /* Disable upside down on mobile for usability */
+        transform: none;
+    }
+}
+
+/* Accessibility - Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+    .april-fools-rainbow,
+    .april-fools-dancing .sprite-selector-item_sprite-info_3EyZh,
+    .confetti-piece,
+    .april-fools-wobble button,
+    .april-fools-wobble .button,
+    .april-fools-pulse .green-flag,
+    .april-fools-pulse .stop-all,
+    .april-fools-float,
+    .april-fools-sparkles::before,
+    .april-fools-sparkles::after {
+        animation: none !important;
+    }
+    
+    .april-fools-upside-down {
+        transform: none !important;
+    }
+}

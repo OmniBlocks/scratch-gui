@@ -43,8 +43,10 @@ import {resolveStageSize} from '../../lib/screen-utils';
 import {Theme} from '../../lib/themes';
 
 import {isRendererSupported, isBrowserSupported} from '../../lib/tw-environment-support-prober';
+import AprilFoolsManager from '../../lib/april-fools-manager.jsx';
 
 import styles from './gui.css';
+import '../../css/april-fools.css';
 import addExtensionIcon from './icon--extensions.svg';
 import codeIcon from '!../../lib/tw-recolor/build!./icon--code.svg';
 import costumesIcon from '!../../lib/tw-recolor/build!./icon--costumes.svg';
@@ -198,39 +200,42 @@ const GUIComponent = props => {
         );
 
         return isPlayerOnly ? (
-            <React.Fragment>
-                {/* TW: When the window is fullscreen, use an element to display the background color */}
-                {/* The default color for transparency is inconsistent between browsers and there isn't an existing */}
-                {/* element for us to style that fills the entire screen. */}
-                {isWindowFullScreen ? (
-                    <div
-                        className={styles.fullscreenBackground}
-                        style={{
-                            backgroundColor: fullscreenBackgroundColor
-                        }}
-                    />
-                ) : null}
-                <StageWrapper
-                    isFullScreen={isFullScreen}
-                    isEmbedded={isEmbedded}
-                    isRendererSupported={isRendererSupported()}
-                    isRtl={isRtl}
-                    loading={loading}
-                    stageSize={STAGE_SIZE_MODES.full}
-                    vm={vm}
-                >
-                    {alertsVisible ? (
-                        <Alerts className={styles.alertsContainer} />
+            <AprilFoolsManager>
+                <React.Fragment>
+                    {/* TW: When the window is fullscreen, use an element to display the background color */}
+                    {/* The default color for transparency is inconsistent between browsers and there isn't an existing */}
+                    {/* element for us to style that fills the entire screen. */}
+                    {isWindowFullScreen ? (
+                        <div
+                            className={styles.fullscreenBackground}
+                            style={{
+                                backgroundColor: fullscreenBackgroundColor
+                            }}
+                        />
                     ) : null}
-                </StageWrapper>
-                {alwaysEnabledModals}
-            </React.Fragment>
+                    <StageWrapper
+                        isFullScreen={isFullScreen}
+                        isEmbedded={isEmbedded}
+                        isRendererSupported={isRendererSupported()}
+                        isRtl={isRtl}
+                        loading={loading}
+                        stageSize={STAGE_SIZE_MODES.full}
+                        vm={vm}
+                    >
+                        {alertsVisible ? (
+                            <Alerts className={styles.alertsContainer} />
+                        ) : null}
+                    </StageWrapper>
+                    {alwaysEnabledModals}
+                </React.Fragment>
+            </AprilFoolsManager>
         ) : (
-            <Box
-                className={styles.pageWrapper}
-                dir={isRtl ? 'rtl' : 'ltr'}
-                style={{
-                    minWidth: 1024 + Math.max(0, customStageSize.width - 480),
+            <AprilFoolsManager>
+                <Box
+                    className={styles.pageWrapper}
+                    dir={isRtl ? 'rtl' : 'ltr'}
+                    style={{
+                        minWidth: 1024 + Math.max(0, customStageSize.width - 480),
                     minHeight: 640 + Math.max(0, customStageSize.height - 360)
                 }}
                 {...componentProps}
@@ -467,6 +472,7 @@ const GUIComponent = props => {
                 </Box>
                 <DragLayer />
             </Box>
+            </AprilFoolsManager>
         );
     }}</MediaQuery>);
 };

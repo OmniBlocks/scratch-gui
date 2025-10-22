@@ -24,7 +24,7 @@ const SpriteList = function (props) {
         onDeleteSprite,
         onDuplicateSprite,
         onExportSprite,
-        onExportCostumesButtonClick,
+        onExportJustButtonClick,
         onSelectSprite,
         onAddSortable,
         onRemoveSortable,
@@ -94,7 +94,7 @@ const SpriteList = function (props) {
                                 onClick={onSelectSprite}
                                 onDeleteButtonClick={onDeleteSprite}
                                 onDuplicateButtonClick={onDuplicateSprite}
-                                onExportCostumesButtonClick={onExportCostumesButtonClick}
+                                onExportJustButtonClick={onExportJustButtonClick}
                                 onExportButtonClick={onExportSprite}
                             />
                         </SortableAsset>

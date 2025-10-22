@@ -1,0 +1,106 @@
+.modalContent {
+    width: 400px;
+    max-width: 90vw;
+}
+
+.body {
+    padding: 1rem;
+}
+
+.title {
+    margin: 0 0 1rem 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.description {
+    margin: 0 0 1.5rem 0;
+    color: #575e75;
+    line-height: 1.4;
+}
+
+.selectRow {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    gap: 0.5rem;
+}
+
+.label {
+    font-weight: bold;
+    color: #575e75;
+    min-width: 80px;
+}
+
+.select {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    background-color: white;
+}
+
+.select:focus {
+    outline: none;
+    border-color: #4c97ff;
+    box-shadow: 0 0 0 2px rgba(76, 151, 255, 0.2);
+}
+
+.progressContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 0;
+}
+
+.progressText {
+    margin: 1rem 0 0 0;
+    font-weight: bold;
+    color: #575e75;
+}
+
+.buttonRow {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.cancelButton {
+    padding: 0.5rem 1rem;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    background-color: white;
+    color: #575e75;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cancelButton:hover {
+    background-color: #f9f9f9;
+    border-color: #ccc;
+}
+
+.exportButton {
+    padding: 0.5rem 1rem;
+    border: 1px solid #4c97ff;
+    border-radius: 4px;
+    background-color: #4c97ff;
+    color: white;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.exportButton:hover {
+    background-color: #4280d7;
+    border-color: #4280d7;
+}
+
+.exportButton:disabled {
+    background-color: #d9d9d9;
+    border-color: #d9d9d9;
+    color: #999;
+    cursor: not-allowed;
+}

@@ -1,5 +1,6 @@
 const OPEN_MODAL = 'scratch-gui/modals/OPEN_MODAL';
 const CLOSE_MODAL = 'scratch-gui/modals/CLOSE_MODAL';
+const OPEN_EXPORT_JUST_MODAL = 'scratch-gui/modals/OPEN_EXPORT_JUST_MODAL';
 
 const MODAL_BACKDROP_LIBRARY = 'backdropLibrary';
 const MODAL_COSTUME_LIBRARY = 'costumeLibrary';
@@ -18,6 +19,7 @@ const MODAL_RESTORE_POINTS = 'restorePointModal';
 const MODAL_FONTS = 'fontsModal';
 const MODAL_UNKNOWN_PLATFORM = 'unknownPlatformModal';
 const MODAL_INVALID_PROJECT = 'invalidProjectModal';
+const MODAL_EXPORT_JUST = 'exportJustModal';
 
 const initialState = {
     [MODAL_BACKDROP_LIBRARY]: false,
@@ -36,7 +38,9 @@ const initialState = {
     [MODAL_RESTORE_POINTS]: false,
     [MODAL_FONTS]: false,
     [MODAL_UNKNOWN_PLATFORM]: false,
-    [MODAL_INVALID_PROJECT]: false
+    [MODAL_INVALID_PROJECT]: false,
+    [MODAL_EXPORT_JUST]: false,
+    exportJustSpriteId: null
 };
 
 const reducer = function (state, action) {
@@ -49,6 +53,11 @@ const reducer = function (state, action) {
     case CLOSE_MODAL:
         return Object.assign({}, state, {
             [action.modal]: false
+        });
+    case OPEN_EXPORT_JUST_MODAL:
+        return Object.assign({}, state, {
+            [MODAL_EXPORT_JUST]: true,
+            exportJustSpriteId: action.spriteId
         });
     default:
         return state;
@@ -117,6 +126,12 @@ const openUnknownPlatformModal = function () {
 const openInvalidProjectModal = function () {
     return openModal(MODAL_INVALID_PROJECT);
 };
+const openExportJustModal = function (spriteId) {
+    return {
+        type: OPEN_EXPORT_JUST_MODAL,
+        spriteId: spriteId
+    };
+};
 const closeBackdropLibrary = function () {
     return closeModal(MODAL_BACKDROP_LIBRARY);
 };
@@ -168,6 +183,9 @@ const closeUnknownPlatformModal = function () {
 const closeInvalidProjectModal = function () {
     return closeModal(MODAL_INVALID_PROJECT);
 };
+const closeExportJustModal = function () {
+    return closeModal(MODAL_EXPORT_JUST);
+};
 export {
     reducer as default,
     initialState as modalsInitialState,
@@ -188,6 +206,7 @@ export {
     openFontsModal,
     openUnknownPlatformModal,
     openInvalidProjectModal,
+    openExportJustModal,
     closeBackdropLibrary,
     closeCostumeLibrary,
     closeExtensionLibrary,
@@ -204,5 +223,6 @@ export {
     closeRestorePointModal,
     closeFontsModal,
     closeUnknownPlatformModal,
-    closeInvalidProjectModal
+    closeInvalidProjectModal,
+    closeExportJustModal
 };

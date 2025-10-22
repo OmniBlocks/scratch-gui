@@ -47,7 +47,9 @@ const base = {
                 {from: /^\/\d+\/fullscreen\/?$/, to: '/fullscreen.html'},
                 {from: /^\/\d+\/editor\/?$/, to: '/editor.html'},
                 {from: /^\/\d+\/embed\/?$/, to: '/embed.html'},
-                {from: /^\/addons\/?$/, to: '/addons.html'}
+                {from: /^\/addons\/?$/, to: '/addons.html'},
+                {from: /^\/sample-projects\/?$/, to: '/sample-projects.html'},
+                {from: /^\/samples\/?$/, to: '/sample-projects.html'}
             ]
         },
             hot: true
@@ -147,6 +149,8 @@ module.exports = [
     // to run editor examples
     defaultsDeep({}, base, {
         entry: {
+            'landing': './src/playground/landing.jsx',
+            'sample-projects': './src/playground/sample-projects.jsx',
             'editor': './src/playground/editor.jsx',
             'player': './src/playground/player.jsx',
             'fullscreen': './src/playground/fullscreen.jsx',
@@ -188,6 +192,20 @@ module.exports = [
                 'process.env.APP_VERSION': JSON.stringify(process.env.APP_VERSION || '') 
             }),
             new HtmlWebpackPlugin({
+                chunks: ['landing'],
+                template: 'src/playground/index.ejs',
+                filename: 'index.html',
+                title: `${APP_NAME} - Welcome`,
+                ...htmlWebpackPluginCommon
+            }),
+            new HtmlWebpackPlugin({
+                chunks: ['sample-projects'],
+                template: 'src/playground/index.ejs',
+                filename: 'sample-projects.html',
+                title: `Sample Projects - ${APP_NAME}`,
+                ...htmlWebpackPluginCommon
+            }),
+            new HtmlWebpackPlugin({
                 chunks: ['editor'],
                 template: 'src/playground/index.ejs',
                 filename: 'editor.html',
@@ -198,7 +216,7 @@ module.exports = [
             new HtmlWebpackPlugin({
                 chunks: ['player'],
                 template: 'src/playground/index.ejs',
-                filename: 'index.html',
+                filename: 'player.html',
                 title: `${APP_NAME} - The Ultimate MultiLanguage IDE`,
                 ...htmlWebpackPluginCommon
             }),

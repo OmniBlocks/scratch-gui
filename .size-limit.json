@@ -1,0 +1,8 @@
+[
+  {
+    "name": "App bundle",
+    "path": "build/**/*.js",
+    "limit": "500 kB",
+    "gzip": true
+  }
+]

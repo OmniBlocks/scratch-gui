@@ -4,6 +4,7 @@
 
 import React, {useState} from 'react';
 import {APP_NAME} from '../lib/brand.js';
+import ObFooter from './ob-footer.jsx';
 import styles from './landing-page.css';
 
 const SampleProjectsPage = () => {
@@ -224,9 +225,7 @@ const SampleProjectsPage = () => {
                     </section>
                 </main>
 
-                <footer className={styles.footer}>
-                    <p>&copy; {new Date().getFullYear()} {APP_NAME}. Empowering creativity through code.</p>
-                </footer>
+                <ObFooter message="Empowering creativity through code." />
             </div>
         </div>
     );

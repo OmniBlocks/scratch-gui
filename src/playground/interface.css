@@ -127,7 +127,7 @@ a {
 .landingPage .header {
     text-align: center;
     padding: 4rem 2rem 2rem;
-    color: white;
+    color: $ui-white;
 }
 
 .landingPage .title {
@@ -145,7 +145,7 @@ a {
 }
 
 .landingPage .main {
-    background: white;
+    background: $page-background;
     margin: 0;
     padding: 0;
 }
@@ -153,7 +153,7 @@ a {
 .landingPage .hero {
     padding: 4rem 2rem;
     text-align: center;
-    background: white;
+    background: $page-background;
 }
 
 .landingPage .heroContent h2 {
@@ -179,7 +179,7 @@ a {
 
 .primaryButton {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    color: $ui-white;
     border: none;
     padding: 1rem 2rem;
     font-size: 1.1rem;
@@ -191,7 +191,7 @@ a {
 
 .primaryButton:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    box-shadow: $shadow;
 }
 
 .secondaryButton {
@@ -208,13 +208,13 @@ a {
 
 .secondaryButton:hover {
     background: $text-primary;
-    color: white;
+    color: $ui-white;
     transform: translateY(-2px);
 }
 
 .features {
     padding: 4rem 2rem;
-    background: #f8f9fa;
+    background: $ui-tertiary;
     text-align: center;
 }
 
@@ -233,16 +233,16 @@ a {
 }
 
 .featureCard {
-    background: white;
+    background: $page-background;
     padding: 2rem;
     border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: $shadow;
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .featureCard:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    box-shadow: $shadow;
 }
 
 .featureCard h3 {
@@ -259,7 +259,7 @@ a {
 .getStarted {
     padding: 4rem 2rem;
     text-align: center;
-    background: white;
+    background: $page-background;
 }
 
 .getStarted h2 {
@@ -276,7 +276,7 @@ a {
 
 .landingPage .footer {
     background: $text-primary;
-    color: white;
+    color: $ui-white;
     text-align: center;
     padding: 2rem;
     margin: 0;
@@ -293,7 +293,7 @@ a {
 
 .sampleProjectsPage .header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    color: $ui-white;
     padding: 2rem;
 }
 
@@ -304,7 +304,7 @@ a {
 
 .backButton {
     background: rgba(255,255,255,0.2);
-    color: white;
+    color: $ui-white;
     border: 1px solid rgba(255,255,255,0.3);
     padding: 0.5rem 1rem;
     border-radius: 25px;
@@ -349,9 +349,9 @@ a {
 }
 
 .categoryButton {
-    background: white;
+    background: $page-background;
     color: $text-primary;
-    border: 2px solid #e0e0e0;
+    border: 2px solid $ui-tertiary;
     padding: 0.5rem 1rem;
     border-radius: 25px;
     cursor: pointer;
@@ -365,7 +365,7 @@ a {
 
 .categoryButton.active {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    color: $ui-white;
     border-color: transparent;
 }
 
@@ -377,16 +377,16 @@ a {
 }
 
 .projectCard {
-    background: white;
+    background: $page-background;
     border-radius: 15px;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: $shadow;
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .projectCard:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    box-shadow: $shadow;
 }
 
 .projectThumbnail {
@@ -435,7 +435,7 @@ a {
 
 .openProjectButton {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    color: $ui-white;
     border: none;
     padding: 0.75rem 1.5rem;
     border-radius: 25px;
@@ -458,9 +458,9 @@ a {
 .createOwn {
     text-align: center;
     padding: 3rem 2rem;
-    background: white;
+    background: $page-background;
     border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: $shadow;
 }
 
 .createOwn h2 {
@@ -477,7 +477,7 @@ a {
 
 .sampleProjectsPage .footer {
     background: $text-primary;
-    color: white;
+    color: $ui-white;
     text-align: center;
     padding: 2rem;
     margin-top: 2rem;

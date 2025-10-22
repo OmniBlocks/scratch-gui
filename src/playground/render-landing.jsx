@@ -4,6 +4,7 @@
 
 import React from 'react';
 import {APP_NAME} from '../lib/brand.js';
+import ObFooter from './ob-footer.jsx';
 import styles from './landing-page.css';
 
 const LandingPage = () => {
@@ -91,9 +92,7 @@ const LandingPage = () => {
                     </section>
                 </main>
 
-                <footer className={styles.footer}>
-                    <p>&copy; {new Date().getFullYear()} {APP_NAME}. Built with ❤️ for creators everywhere.</p>
-                </footer>
+                <ObFooter />
             </div>
         </div>
     );

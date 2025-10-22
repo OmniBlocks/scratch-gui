@@ -5,13 +5,13 @@
     min-height: 100vh;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: $text-primary;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: $ui-primary;
 }
 
 .landingPage .header {
     text-align: center;
     padding: 4rem 2rem 2rem;
-    color: white;
+    color: $ui-white;
 }
 
 .headerImagePlaceholder {
@@ -76,7 +76,7 @@
 }
 
 .primaryButton {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: $ui-primary;
     color: $ui-white;
     border: none;
     padding: 1rem 2rem;
@@ -89,7 +89,7 @@
 
 .primaryButton:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    box-shadow: $shadow;
 }
 
 .secondaryButton {
@@ -140,7 +140,7 @@
 
 .featureCard:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    box-shadow: $shadow;
 }
 
 .featureCard h3 {
@@ -284,7 +284,7 @@
 
 .projectCard:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    box-shadow: $shadow;
 }
 
 .projectThumbnail {

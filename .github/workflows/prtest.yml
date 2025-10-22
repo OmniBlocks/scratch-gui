@@ -53,7 +53,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-      - run: npm ci
+      - run: npm install
 
   ci_lint:
     name: Lint
@@ -65,7 +65,7 @@ jobs:
         with: 
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-      - run: npm ci
+      - run: npm install
       - run: |
           if jq -e '.scripts.lint' package.json >/dev/null 2>&1; then
             npm run test:lint || true
@@ -83,7 +83,7 @@ jobs:
         with: 
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-      - run: npm ci
+      - run: npm install
       - name: Test with coverage
         run: npx jest --coverage --coverageReporters='json-summary,text-summary'
       - uses: actions/upload-artifact@v4
@@ -110,7 +110,7 @@ jobs:
         with: 
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-      - run: npm ci
+      - run: npm install
       - name: Spinner + progress
         run: |
           chmod +x scripts/ci/progress.sh
@@ -146,7 +146,7 @@ jobs:
         with: 
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-      - run: npm ci
+      - run: npm install
       - run: npm audit --production --audit-level=moderate || true
 
   ci_a11y:
@@ -160,7 +160,7 @@ jobs:
         with: 
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-      - run: npm ci
+      - run: npm install
       - run: npm i -g pa11y-ci@3 wait-on@7
       - name: Start preview server
         run: |
@@ -186,7 +186,7 @@ jobs:
         with: 
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-      - run: npm ci
+      - run: npm install
       - name: Install Playwright
         run: npx playwright install --with-deps
       - name: Run Playwright VRT (placeholder)

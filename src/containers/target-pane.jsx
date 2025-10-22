@@ -7,7 +7,8 @@ import JSZip from 'jszip';
 
 import {
     openSpriteLibrary,
-    closeSpriteLibrary
+    closeSpriteLibrary,
+    openExportJustModal
 } from '../reducers/modals';
 import {activateTab, COSTUMES_TAB_INDEX, BLOCKS_TAB_INDEX} from '../reducers/editor-tab';
 import {setReceivedBlocks} from '../reducers/hovered-target';
@@ -43,8 +44,7 @@ class TargetPane extends React.Component {
             'handleDrop',
             'handleDuplicateSprite',
             'handleExportSprite',
-            'handleExportCostumes', 
-            'handleExportSounds',
+            'handleOpenExportJustModal',
             'handleNewSprite',
             'handleSelectSprite',
             'handleSurpriseSpriteClick',

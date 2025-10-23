@@ -488,4 +488,150 @@ describe('projectSaverHOC', () => {
         expect(setSaver).toHaveBeenCalledTimes(2);
         expect(setSaver.mock.calls[1][0]).toBe(null);
     });
+
+    // Tests for componentDidMount lifecycle behavior (React 19 compatibility)
+    test('window.onbeforeunload should be set during componentDidMount', () => {
+        const Component = () => <div />;
+        const WrappedComponent = projectSaverHOC(Component);
+
+        // Clear any existing handler
+        window.onbeforeunload = null;
+
+        const mounted = mount(
+            <WrappedComponent
+                store={store}
+                vm={vm}
+            />
+        );
+
+        // window.onbeforeunload should be set
+        expect(window.onbeforeunload).toBeDefined();
+        expect(typeof window.onbeforeunload).toBe('function');
+
+        mounted.unmount();
+    });
+
+    test('onSetProjectThumbnailer should be called during componentDidMount', () => {
+        const Component = () => <div />;
+        const WrappedComponent = projectSaverHOC(Component);
+        const setThumb = jest.fn();
+
+        mount(
+            <WrappedComponent
+                store={store}
+                vm={vm}
+                onSetProjectThumbnailer={setThumb}
+            />
+        );
+
+        // Should be called exactly once during mount
+        expect(setThumb).toHaveBeenCalledTimes(1);
+        expect(setThumb).toHaveBeenCalledWith(expect.any(Function));
+    });
+
+    test('onSetProjectSaver should be called during componentDidMount', () => {
+        const Component = () => <div />;
+        const WrappedComponent = projectSaverHOC(Component);
+        const setSaver = jest.fn();
+
+        mount(
+            <WrappedComponent
+                store={store}
+                vm={vm}
+                onSetProjectSaver={setSaver}
+            />
+        );
+
+        // Should be called exactly once during mount
+        expect(setSaver).toHaveBeenCalledTimes(1);
+        expect(setSaver).toHaveBeenCalledWith(expect.any(Function));
+    });
+
+    test('componentDidMount initialization should happen before first componentDidUpdate', () => {
+        const Component = () => <div />;
+        const WrappedComponent = projectSaverHOC(Component);
+        const setThumb = jest.fn();
+        const setSaver = jest.fn();
+        const mockedAutoUpdate = jest.fn(() => Promise.resolve());
+
+        const mounted = mount(
+            <WrappedComponent
+                canSave
+                isShowingSaveable
+                isShowingWithId
+                loadingState={LoadingState.SHOWING_WITH_ID}
+                store={store}
+                vm={vm}
+                onSetProjectThumbnailer={setThumb}
+                onSetProjectSaver={setSaver}
+                onAutoUpdateProject={mockedAutoUpdate}
+            />
+        );
+
+        // Both should be called during mount
+        expect(setThumb).toHaveBeenCalledTimes(1);
+        expect(setSaver).toHaveBeenCalledTimes(1);
+
+        // Trigger an update
+        mounted.setProps({
+            projectChanged: true
+        });
+
+        // Should not be called again
+        expect(setThumb).toHaveBeenCalledTimes(1);
+        expect(setSaver).toHaveBeenCalledTimes(1);
+    });
+
+    test('window.onbeforeunload handler should prevent navigation when project changed', () => {
+        const Component = () => <div />;
+        const WrappedComponent = projectSaverHOC(Component);
+
+        window.onbeforeunload = null;
+
+        const mounted = mount(
+            <WrappedComponent
+                projectChanged
+                store={store}
+                vm={vm}
+            />
+        );
+
+        const handler = window.onbeforeunload;
+        expect(handler).toBeDefined();
+
+        // Simulate beforeunload event
+        const mockEvent = { returnValue: false };
+        const result = handler(mockEvent);
+
+        expect(mockEvent.returnValue).toBe(true);
+        expect(result).toBe(true);
+
+        mounted.unmount();
+    });
+
+    test('window.onbeforeunload handler should allow navigation when project not changed', () => {
+        const Component = () => <div />;
+        const WrappedComponent = projectSaverHOC(Component);
+
+        window.onbeforeunload = null;
+
+        const mounted = mount(
+            <WrappedComponent
+                projectChanged={false}
+                store={store}
+                vm={vm}
+            />
+        );
+
+        const handler = window.onbeforeunload;
+        expect(handler).toBeDefined();
+
+        // Simulate beforeunload event
+        const mockEvent = { returnValue: false };
+        const result = handler(mockEvent);
+
+        expect(result).toBeUndefined();
+
+        mounted.unmount();
+    });
 });

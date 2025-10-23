@@ -398,4 +398,137 @@ describe.skip('CloudManagerHOC', () => {
         expect(vm.setCloudProvider).toHaveBeenCalledWith(null);
         expect(requestCloseConnection).toHaveBeenCalledTimes(1);
     });
+
+    // Tests for componentDidUpdate lifecycle behavior (React 19 compatibility)
+    test('cloudHost prop change should update redux cloud host via componentDidUpdate', () => {
+        const Component = () => <div />;
+        const WrappedComponent = cloudManagerHOC(Component);
+        const onSetReduxCloudHost = jest.fn();
+        
+        const mounted = mountWithIntl(
+            <WrappedComponent
+                hasCloudPermission
+                cloudHost="https://cloudhost1.example.com"
+                reduxCloudHost="https://cloudhost1.example.com"
+                store={store}
+                username="user"
+                vm={vm}
+                onSetReduxCloudHost={onSetReduxCloudHost}
+            />
+        );
+        
+        // Should not be called on mount since cloudHost matches reduxCloudHost
+        expect(onSetReduxCloudHost).not.toHaveBeenCalled();
+        
+        // Update cloudHost prop
+        mounted.setProps({
+            cloudHost: "https://cloudhost2.example.com"
+        });
+        
+        // Should be called with the new cloudHost
+        expect(onSetReduxCloudHost).toHaveBeenCalledTimes(1);
+        expect(onSetReduxCloudHost).toHaveBeenCalledWith("https://cloudhost2.example.com");
+    });
+
+    test('cloudHost prop change to same value should not trigger update', () => {
+        const Component = () => <div />;
+        const WrappedComponent = cloudManagerHOC(Component);
+        const onSetReduxCloudHost = jest.fn();
+        
+        const mounted = mountWithIntl(
+            <WrappedComponent
+                hasCloudPermission
+                cloudHost="https://cloudhost1.example.com"
+                reduxCloudHost="https://cloudhost1.example.com"
+                store={store}
+                username="user"
+                vm={vm}
+                onSetReduxCloudHost={onSetReduxCloudHost}
+            />
+        );
+        
+        // Update with same value
+        mounted.setProps({
+            cloudHost: "https://cloudhost1.example.com"
+        });
+        
+        // Should not be called
+        expect(onSetReduxCloudHost).not.toHaveBeenCalled();
+    });
+
+    test('reduxCloudHost change should trigger cloud host update check in componentDidUpdate', () => {
+        const Component = () => <div />;
+        const WrappedComponent = cloudManagerHOC(Component);
+        const onSetReduxCloudHost = jest.fn();
+        
+        const customStore = mockStore({
+            scratchGui: {
+                projectState: {
+                    projectId: '1234',
+                    loadingState: LoadingState.SHOWING_WITH_ID
+                },
+                mode: {
+                    hasEverEnteredEditor: false
+                },
+                tw: {
+                    cloudHost: 'https://cloudhost1.example.com'
+                }
+            }
+        });
+        
+        const mounted = mountWithIntl(
+            <WrappedComponent
+                hasCloudPermission
+                cloudHost="https://cloudhost2.example.com"
+                store={customStore}
+                username="user"
+                vm={vm}
+                onSetReduxCloudHost={onSetReduxCloudHost}
+            />
+        );
+        
+        // Should be called on first componentDidUpdate after mount
+        // because cloudHost doesn't match reduxCloudHost
+        expect(onSetReduxCloudHost).toHaveBeenCalledWith("https://cloudhost2.example.com");
+    });
+
+    test('multiple prop updates should handle cloudHost changes correctly', () => {
+        const Component = () => <div />;
+        const WrappedComponent = cloudManagerHOC(Component);
+        const onSetReduxCloudHost = jest.fn();
+        
+        const mounted = mountWithIntl(
+            <WrappedComponent
+                hasCloudPermission
+                cloudHost="https://cloudhost1.example.com"
+                reduxCloudHost="https://cloudhost1.example.com"
+                store={store}
+                username="user"
+                vm={vm}
+                onSetReduxCloudHost={onSetReduxCloudHost}
+            />
+        );
+        
+        // First update - change cloudHost
+        mounted.setProps({
+            cloudHost: "https://cloudhost2.example.com"
+        });
+        expect(onSetReduxCloudHost).toHaveBeenCalledTimes(1);
+        expect(onSetReduxCloudHost).toHaveBeenLastCalledWith("https://cloudhost2.example.com");
+        
+        // Second update - change to another cloudHost
+        mounted.setProps({
+            cloudHost: "https://cloudhost3.example.com",
+            reduxCloudHost: "https://cloudhost2.example.com"
+        });
+        expect(onSetReduxCloudHost).toHaveBeenCalledTimes(2);
+        expect(onSetReduxCloudHost).toHaveBeenLastCalledWith("https://cloudhost3.example.com");
+        
+        // Third update - no cloudHost change
+        mounted.setProps({
+            username: "different-user",
+            reduxCloudHost: "https://cloudhost3.example.com"
+        });
+        expect(onSetReduxCloudHost).toHaveBeenCalledTimes(2); // Should not increase
+    });
 });

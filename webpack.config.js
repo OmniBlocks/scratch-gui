@@ -52,7 +52,7 @@ const base = {
                 {from: /^\/addons\/?$/, to: '/addons.html'}
             ]
         },
-        hot: true
+            hot: true
     },
     output: {
         library: 'GUI',

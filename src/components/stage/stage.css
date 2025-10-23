@@ -38,12 +38,6 @@
     animation: scaleIn var(--duration-slow) var(--ease-out-back);
 }
 
-/* Enhanced hover effect for interactive stage */
-.stage:hover {
-    border-color: rgba(0, 0, 0, 0.2);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
-}
 
 .stage.full-screen {
     border: $stage-full-screen-border-width solid $ui-black-transparent;

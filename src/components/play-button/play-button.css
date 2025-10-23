@@ -20,7 +20,7 @@
     transition: all var(--duration-fast) var(--ease-out-circ);
     
     /* Enhanced entrance animation */
-    animation: bounceIn var(--duration-normal) var(--ease-bounce);
+    
     
     /* Enhanced visual effects */
     position: relative;
@@ -35,7 +35,7 @@
 
 /* Exciting hover effects */
 .play-button:hover {
-    transform: scale(1.15) translateY(-2px);
+    transform: scale(1.15) translateY(-0.5px); /* changed to 0.5 px because 2 px freaking goes flying to the universe bruh what the sigma */
     background-color: lighten($sound-primary, 10%);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     
@@ -73,9 +73,9 @@
     background: linear-gradient(45deg, $sound-primary, lighten($sound-primary, 20%));
 }
 
-/* Success state when audio starts */
+/* Success state when starts */
 .play-button.success {
-    animation: tada var(--duration-slower) var(--ease-bounce);
+   /* animation: tada var(--duration-slower) var(--ease-bounce); /* is this the annoying as heck animation that shakes if so im removing it lol */
 }
 
 /* Ripple effect on click */

@@ -35,9 +35,11 @@ const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     devtool: process.env.SOURCEMAP || (process.env.NODE_ENV === 'production' ? false : 'cheap-module-source-map'),
     devServer: {
-        contentBase: path.resolve(__dirname, 'build'),
+        static: {
+            directory: path.resolve(__dirname, 'build')
+        },
         host: '0.0.0.0',
-        disableHostCheck: true,
+        allowedHosts: 'all',
         compress: true,
         port: process.env.PORT || 8601,
         // allows ROUTING_STYLE=wildcard to work properly
@@ -50,7 +52,7 @@ const base = {
                 {from: /^\/addons\/?$/, to: '/addons.html'}
             ]
         },
-            hot: true
+        hot: true
     },
     output: {
         library: 'GUI',
@@ -97,21 +99,22 @@ const base = {
             }, {
                 loader: 'css-loader',
                 options: {
-                    modules: true,
-                    importLoaders: 1,
-                    localIdentName: '[name]_[local]_[hash:base64:5]',
-                    camelCase: true
+                    modules: {
+                        mode: 'local',
+                        localIdentName: '[name]_[local]_[hash:base64:5]',
+                        exportLocalsConvention: 'camelCase'
+                    },
+                    importLoaders: 1
                 }
             }, {
                 loader: 'postcss-loader',
                 options: {
-                    ident: 'postcss',
-                    plugins: function () {
-                        return [
+                    postcssOptions: {
+                        plugins: [
                             postcssImport,
                             postcssVars,
                             autoprefixer
-                        ];
+                        ]
                     }
                 }
             }]
@@ -164,8 +167,9 @@ module.exports = [
                     loader: 'url-loader',
                     options: {
                         limit: 2048,
-                        outputPath: 'static/assets/',
-                        esModule: false
+                        generator: {
+                            filename: 'static/assets/[name].[hash][ext]'
+                        }
                     }
                 }
             ])

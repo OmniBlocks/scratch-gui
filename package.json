@@ -79,7 +79,7 @@
     "@szhsin/react-menu": "^4.2.2",
     "react-dom": "^19.0.0",
     "react-draggable": "^4.4.6",
-    "react-intl": "^6.6.8",
+    "react-intl": "^7.0.0",
     "react-modal": "^3.16.1",
     "react-popover": "^0.5.10",
     "react-redux": "^9.1.2",

@@ -167,9 +167,8 @@ module.exports = [
                     loader: 'url-loader',
                     options: {
                         limit: 2048,
-                        generator: {
-                            filename: 'static/assets/[name].[hash][ext]'
-                        }
+                        outputPath: 'static/assets/',
+                        esModule: false
                     }
                 }
             ])
@@ -279,9 +278,9 @@ module.exports = [
                         loader: 'url-loader',
                         options: {
                             limit: 2048,
-                            outputPath: 'static/assets/',
-                            publicPath: `${STATIC_PATH}/assets/`,
-                            esModule: false
+                            generator: {
+                                filename: 'static/assets/[name].[hash][ext]'
+                            }
                         }
                     }
                 ])

@@ -38,7 +38,22 @@
     animation: scaleIn var(--duration-slow) var(--ease-out-back);
 }
 
-
+@keyframes zoomInStage {
+    from {
+        transform: scale3d(0.3, 0.3, 0.3);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    99% {
+        transform: scale3d(1, 1, 1);
+        opacity: 1;
+    }
+    to {
+        opacity: 1;
+    }
+}
 .stage.full-screen {
     border: $stage-full-screen-border-width solid $ui-black-transparent;
     transition: all var(--duration-normal) var(--ease-out-expo);

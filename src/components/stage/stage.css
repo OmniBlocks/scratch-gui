@@ -3,7 +3,19 @@
 @import "../../css/default-colors.css";
 @import "../../css/z-index.css";
 @import "../../css/animations.css";
-
+@keyframes scaleInStage {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    99% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    to {
+        opacity: 1;
+    }
+}
 .stage {
     /*
         Fixes a few extra pixels of margin/padding, that adds on to the bottom
@@ -35,7 +47,7 @@
     transition: all var(--duration-normal) var(--ease-out-circ);
     
     /* Subtle entrance animation */
-    animation: scaleIn var(--duration-slow) var(--ease-out-back);
+    animation: scaleInStage var(--duration-slow) var(--ease-out-back);
 }
 
 @keyframes zoomInStage {
@@ -59,7 +71,7 @@
     transition: all var(--duration-normal) var(--ease-out-expo);
     
     /* Dramatic entrance for fullscreen */
-    animation: zoomIn var(--duration-slow) var(--ease-out-back);
+    animation: zoomInStage var(--duration-slow) var(--ease-out-back);
 }
 
 .with-color-picker {

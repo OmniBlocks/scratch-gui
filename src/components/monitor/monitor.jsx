@@ -40,13 +40,12 @@ const getCategoryColor = (theme, category) => {
     };
 };
 
-const MonitorComponent = props => (
-    <ContextMenuTrigger
-        // TW: if export is defined, we always show it, even outside of the editor
-        disable={!props.draggable && !props.onExport}
-        holdToDisplay={props.mode === 'slider' ? -1 : 1000}
-        id={`monitor-${props.label}`}
-    >
+const MonitorComponent = props => {
+    const hasContextMenu = (props.draggable && (props.onSetModeToDefault || props.onSetModeToLarge || 
+                           props.onSetModeToSlider || props.onSliderPromptOpen || props.onHide)) || 
+                           props.onImport || props.onExport;
+
+    const monitorContent = (
         <Draggable
             bounds=".monitor-overlay" // Class for monitor container
             cancel=".no-drag" // Class used for slider input to prevent drag
@@ -70,73 +69,86 @@ const MonitorComponent = props => (
                 })}
             </Box>
         </Draggable>
-        {ReactDOM.createPortal((
-            // Use a portal to render the context menu outside the flow to avoid
-            // positioning conflicts between the monitors `transform: scale` and
-            // the context menus `position: fixed`. For more details, see
-            // http://meyerweb.com/eric/thoughts/2011/09/12/un-fixing-fixed-elements-with-css-transforms/
-            <ContextMenu id={`monitor-${props.label}`}>
-                {props.draggable && props.onSetModeToDefault &&
-                    <MenuItem onClick={props.onSetModeToDefault}>
-                        <FormattedMessage
-                            defaultMessage="normal readout"
-                            description="Menu item to switch to the default monitor"
-                            id="gui.monitor.contextMenu.default"
-                        />
-                    </MenuItem>}
-                {props.draggable && props.onSetModeToLarge &&
-                    <MenuItem onClick={props.onSetModeToLarge}>
-                        <FormattedMessage
-                            defaultMessage="large readout"
-                            description="Menu item to switch to the large monitor"
-                            id="gui.monitor.contextMenu.large"
-                        />
-                    </MenuItem>}
-                {props.draggable && props.onSetModeToSlider &&
-                    <MenuItem onClick={props.onSetModeToSlider}>
-                        <FormattedMessage
-                            defaultMessage="slider"
-                            description="Menu item to switch to the slider monitor"
-                            id="gui.monitor.contextMenu.slider"
-                        />
-                    </MenuItem>}
-                {props.draggable && props.onSliderPromptOpen && props.mode === 'slider' &&
-                    <BorderedMenuItem onClick={props.onSliderPromptOpen}>
-                        <FormattedMessage
-                            defaultMessage="change slider range"
-                            description="Menu item to change the slider range"
-                            id="gui.monitor.contextMenu.sliderRange"
-                        />
-                    </BorderedMenuItem>}
-                {props.onImport &&
-                    <MenuItem onClick={props.onImport}>
-                        <FormattedMessage
-                            defaultMessage="import"
-                            description="Menu item to import into list monitors"
-                            id="gui.monitor.contextMenu.import"
-                        />
-                    </MenuItem>}
-                {props.onExport &&
-                    <MenuItem onClick={props.onExport}>
-                        <FormattedMessage
-                            defaultMessage="export"
-                            description="Menu item to export from list monitors"
-                            id="gui.monitor.contextMenu.export"
-                        />
-                    </MenuItem>}
-                {props.draggable && props.onHide &&
-                    <BorderedMenuItem onClick={props.onHide}>
-                        <FormattedMessage
-                            defaultMessage="hide"
-                            description="Menu item to hide the monitor"
-                            id="gui.monitor.contextMenu.hide"
-                        />
-                    </BorderedMenuItem>}
-            </ContextMenu>
-        ), document.body)}
-    </ContextMenuTrigger>
+    );
 
-);
+    if (hasContextMenu) {
+        return (
+            <MenuButton
+                // TW: if export is defined, we always show it, even outside of the editor
+                disabled={!props.draggable && !props.onExport}
+                holdToDisplay={props.mode === 'slider' ? -1 : 1000}
+            >
+                {monitorContent}
+                {ReactDOM.createPortal((
+                    // Use a portal to render the context menu outside the flow to avoid
+                    // positioning conflicts between the monitors `transform: scale` and
+                    // the context menus `position: fixed`. For more details, see
+                    // http://meyerweb.com/eric/thoughts/2011/09/12/un-fixing-fixed-elements-with-css-transforms/
+                    <Menu>
+                        {props.draggable && props.onSetModeToDefault &&
+                            <MenuItem onClick={props.onSetModeToDefault}>
+                                <FormattedMessage
+                                    defaultMessage="normal readout"
+                                    description="Menu item to switch to the default monitor"
+                                    id="gui.monitor.contextMenu.default"
+                                />
+                            </MenuItem>}
+                        {props.draggable && props.onSetModeToLarge &&
+                            <MenuItem onClick={props.onSetModeToLarge}>
+                                <FormattedMessage
+                                    defaultMessage="large readout"
+                                    description="Menu item to switch to the large monitor"
+                                    id="gui.monitor.contextMenu.large"
+                                />
+                            </MenuItem>}
+                        {props.draggable && props.onSetModeToSlider &&
+                            <MenuItem onClick={props.onSetModeToSlider}>
+                                <FormattedMessage
+                                    defaultMessage="slider"
+                                    description="Menu item to switch to the slider monitor"
+                                    id="gui.monitor.contextMenu.slider"
+                                />
+                            </MenuItem>}
+                        {props.draggable && props.onSliderPromptOpen && props.mode === 'slider' &&
+                            <BorderedMenuItem onClick={props.onSliderPromptOpen}>
+                                <FormattedMessage
+                                    defaultMessage="change slider range"
+                                    description="Menu item to change the slider range"
+                                    id="gui.monitor.contextMenu.sliderRange"
+                                />
+                            </BorderedMenuItem>}
+                        {props.onImport &&
+                            <MenuItem onClick={props.onImport}>
+                                <FormattedMessage
+                                    defaultMessage="import"
+                                    description="Menu item to import into list monitors"
+                                    id="gui.monitor.contextMenu.import"
+                                />
+                            </MenuItem>}
+                        {props.onExport &&
+                            <MenuItem onClick={props.onExport}>
+                                <FormattedMessage
+                                    defaultMessage="export"
+                                    description="Menu item to export from list monitors"
+                                    id="gui.monitor.contextMenu.export"
+                                />
+                            </MenuItem>}
+                        {props.draggable && props.onHide &&
+                            <BorderedMenuItem onClick={props.onHide}>
+                                <FormattedMessage
+                                    defaultMessage="hide"
+                                    description="Menu item to hide the monitor"
+                                    id="gui.monitor.contextMenu.hide"
+                                />
+                            </BorderedMenuItem>}
+                    </Menu>
+                ), document.body)}
+            </MenuButton>
+        );
+    }
+
+    return monitorContent;
+};
 
 const monitorModes = Object.keys(modes);
 

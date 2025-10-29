@@ -83,12 +83,12 @@
     color: #e6e6e6;
 }
 
-[theme="dark"] .toolbar-button:hover {
+[theme="dark"] .toolbarButton:hover {
     background-color: #4d4d4d;
     border-color: #5d5d5d;
 }
 
-[theme="dark"] .toolbar-button:active {
+[theme="dark"] .toolbarButton:active {
     background-color: #5d5d5d;
     border-color: #6d6d6d;
 }

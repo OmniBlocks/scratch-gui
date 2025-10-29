@@ -16,7 +16,7 @@
     gap: 4px;
 }
 
-.toolbar-button {
+.toolbarButton {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -33,12 +33,12 @@
     transition: all 0.2s ease;
 }
 
-.toolbar-button:hover {
+.toolbarButton:hover {
     background-color: #e6f7ff;
     border-color: #91d5ff;
 }
 
-.toolbar-button:active {
+.toolbarButton:active {
     background-color: #bae7ff;
     border-color: #69c0ff;
 }
@@ -77,7 +77,7 @@
     border-bottom-color: #434343;
 }
 
-[theme="dark"] .toolbar-button {
+[theme="dark"] .toolbarButton {
     background-color: #3d3d3d;
     border-color: #434343;
     color: #e6e6e6;

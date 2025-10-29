@@ -1,0 +1,97 @@
+.markdown-preview {
+    padding: 16px;
+    height: 100%;
+    overflow-y: auto;
+    background-color: white;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+}
+
+.content {
+    line-height: 1.6;
+    color: #333;
+}
+
+.content h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 16px 0 8px 0;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 8px;
+}
+
+.content h2 {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 14px 0 6px 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 4px;
+}
+
+.content h3 {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 12px 0 4px 0;
+}
+
+.content p {
+    margin: 8px 0;
+}
+
+.content ul, .content ol {
+    margin: 8px 0;
+    padding-left: 24px;
+}
+
+.content li {
+    margin: 4px 0;
+}
+
+.content a {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+.content a:hover {
+    text-decoration: underline;
+}
+
+.content strong {
+    font-weight: bold;
+}
+
+.content em {
+    font-style: italic;
+}
+
+.content code {
+    background-color: #f5f5f5;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 13px;
+}
+
+/* Dark theme support */
+[theme="dark"] .markdown-preview {
+    background-color: #1e1e1e;
+    border-color: #434343;
+}
+
+[theme="dark"] .content {
+    color: #e6e6e6;
+}
+
+[theme="dark"] .content h1,
+[theme="dark"] .content h2 {
+    border-bottom-color: #434343;
+}
+
+[theme="dark"] .content a {
+    color: #66b3ff;
+}
+
+[theme="dark"] .content code {
+    background-color: #2d2d2d;
+    color: #e6e6e6;
+}

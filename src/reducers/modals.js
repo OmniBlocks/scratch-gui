@@ -213,6 +213,5 @@ export {
     closeRestorePointModal,
     closeFontsModal,
     closeUnknownPlatformModal,
-    closeInvalidProjectModal,
-    closeNotesModal
+    closeInvalidProjectModal
 };

@@ -1,0 +1,58 @@
+      - name: Handle security keyword
+        if: ${{ steps.parse-response.outputs.keyword == 'SECURITY' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          # Replace the public body with a security placeholder
+          gh issue edit "$ISSUE_NUMBER" \
+            --title "🔒 Security Issue" \
+            --body "🔒 **Security Issue Detected**
+
+          This issue has been identified as containing potential security-sensitive information. To protect the project and its users, the original content has been hidden and the issue has been secured.
+
+          **What happens next:**
+          - The maintainers have been notified
+          - This issue will be reviewed privately
+          - If this is a legitimate security concern, it will be handled through our security process
+          - If this was flagged in error, the issue may be reopened with appropriate content
+
+          **For security researchers:**
+          Please use our private security reporting process for vulnerability disclosures. You can find more information in our security policy or contact the maintainers directly.
+
+          **For regular users:**
+          If this was not intended as a security report, please create a new issue with a clear description of your problem, avoiding any potentially sensitive information."
+
+          # Post a comment with security handling information
+          COMMENT="🔒 **Security Issue Handling**
+
+          Hi @${{ github.event.issue.user.login }}! This issue has been automatically flagged as containing potential security-sensitive content and has been secured according to our security protocols.
+
+          **Actions taken:**
+          - Issue content has been sanitized to prevent information disclosure
+          - Issue has been labeled with security tags
+          - Issue has been closed and locked for security review
+          - Maintainers have been notified for private review
+
+          **If this is a security vulnerability report:**
+          Thank you for helping to keep our project secure! The maintainers will review this privately and follow responsible disclosure practices.
+
+          **If this was flagged in error:**
+          Please contact the maintainers or create a new issue with a clear, non-sensitive description of your problem."
+          
+          # Add AI reasoning if provided
+          AI_MESSAGE="${{ steps.parse-response.outputs.message }}"
+          if [ -n "$AI_MESSAGE" ]; then
+            COMMENT="$COMMENT
+
+          **AI Analysis:** $AI_MESSAGE"
+          fi
+          
+          echo "$COMMENT" | gh issue comment "$ISSUE_NUMBER" --body-file -
+
+          # Add security labels
+          gh issue edit "$ISSUE_NUMBER" --add-label "security" --add-label "needs-review"
+
+          # Close & lock the issue for security review
+          gh issue close "$ISSUE_NUMBER"
+          gh issue lock "$ISSUE_NUMBER"

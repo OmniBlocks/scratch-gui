@@ -321,10 +321,200 @@ $border-radius: 0.25rem;
 
 .stereo {
     background-color: rgba(145, 145, 255, 0.3);
-    border-color: rgb(145, 145, 255)
+    border-color: rgb(145, 145, 255);
 }
 
 .too-large {
     background-color: rgba(255, 119, 0, 0.3);
     border-color: rgb(255, 119, 0);
+}
+
+/* Easter Egg Styles */
+.easterEggOverlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+    pointer-events: none;
+    animation: fadeInOut 5s ease-in-out;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* Sonic Easter Egg */
+.sonicOverlay {
+    text-align: center;
+    animation: pulse 0.5s ease-in-out infinite;
+}
+
+.sonicText {
+    font-size: 48px;
+    font-weight: bold;
+    color: #0066ff;
+    text-shadow: 3px 3px 0px #ffcc00,
+                 -3px -3px 0px #ffcc00,
+                 3px -3px 0px #ffcc00,
+                 -3px 3px 0px #ffcc00;
+    margin-bottom: 20px;
+}
+
+.sonicEmoji {
+    font-size: 64px;
+    animation: bounce 0.5s ease-in-out infinite;
+}
+
+.sonicRings {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+}
+
+.ring {
+    position: absolute;
+    border: 4px solid #ffcc00;
+    border-radius: 50%;
+    animation: ringExpand 1.5s ease-out infinite;
+}
+
+.ring:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.ring:nth-child(2) {
+    animation-delay: 0.5s;
+}
+
+.ring:nth-child(3) {
+    animation-delay: 1s;
+}
+
+@keyframes ringExpand {
+    0% {
+        width: 50px;
+        height: 50px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 1;
+    }
+    100% {
+        width: 300px;
+        height: 300px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+/* Nether Easter Egg */
+.netherOverlay {
+    text-align: center;
+    background: linear-gradient(135deg, #ff6600 0%, #cc0000 100%);
+    padding: 40px 60px;
+    border-radius: 20px;
+    box-shadow: 0 0 50px rgba(255, 102, 0, 0.8);
+    animation: flicker 0.3s ease-in-out infinite;
+}
+
+.netherText {
+    font-size: 36px;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    margin-bottom: 20px;
+}
+
+.fireEmojis {
+    font-size: 48px;
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.fireEmojis span {
+    animation: fireFlicker 0.3s ease-in-out infinite;
+    animation-delay: calc(var(--i, 0) * 0.1s);
+}
+
+.fireEmojis span:nth-child(1) { animation-delay: 0s; }
+.fireEmojis span:nth-child(2) { animation-delay: 0.1s; }
+.fireEmojis span:nth-child(3) { animation-delay: 0.2s; }
+.fireEmojis span:nth-child(4) { animation-delay: 0.3s; }
+.fireEmojis span:nth-child(5) { animation-delay: 0.4s; }
+.fireEmojis span:nth-child(6) { animation-delay: 0.5s; }
+
+.minecraftEmoji {
+    font-size: 64px;
+}
+
+@keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.95; }
+}
+
+@keyframes fireFlicker {
+    0%, 100% { transform: translateY(0) scale(1); }
+    25% { transform: translateY(-5px) scale(1.1); }
+    75% { transform: translateY(5px) scale(0.9); }
+}
+
+/* Upside Down Easter Egg */
+.upsideDownContainer {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    pointer-events: none;
+    animation: fadeInOut 5s ease-in-out;
+}
+
+.upsideDownText {
+    font-size: 32px;
+    font-weight: bold;
+    color: #ff00ff;
+    text-shadow: 2px 2px 0px #00ffff,
+                 -2px -2px 0px #00ffff;
+    animation: spin 2s linear infinite;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 15px 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Apply upside-down effect to the entire editor when active */
+.editorContainer:has(~ .upsideDownContainer) {
+    animation: flipContainer 5s ease-in-out;
+}
+
+@keyframes flipContainer {
+    0% { transform: rotate(0deg); }
+    10% { transform: rotate(180deg); }
+    90% { transform: rotate(180deg); }
+    100% { transform: rotate(0deg); }
 }

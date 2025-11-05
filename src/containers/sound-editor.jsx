@@ -55,6 +55,22 @@ class SoundEditor extends React.Component {
             trimEnd: null
         };
 
+        // Easter egg click counters
+        this.easterEggClicks = {
+            faster: 0,
+            echo: 0,
+            reverse: 0
+        };
+        this.easterEggTimers = {
+            faster: null,
+            echo: null,
+            reverse: null
+        };
+        this.state = {
+            ...this.state,
+            activeEasterEgg: null // "sonic", "nether", or "upsidedown"
+        };
+
         this.redoStack = [];
         this.undoStack = [];
 
@@ -236,8 +252,46 @@ class SoundEditor extends React.Component {
         this.setState({trimStart, trimEnd});
         this.handleStopPlaying();
     }
+    handleEasterEgg (type, threshold, eggName) {
+        // Increment click counter
+        this.easterEggClicks[type]++;
+        
+        // Clear existing timer
+        if (this.easterEggTimers[type]) {
+            clearTimeout(this.easterEggTimers[type]);
+        }
+        
+        // Reset counter after 2 seconds of inactivity
+        this.easterEggTimers[type] = setTimeout(() => {
+            this.easterEggClicks[type] = 0;
+        }, 2000);
+        
+        // Check if threshold reached
+        if (this.easterEggClicks[type] >= threshold) {
+            this.easterEggClicks[type] = 0;
+            this.setState({activeEasterEgg: eggName});
+            
+            // Auto-dismiss after 5 seconds
+            setTimeout(() => {
+                this.setState({activeEasterEgg: null});
+            }, 5000);
+        }
+    }
+    
     effectFactory (name) {
-        return () => this.handleEffect(name);
+        return () => {
+            // Check for Easter eggs
+            if (name === "faster") {
+                this.handleEasterEgg("faster", 20, "sonic");
+            } else if (name === "echo") {
+                this.handleEasterEgg("echo", 10, "nether");
+            } else if (name === "reverse") {
+                this.handleEasterEgg("reverse", 5, "upsidedown");
+            }
+            
+            // Execute the actual effect
+            this.handleEffect(name);
+        };
     }
     copyCurrentBuffer () {
         // Cannot reliably use props.samples because it gets detached by Firefox
@@ -470,6 +524,7 @@ class SoundEditor extends React.Component {
                 onSetTrim={this.handleUpdateTrim}
                 onSlower={this.effectFactory(effectTypes.SLOWER)}
                 onSofter={this.effectFactory(effectTypes.SOFTER)}
+                activeEasterEgg={this.state.activeEasterEgg}
                 onStop={this.handleStopPlaying}
                 onUndo={this.handleUndo}
             />

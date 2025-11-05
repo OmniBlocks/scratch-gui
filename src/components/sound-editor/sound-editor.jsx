@@ -218,7 +218,69 @@ const SoundEditor = props => (
                             src={redoIcon}
                         />
                     </button>
+        {/* Easter Egg Overlays */}
+        {props.activeEasterEgg === "sonic" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.sonicOverlay}>
+                    <div className={styles.sonicRings}>
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                    </div>
+                    <div className={styles.sonicText}>GOTTA GO FAST!</div>
+                    <div className={styles.sonicEmoji}>💙💨</div>
                 </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "nether" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.netherOverlay}>
+                    <div className={styles.netherText}>Welcome to the Nether</div>
+                    <div className={styles.fireEmojis}>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                    </div>
+                    <div className={styles.minecraftEmoji}>🎮</div>
+                </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "upsidedown" && (
+            <div className={styles.upsideDownContainer}>
+                <div className={styles.upsideDownText}>🔄 Everything is upside down! 🔄</div>
+            </div>
+        )}
+                </div>
+        {/* Easter Egg Overlays */}
+        {props.activeEasterEgg === "sonic" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.sonicOverlay}>
+                    <div className={styles.sonicRings}>
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                    </div>
+                    <div className={styles.sonicText}>GOTTA GO FAST!</div>
+                    <div className={styles.sonicEmoji}>💙💨</div>
+                </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "nether" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.netherOverlay}>
+                    <div className={styles.netherText}>Welcome to the Nether</div>
+                    <div className={styles.fireEmojis}>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                    </div>
+                    <div className={styles.minecraftEmoji}>🎮</div>
+                </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "upsidedown" && (
+            <div className={styles.upsideDownContainer}>
+                <div className={styles.upsideDownText}>🔄 Everything is upside down! 🔄</div>
+            </div>
+        )}
             </div>
             <div className={styles.inputGroup}>
                 <IconButton
@@ -240,6 +302,37 @@ const SoundEditor = props => (
                     title={props.intl.formatMessage(messages.copyToNew)}
                     onClick={props.onCopyToNew}
                 />
+        {/* Easter Egg Overlays */}
+        {props.activeEasterEgg === "sonic" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.sonicOverlay}>
+                    <div className={styles.sonicRings}>
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                    </div>
+                    <div className={styles.sonicText}>GOTTA GO FAST!</div>
+                    <div className={styles.sonicEmoji}>💙💨</div>
+                </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "nether" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.netherOverlay}>
+                    <div className={styles.netherText}>Welcome to the Nether</div>
+                    <div className={styles.fireEmojis}>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                    </div>
+                    <div className={styles.minecraftEmoji}>🎮</div>
+                </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "upsidedown" && (
+            <div className={styles.upsideDownContainer}>
+                <div className={styles.upsideDownText}>🔄 Everything is upside down! 🔄</div>
+            </div>
+        )}
             </div>
             <IconButton
                 className={styles.toolButton}
@@ -248,6 +341,37 @@ const SoundEditor = props => (
                 title={props.intl.formatMessage(messages.delete)}
                 onClick={props.onDelete}
             />
+        {/* Easter Egg Overlays */}
+        {props.activeEasterEgg === "sonic" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.sonicOverlay}>
+                    <div className={styles.sonicRings}>
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                    </div>
+                    <div className={styles.sonicText}>GOTTA GO FAST!</div>
+                    <div className={styles.sonicEmoji}>💙💨</div>
+                </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "nether" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.netherOverlay}>
+                    <div className={styles.netherText}>Welcome to the Nether</div>
+                    <div className={styles.fireEmojis}>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                    </div>
+                    <div className={styles.minecraftEmoji}>🎮</div>
+                </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "upsidedown" && (
+            <div className={styles.upsideDownContainer}>
+                <div className={styles.upsideDownText}>🔄 Everything is upside down! 🔄</div>
+            </div>
+        )}
         </div>
         <div className={styles.row}>
             <div className={styles.waveformContainer}>
@@ -264,7 +388,69 @@ const SoundEditor = props => (
                     onSetTrim={props.onSetTrim}
                     onStop={props.onStop}
                 />
+        {/* Easter Egg Overlays */}
+        {props.activeEasterEgg === "sonic" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.sonicOverlay}>
+                    <div className={styles.sonicRings}>
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                    </div>
+                    <div className={styles.sonicText}>GOTTA GO FAST!</div>
+                    <div className={styles.sonicEmoji}>💙💨</div>
+                </div>
             </div>
+        )}
+        {props.activeEasterEgg === "nether" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.netherOverlay}>
+                    <div className={styles.netherText}>Welcome to the Nether</div>
+                    <div className={styles.fireEmojis}>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                    </div>
+                    <div className={styles.minecraftEmoji}>🎮</div>
+                </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "upsidedown" && (
+            <div className={styles.upsideDownContainer}>
+                <div className={styles.upsideDownText}>🔄 Everything is upside down! 🔄</div>
+            </div>
+        )}
+            </div>
+        {/* Easter Egg Overlays */}
+        {props.activeEasterEgg === "sonic" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.sonicOverlay}>
+                    <div className={styles.sonicRings}>
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                    </div>
+                    <div className={styles.sonicText}>GOTTA GO FAST!</div>
+                    <div className={styles.sonicEmoji}>💙💨</div>
+                </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "nether" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.netherOverlay}>
+                    <div className={styles.netherText}>Welcome to the Nether</div>
+                    <div className={styles.fireEmojis}>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                    </div>
+                    <div className={styles.minecraftEmoji}>🎮</div>
+                </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "upsidedown" && (
+            <div className={styles.upsideDownContainer}>
+                <div className={styles.upsideDownText}>🔄 Everything is upside down! 🔄</div>
+            </div>
+        )}
         </div>
         <div className={classNames(styles.row, styles.rowReverse)}>
             <div className={classNames(styles.roundButtonOuter, styles.inputGroup)}>
@@ -291,6 +477,37 @@ const SoundEditor = props => (
                         />
                     </button>
                 )}
+        {/* Easter Egg Overlays */}
+        {props.activeEasterEgg === "sonic" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.sonicOverlay}>
+                    <div className={styles.sonicRings}>
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                    </div>
+                    <div className={styles.sonicText}>GOTTA GO FAST!</div>
+                    <div className={styles.sonicEmoji}>💙💨</div>
+                </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "nether" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.netherOverlay}>
+                    <div className={styles.netherText}>Welcome to the Nether</div>
+                    <div className={styles.fireEmojis}>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                    </div>
+                    <div className={styles.minecraftEmoji}>🎮</div>
+                </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "upsidedown" && (
+            <div className={styles.upsideDownContainer}>
+                <div className={styles.upsideDownText}>🔄 Everything is upside down! 🔄</div>
+            </div>
+        )}
             </div>
             <div className={styles.effects}>
                 <IconButton
@@ -354,11 +571,104 @@ const SoundEditor = props => (
                     title={<FormattedMessage {...messages.echo} />}
                     onClick={props.onEcho}
                 />
+        {/* Easter Egg Overlays */}
+        {props.activeEasterEgg === "sonic" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.sonicOverlay}>
+                    <div className={styles.sonicRings}>
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                    </div>
+                    <div className={styles.sonicText}>GOTTA GO FAST!</div>
+                    <div className={styles.sonicEmoji}>💙💨</div>
+                </div>
             </div>
+        )}
+        {props.activeEasterEgg === "nether" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.netherOverlay}>
+                    <div className={styles.netherText}>Welcome to the Nether</div>
+                    <div className={styles.fireEmojis}>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                    </div>
+                    <div className={styles.minecraftEmoji}>🎮</div>
+                </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "upsidedown" && (
+            <div className={styles.upsideDownContainer}>
+                <div className={styles.upsideDownText}>🔄 Everything is upside down! 🔄</div>
+            </div>
+        )}
+            </div>
+        {/* Easter Egg Overlays */}
+        {props.activeEasterEgg === "sonic" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.sonicOverlay}>
+                    <div className={styles.sonicRings}>
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                    </div>
+                    <div className={styles.sonicText}>GOTTA GO FAST!</div>
+                    <div className={styles.sonicEmoji}>💙💨</div>
+                </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "nether" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.netherOverlay}>
+                    <div className={styles.netherText}>Welcome to the Nether</div>
+                    <div className={styles.fireEmojis}>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                    </div>
+                    <div className={styles.minecraftEmoji}>🎮</div>
+                </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "upsidedown" && (
+            <div className={styles.upsideDownContainer}>
+                <div className={styles.upsideDownText}>🔄 Everything is upside down! 🔄</div>
+            </div>
+        )}
         </div>
         <div className={styles.infoRow}>
             <div className={styles.duration}>
                 {formatDuration(props.playhead, props.trimStart, props.trimEnd, props.duration)}
+        {/* Easter Egg Overlays */}
+        {props.activeEasterEgg === "sonic" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.sonicOverlay}>
+                    <div className={styles.sonicRings}>
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                    </div>
+                    <div className={styles.sonicText}>GOTTA GO FAST!</div>
+                    <div className={styles.sonicEmoji}>💙💨</div>
+                </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "nether" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.netherOverlay}>
+                    <div className={styles.netherText}>Welcome to the Nether</div>
+                    <div className={styles.fireEmojis}>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                    </div>
+                    <div className={styles.minecraftEmoji}>🎮</div>
+                </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "upsidedown" && (
+            <div className={styles.upsideDownContainer}>
+                <div className={styles.upsideDownText}>🔄 Everything is upside down! 🔄</div>
+            </div>
+        )}
             </div>
             <div className={styles.advancedInfo}>
                 {props.isStereo ? (
@@ -375,7 +685,69 @@ const SoundEditor = props => (
                     />
                 )}
                 {` (${formatSoundSize(props.size)})`}
+        {/* Easter Egg Overlays */}
+        {props.activeEasterEgg === "sonic" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.sonicOverlay}>
+                    <div className={styles.sonicRings}>
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                    </div>
+                    <div className={styles.sonicText}>GOTTA GO FAST!</div>
+                    <div className={styles.sonicEmoji}>💙💨</div>
+                </div>
             </div>
+        )}
+        {props.activeEasterEgg === "nether" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.netherOverlay}>
+                    <div className={styles.netherText}>Welcome to the Nether</div>
+                    <div className={styles.fireEmojis}>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                    </div>
+                    <div className={styles.minecraftEmoji}>🎮</div>
+                </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "upsidedown" && (
+            <div className={styles.upsideDownContainer}>
+                <div className={styles.upsideDownText}>🔄 Everything is upside down! 🔄</div>
+            </div>
+        )}
+            </div>
+        {/* Easter Egg Overlays */}
+        {props.activeEasterEgg === "sonic" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.sonicOverlay}>
+                    <div className={styles.sonicRings}>
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                    </div>
+                    <div className={styles.sonicText}>GOTTA GO FAST!</div>
+                    <div className={styles.sonicEmoji}>💙💨</div>
+                </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "nether" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.netherOverlay}>
+                    <div className={styles.netherText}>Welcome to the Nether</div>
+                    <div className={styles.fireEmojis}>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                    </div>
+                    <div className={styles.minecraftEmoji}>🎮</div>
+                </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "upsidedown" && (
+            <div className={styles.upsideDownContainer}>
+                <div className={styles.upsideDownText}>🔄 Everything is upside down! 🔄</div>
+            </div>
+        )}
         </div>
         {/* TODO: don't know whether this should be > or >=. Using >= for now to be safe */}
         {props.size >= SOUND_BYTE_LIMIT && (
@@ -385,6 +757,37 @@ const SoundEditor = props => (
                     description="Message that appears when a sound exceeds the Scratch sound size limit."
                     id="tw.tooLarge"
                 />
+        {/* Easter Egg Overlays */}
+        {props.activeEasterEgg === "sonic" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.sonicOverlay}>
+                    <div className={styles.sonicRings}>
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                    </div>
+                    <div className={styles.sonicText}>GOTTA GO FAST!</div>
+                    <div className={styles.sonicEmoji}>💙💨</div>
+                </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "nether" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.netherOverlay}>
+                    <div className={styles.netherText}>Welcome to the Nether</div>
+                    <div className={styles.fireEmojis}>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                    </div>
+                    <div className={styles.minecraftEmoji}>🎮</div>
+                </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "upsidedown" && (
+            <div className={styles.upsideDownContainer}>
+                <div className={styles.upsideDownText}>🔄 Everything is upside down! 🔄</div>
+            </div>
+        )}
             </div>
         )}
         {props.isStereo && (
@@ -394,6 +797,68 @@ const SoundEditor = props => (
                     description="Message that appears when editing a stereo sound."
                     id="tw.stereoAlert"
                 />
+        {/* Easter Egg Overlays */}
+        {props.activeEasterEgg === "sonic" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.sonicOverlay}>
+                    <div className={styles.sonicRings}>
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                    </div>
+                    <div className={styles.sonicText}>GOTTA GO FAST!</div>
+                    <div className={styles.sonicEmoji}>💙💨</div>
+                </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "nether" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.netherOverlay}>
+                    <div className={styles.netherText}>Welcome to the Nether</div>
+                    <div className={styles.fireEmojis}>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                    </div>
+                    <div className={styles.minecraftEmoji}>🎮</div>
+                </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "upsidedown" && (
+            <div className={styles.upsideDownContainer}>
+                <div className={styles.upsideDownText}>🔄 Everything is upside down! 🔄</div>
+            </div>
+        )}
+            </div>
+        )}
+        {/* Easter Egg Overlays */}
+        {props.activeEasterEgg === "sonic" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.sonicOverlay}>
+                    <div className={styles.sonicRings}>
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                        <div className={styles.ring} />
+                    </div>
+                    <div className={styles.sonicText}>GOTTA GO FAST!</div>
+                    <div className={styles.sonicEmoji}>💙💨</div>
+                </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "nether" && (
+            <div className={styles.easterEggOverlay}>
+                <div className={styles.netherOverlay}>
+                    <div className={styles.netherText}>Welcome to the Nether</div>
+                    <div className={styles.fireEmojis}>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                        <span>🔥</span><span>🔥</span><span>🔥</span>
+                    </div>
+                    <div className={styles.minecraftEmoji}>🎮</div>
+                </div>
+            </div>
+        )}
+        {props.activeEasterEgg === "upsidedown" && (
+            <div className={styles.upsideDownContainer}>
+                <div className={styles.upsideDownText}>🔄 Everything is upside down! 🔄</div>
             </div>
         )}
     </div>
@@ -407,6 +872,7 @@ SoundEditor.propTypes = {
     canRedo: PropTypes.bool.isRequired,
     canUndo: PropTypes.bool.isRequired,
     chunkLevels: PropTypes.arrayOf(PropTypes.number).isRequired,
+    activeEasterEgg: PropTypes.string,
     intl: intlShape,
     name: PropTypes.string.isRequired,
     onChangeName: PropTypes.func.isRequired,

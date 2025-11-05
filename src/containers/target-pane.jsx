@@ -43,7 +43,7 @@ class TargetPane extends React.Component {
             'handleDrop',
             'handleDuplicateSprite',
             'handleExportSprite',
-            'handleExportCostumes', 
+            'handleExportCostumes',
             'handleExportSounds',
             'handleNewSprite',
             'handleSelectSprite',
@@ -102,7 +102,6 @@ class TargetPane extends React.Component {
     sound-tab.jsx at lines 94-98. */
 
     async handleExportSounds(id) { // literally just reskined handleexportcostumes with sounds instead
-    console.log('TargetPane.handleExportSounds called for sprite id:', id);
     const zip = new JSZip();
 
     const target = this.props.vm.runtime.getTargetById(id);
@@ -156,27 +155,10 @@ class TargetPane extends React.Component {
             downloadBlob(`${spriteName}.sprite3`, content);
         });
     }
-async handleExportCostumes (id) {
-    console.log('TargetPane.handleExportCostumes called for sprite id:', id);
-    console.log("about to create zip");
+    async handleExportCostumes (id) {
     const zip = new JSZip();
-    console.log("created zip");
-    // Log just the keys of sprites prop
-    try {
-        console.log('All sprites prop keys:', Object.keys(this.props.sprites));
-    } catch (e) {
-        console.error('Error logging sprite keys:', e);
-    }
-
-    // Log all VM target IDs and names
-    const allTargets = this.props.vm.runtime.targets;
-    console.log('All VM targets:', allTargets.map(t => ({
-        id: t.id,
-        name: t.getName && t.getName()
-    })));
 
     const target = this.props.vm.runtime.getTargetById(id);
-    console.log('Result of getTargetById:', target);
 
     if (!target || !target.sprite || !target.sprite.costumes) {
         alert('No target or costumes found for this sprite.');
@@ -185,7 +167,6 @@ async handleExportCostumes (id) {
     }
 
     // Log all costume info
-    console.log('Costumes:', target.sprite.costumes);
 
     let addedCount = 0;
     const costumePromises = target.sprite.costumes.map(async (item, idx) => {
@@ -194,7 +175,6 @@ async handleExportCostumes (id) {
             if (!data) {
                 console.warn(`No data for costume ${item.name} at index ${idx}`, item);
             } else {
-                console.log(`Adding costume to zip: ${item.name}.${item.asset.dataFormat}`, data);
                 zip.file(
                     `${item.name}.${item.asset.dataFormat}`,
                     data,
@@ -217,14 +197,12 @@ async handleExportCostumes (id) {
     }
 
     zip.generateAsync({type: 'blob'}).then((content) => {
-        console.log('Zip blob generated:', content);
         if (!content || !(content instanceof Blob)) {
             alert('Failed to generate zip file for download.');
             console.error('Generated content is not a Blob:', content);
             return;
         }
         const filename = `${target.getName()}-costumes.zip`;
-        console.log('Calling downloadBlob with:', filename, content);
         downloadBlob(filename, content);
     }).catch((err) => {
         alert('Error generating zip file.');

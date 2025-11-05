@@ -109,7 +109,6 @@ class SpriteSelectorItem extends React.PureComponent {
     }
     async handleExportCostumes (e) {
         e.stopPropagation();
-        console.log('Export costumes button clicked for sprite id:', this.props.id);
         if (this.props.onExportCostumesButtonClick) {
             try {
                 await this.props.onExportCostumesButtonClick(this.props.id);

@@ -33,13 +33,13 @@
     flex-direction: row;
     align-items: center;
     border-right: 1px solid var(--ui-black-transparent);
-    min-height: 5.5rem;
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.25s ease-in-out;
 }
 
 .backpack-list.expanded {
+    min-height: 5.5rem;
     max-height: 6rem;
 }
 

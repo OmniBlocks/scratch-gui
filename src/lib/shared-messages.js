@@ -30,5 +30,25 @@ export default defineMessages({
         id: 'gui.sharedMessages.loadFromComputerTitle',
         defaultMessage: 'Load from your computer',
         description: 'Title for uploading a project from your computer'
+    },
+    recentProjects: {
+        id: 'gui.menuBar.recentProjects',
+        defaultMessage: 'Recent Projects',
+        description: 'Menu item for opening recent projects'
+    },
+    noRecentProjects: {
+        id: 'gui.menuBar.noRecentProjects',
+        defaultMessage: 'No recent projects',
+        description: 'Message shown when there are no recent projects'
+    },
+    clearRecentProjects: {
+        id: 'gui.menuBar.clearRecentProjects',
+        defaultMessage: 'Clear Recent Projects',
+        description: 'Menu item to clear the recent projects list'
+    },
+    openRecentProjectError: {
+        id: 'gui.menuBar.openRecentProjectError',
+        defaultMessage: 'Could not open recent project',
+        description: 'Error message when opening a recent project fails'
     }
 });

@@ -7,6 +7,8 @@ import downloadBlob from '../lib/download-blob';
 import {setProjectUnchanged} from '../reducers/project-changed';
 import {showStandardAlert, showAlertWithTimeout} from '../reducers/alerts';
 import {setFileHandle} from '../reducers/tw';
+import {addRecentProject as addRecentProjectAction} from '../reducers/recent-projects';
+import {addRecentProject} from '../lib/tw-recent-projects-api';
 import {getIsShowingProject} from '../reducers/project-state';
 import log from '../lib/log';
 
@@ -114,6 +116,17 @@ class SB3Downloader extends React.Component {
             if (title) {
                 this.props.onSetProjectTitle(title);
             }
+            
+            // Track in recent projects
+            addRecentProject(handle, Date.now())
+                .then(updatedList => {
+                    if (updatedList && this.props.onUpdateRecentProjects) {
+                        this.props.onUpdateRecentProjects(updatedList);
+                    }
+                })
+                .catch(err => {
+                    console.warn('Failed to add to recent projects:', err);
+                });
         } catch (e) {
             this.handleSaveError(e);
         }
@@ -121,6 +134,19 @@ class SB3Downloader extends React.Component {
     async saveToLastFile () {
         try {
             await this.saveToHandle(this.props.fileHandle);
+            
+            // Track in recent projects when saving to existing file
+            if (this.props.fileHandle) {
+                addRecentProject(this.props.fileHandle, Date.now())
+                    .then(updatedList => {
+                        if (updatedList && this.props.onUpdateRecentProjects) {
+                            this.props.onUpdateRecentProjects(updatedList);
+                        }
+                    })
+                    .catch(err => {
+                        console.warn('Failed to add to recent projects:', err);
+                    });
+            }
         } catch (e) {
             this.handleSaveError(e);
         }
@@ -291,7 +317,8 @@ SB3Downloader.propTypes = {
     onShowSaveSuccessAlert: PropTypes.func,
     onShowSaveErrorAlert: PropTypes.func,
     onProjectUnchanged: PropTypes.func,
-    showSaveFilePicker: PropTypes.func
+    showSaveFilePicker: PropTypes.func,
+    onUpdateRecentProjects: PropTypes.func
 };
 SB3Downloader.defaultProps = {
     className: '',
@@ -312,7 +339,8 @@ const mapDispatchToProps = dispatch => ({
     onShowSavingAlert: () => showAlertWithTimeout(dispatch, 'saving'),
     onShowSaveSuccessAlert: () => showAlertWithTimeout(dispatch, 'twSaveToDiskSuccess'),
     onShowSaveErrorAlert: () => dispatch(showStandardAlert('savingError')),
-    onProjectUnchanged: () => dispatch(setProjectUnchanged())
+    onProjectUnchanged: () => dispatch(setProjectUnchanged()),
+    onUpdateRecentProjects: projects => dispatch(addRecentProjectAction(projects[0]))
 });
 
 export default connect(

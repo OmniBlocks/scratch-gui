@@ -19,6 +19,7 @@ import projectStateReducer, {projectStateInitialState} from './project-state';
 import projectTitleReducer, {projectTitleInitialState} from './project-title';
 import fontsLoadedReducer, {fontsLoadedInitialState} from './fonts-loaded';
 import restoreDeletionReducer, {restoreDeletionInitialState} from './restore-deletion';
+import recentProjectsReducer, {recentProjectsInitialState} from './recent-projects';
 import stageSizeReducer, {stageSizeInitialState} from './stage-size';
 import targetReducer, {targetsInitialState} from './targets';
 import themeReducer, {themeInitialState} from './theme';
@@ -59,6 +60,7 @@ const guiInitialState = {
     projectTitle: projectTitleInitialState,
     fontsLoaded: fontsLoadedInitialState,
     restoreDeletion: restoreDeletionInitialState,
+    recentProjects: recentProjectsInitialState,
     targets: targetsInitialState,
     theme: themeInitialState,
     timeout: timeoutInitialState,
@@ -165,6 +167,7 @@ const guiReducer = combineReducers({
     projectTitle: projectTitleReducer,
     fontsLoaded: fontsLoadedReducer,
     restoreDeletion: restoreDeletionReducer,
+    recentProjects: recentProjectsReducer,
     targets: targetReducer,
     theme: themeReducer,
     timeout: timeoutReducer,

@@ -147,21 +147,10 @@ const SBFileUploaderHOC = function (WrappedComponent) {
                     // Don't update file handle until after confirming replace.
                     const handle = thisFileInput.handle;
                     if (handle) {
+                    this.currentFileHandle = handle; // Store handle for later use
                         if (this.fileToUpload.name.endsWith('.sb3')) {
                             this.props.onSetFileHandle(handle);
                             
-                            // Track in recent projects
-                            addRecentProject(handle, Date.now())
-                                .then(updatedList => {
-                                    if (updatedList && this.props.onUpdateRecentProjects) {
-                                        this.props.onUpdateRecentProjects(updatedList);
-                                    }
-                                })
-                                .catch(err => {
-                                    // Silently fail - don't disrupt file loading
-                                    console.warn('Failed to add to recent projects:', err);
-                                });
-                        } else {
                             this.props.onSetFileHandle(null);
                         }
                     }
@@ -217,6 +206,19 @@ const SBFileUploaderHOC = function (WrappedComponent) {
                         }
                         this.props.vm.renderer.draw();
                         loadingSuccess = true;
+                        
+                        // Track in recent projects after successful loading
+                        if (this.currentFileHandle && this.fileToUpload && this.fileToUpload.name.endsWith('.sb3')) {
+                            addRecentProject(this.currentFileHandle, Date.now())
+                                .then(updatedList => {
+                                    if (updatedList && this.props.onUpdateRecentProjects) {
+                                        this.props.onUpdateRecentProjects(updatedList);
+                                    }
+                                })
+                                .catch(err => {
+                                    console.warn('Failed to add to recent projects:', err);
+                                });
+                        }
                     })
                     .catch(error => {
                         log.error(error);
@@ -237,6 +239,7 @@ const SBFileUploaderHOC = function (WrappedComponent) {
                 this.inputElement.value = null;
                 document.body.removeChild(this.inputElement);
             }
+            this.currentFileHandle = null;
             this.inputElement = null;
             this.fileReader = null;
             this.fileToUpload = null;
@@ -337,7 +340,11 @@ const SBFileUploaderHOC = function (WrappedComponent) {
         // noticed by componentDidUpdate()
         requestProjectUpload: loadingState => dispatch(requestProjectUpload(loadingState)),
         onSetFileHandle: fileHandle => dispatch(setFileHandle(fileHandle)),
-        onUpdateRecentProjects: projects => dispatch(addRecentProjectAction(projects[0]))
+        onUpdateRecentProjects: projects => {
+            if (projects && projects.length > 0) {
+                dispatch(addRecentProjectAction(projects[0]));
+            }
+        }
     });
     // Allow incoming props to override redux-provided props. Used to mock in tests.
     const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign(

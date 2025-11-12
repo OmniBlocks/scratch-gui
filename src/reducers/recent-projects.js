@@ -21,6 +21,7 @@ const reducer = (state = initialState, action) => {
             projects: action.projects || []
         };
     case ADD_RECENT_PROJECT:
+        {
         if (!action.project) {
             return state;
         }
@@ -31,6 +32,7 @@ const reducer = (state = initialState, action) => {
             ...state,
             projects: newProjects
         };
+        }
     case CLEAR_RECENT_PROJECTS:
         return {
             ...state,

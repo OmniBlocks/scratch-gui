@@ -148,6 +148,7 @@ const enforceMaxLimit = (store, resolve) => {
             const sortedProjects = allProjects
                 .sort((a, b) => b.timestamp - a.timestamp)
                 .map(p => ({
+                    id: p.id,
                     handle: p.handle,
                     name: p.name,
                     timestamp: p.timestamp
@@ -167,6 +168,7 @@ const enforceMaxLimit = (store, resolve) => {
             if (deletedCount >= projectsToDelete.length) {
                 // All old projects deleted, return the kept projects
                 const result = projectsToKeep.map(p => ({
+                    id: p.id,
                     handle: p.handle,
                     name: p.name,
                     timestamp: p.timestamp
@@ -214,6 +216,7 @@ const getRecentProjects = async () => {
                 .sort((a, b) => b.timestamp - a.timestamp)
                 .slice(0, MAX_RECENT_PROJECTS)
                 .map(p => ({
+                    id: p.id,
                     handle: p.handle,
                     name: p.name,
                     timestamp: p.timestamp

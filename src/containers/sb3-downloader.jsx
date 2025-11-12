@@ -340,7 +340,11 @@ const mapDispatchToProps = dispatch => ({
     onShowSaveSuccessAlert: () => showAlertWithTimeout(dispatch, 'twSaveToDiskSuccess'),
     onShowSaveErrorAlert: () => dispatch(showStandardAlert('savingError')),
     onProjectUnchanged: () => dispatch(setProjectUnchanged()),
-    onUpdateRecentProjects: projects => dispatch(addRecentProjectAction(projects[0]))
+    onUpdateRecentProjects: projects => {
+        if (projects && projects.length > 0) {
+            dispatch(addRecentProjectAction(projects[0]));
+        }
+    }
 });
 
 export default connect(

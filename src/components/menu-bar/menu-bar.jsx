@@ -28,6 +28,7 @@ import TurboMode from '../../containers/turbo-mode.jsx';
 import MenuBarHOC from '../../containers/menu-bar-hoc.jsx';
 import SettingsMenu from './settings-menu.jsx';
 
+import RecentProjectsMenu from './recent-projects-menu.jsx';
 import FramerateChanger from '../../containers/tw-framerate-changer.jsx';
 import ChangeUsername from '../../containers/tw-change-username.jsx';
 import CloudVariablesToggler from '../../containers/tw-cloud-toggler.jsx';
@@ -79,6 +80,8 @@ import {
     closeErrorsMenu
 } from '../../reducers/menus';
 import {setFileHandle} from '../../reducers/tw.js';
+import {getRecentProjects} from '../../lib/tw-recent-projects-api';
+import {loadRecentProjects} from '../../reducers/recent-projects';
 
 import collectMetadata from '../../lib/collect-metadata';
 
@@ -232,6 +235,12 @@ class MenuBar extends React.Component {
     componentDidMount () {
         document.addEventListener('keydown', this.handleKeyPress);
         
+        // Load recent projects from IndexedDB
+        getRecentProjects().then(projects => {
+            if (projects) {
+                this.props.onLoadRecentProjects(projects);
+            }
+        });
     }
     componentWillUnmount () {
         document.removeEventListener('keydown', this.handleKeyPress);
@@ -626,6 +635,15 @@ class MenuBar extends React.Component {
                                             )}
                                         </MenuSection>
                                     )}
+                                    <MenuSection>
+                                        <RecentProjectsMenu
+                                            onLoadingStarted={this.props.onLoadingStarted}
+                                            onLoadingFinished={this.props.onLoadingFinished}
+                                            onRequestCloseFile={this.props.onRequestCloseFile}
+                                            onSetFileHandle={this.props.onSetFileHandle}
+                                            onShowAlert={this.props.onShowAlert}
+                                        />
+                                    </MenuSection>
                                     <MenuSection>
                                         <MenuItem
                                             onClick={this.props.onStartSelectingFileUpload}
@@ -1143,6 +1161,7 @@ MenuBar.propTypes = {
     showComingSoon: PropTypes.bool,
     username: PropTypes.string,
     userOwnsProject: PropTypes.bool,
+    onLoadRecentProjects: PropTypes.func,
     vm: PropTypes.instanceOf(VM).isRequired
 };
 
@@ -1220,6 +1239,7 @@ const mapDispatchToProps = dispatch => ({
     onClickSaveAsCopy: () => dispatch(saveProjectAsCopy()),
     onSeeCommunity: () => dispatch(setPlayer(true)),
     onSetTimeTravelMode: mode => dispatch(setTimeTravel(mode))
+    onLoadRecentProjects: projects => dispatch(loadRecentProjects(projects))
 });
 
 export default compose(

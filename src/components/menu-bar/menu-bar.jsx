@@ -1238,7 +1238,8 @@ const mapDispatchToProps = dispatch => ({
     onClickSave: () => dispatch(manualUpdateProject()),
     onClickSaveAsCopy: () => dispatch(saveProjectAsCopy()),
     onSeeCommunity: () => dispatch(setPlayer(true)),
-    onSetTimeTravelMode: mode => dispatch(setTimeTravel(mode))
+    onSeeCommunity: () => dispatch(setPlayer(true)),
+    onSetTimeTravelMode: mode => dispatch(setTimeTravel(mode)),
     onLoadRecentProjects: projects => dispatch(loadRecentProjects(projects))
 });
 

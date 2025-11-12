@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import bindAll from 'lodash.bindall';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -8,7 +7,7 @@ import {connect} from 'react-redux';
 import {MenuItem, Submenu} from '../menu/menu.jsx';
 import fileIcon from './icon--file.svg';
 import {recentProjectsMenuOpen, openRecentProjectsMenu} from '../../reducers/menus.js';
-import {getRecentProjects, clearAllRecentProjects, checkFilePermission} from '../../lib/tw-recent-projects-api';
+import {clearAllRecentProjects, checkFilePermission} from '../../lib/tw-recent-projects-api';
 import {loadRecentProjects} from '../../reducers/recent-projects';
 import sharedMessages from '../../lib/shared-messages';
 

@@ -36,7 +36,8 @@ class RecentProjectsMenu extends React.PureComponent {
             const file = await project.handle.getFile();
             this.props.onLoadingStarted();
             
-            const reader = new FileReader();
+            try {
+                const reader = new FileReader();
             reader.onload = () => {
                 this.props.vm.loadProject(reader.result)
                     .then(() => {

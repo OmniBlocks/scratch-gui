@@ -7,7 +7,7 @@ import downloadBlob from '../lib/download-blob';
 import {setProjectUnchanged} from '../reducers/project-changed';
 import {showStandardAlert, showAlertWithTimeout} from '../reducers/alerts';
 import {setFileHandle} from '../reducers/tw';
-import {addRecentProject as addRecentProjectAction} from '../reducers/recent-projects';
+import {loadRecentProjects} from '../reducers/recent-projects';
 import {loadRecentProjects} from '../reducers/recent-projects';
 import {addRecentProject} from '../lib/tw-recent-projects-api';
 import {getIsShowingProject} from '../reducers/project-state';

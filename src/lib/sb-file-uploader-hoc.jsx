@@ -6,7 +6,7 @@ import {connect} from 'react-redux';
 import log from '../lib/log';
 import sharedMessages from './shared-messages';
 import {setFileHandle, setProjectError} from '../reducers/tw';
-import {addRecentProject as addRecentProjectAction} from '../reducers/recent-projects';
+import {loadRecentProjects} from '../reducers/recent-projects';
 import {loadRecentProjects} from '../reducers/recent-projects';
 import {addRecentProject} from './tw-recent-projects-api';
 

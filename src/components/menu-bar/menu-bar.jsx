@@ -240,6 +240,8 @@ class MenuBar extends React.Component {
             if (projects) {
                 this.props.onLoadRecentProjects(projects);
             }
+        }).catch(error => {
+            console.error('Failed to load recent projects:', error);
         });
     }
     componentWillUnmount () {
@@ -1238,7 +1240,7 @@ const mapDispatchToProps = dispatch => ({
     onClickSave: () => dispatch(manualUpdateProject()),
     onClickSaveAsCopy: () => dispatch(saveProjectAsCopy()),
     onSeeCommunity: () => dispatch(setPlayer(true)),
-    onSeeCommunity: () => dispatch(setPlayer(true)),
+    onSetTimeTravelMode: mode => dispatch(setTimeTravel(mode)),
     onSetTimeTravelMode: mode => dispatch(setTimeTravel(mode)),
     onLoadRecentProjects: projects => dispatch(loadRecentProjects(projects))
 });

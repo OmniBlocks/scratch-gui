@@ -7,6 +7,7 @@ import log from '../lib/log';
 import sharedMessages from './shared-messages';
 import {setFileHandle, setProjectError} from '../reducers/tw';
 import {addRecentProject as addRecentProjectAction} from '../reducers/recent-projects';
+import {loadRecentProjects} from '../reducers/recent-projects';
 import {addRecentProject} from './tw-recent-projects-api';
 
 import {
@@ -150,8 +151,6 @@ const SBFileUploaderHOC = function (WrappedComponent) {
                     this.currentFileHandle = handle; // Store handle for later use
                         if (this.fileToUpload.name.endsWith('.sb3')) {
                             this.props.onSetFileHandle(handle);
-                            
-                            this.props.onSetFileHandle(null);
                         }
                     }
 
@@ -342,7 +341,7 @@ const SBFileUploaderHOC = function (WrappedComponent) {
         onSetFileHandle: fileHandle => dispatch(setFileHandle(fileHandle)),
         onUpdateRecentProjects: projects => {
             if (projects && projects.length > 0) {
-                dispatch(addRecentProjectAction(projects[0]));
+                dispatch(loadRecentProjects(projects));
             }
         }
     });

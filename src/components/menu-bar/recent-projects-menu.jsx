@@ -7,7 +7,7 @@ import {connect} from 'react-redux';
 import {MenuItem, Submenu} from '../menu/menu.jsx';
 import fileIcon from './icon--file.svg';
 import {recentProjectsMenuOpen, openRecentProjectsMenu} from '../../reducers/menus.js';
-import {addRecentProject, clearAllRecentProjects, checkFilePermission} from '../../lib/tw-recent-projects-api';
+import {clearAllRecentProjects, checkFilePermission} from '../../lib/tw-recent-projects-api';
 import {loadRecentProjects} from '../../reducers/recent-projects';
 import sharedMessages from '../../lib/shared-messages';
 
@@ -36,24 +36,11 @@ class RecentProjectsMenu extends React.PureComponent {
             const file = await project.handle.getFile();
             this.props.onLoadingStarted();
             
-            try {
-                const reader = new FileReader();
+            const reader = new FileReader();
             reader.onload = () => {
                 this.props.vm.loadProject(reader.result)
                     .then(() => {
                         this.props.onSetFileHandle(project.handle);
-                        
-                        // Refresh MRU order
-                        addRecentProject(project.handle, Date.now())
-                            .then(updatedList => {
-                                if (updatedList && this.props.onUpdateRecentProjects) {
-                                    this.props.onUpdateRecentProjects(updatedList);
-                                }
-                            })
-                            .catch(error => {
-                                console.warn('Failed to refresh recent projects after open:', error);
-                            });
-                        
                         this.props.onLoadingFinished();
                         this.props.onRequestCloseFile();
                     })
@@ -156,7 +143,6 @@ RecentProjectsMenu.propTypes = {
     onRequestOpen: PropTypes.func,
     onSetFileHandle: PropTypes.func,
     onShowAlert: PropTypes.func,
-    onUpdateRecentProjects: PropTypes.func,
     recentProjects: PropTypes.arrayOf(PropTypes.shape({
         handle: PropTypes.object,
         name: PropTypes.string,
@@ -174,7 +160,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     onClearRecentProjects: () => dispatch(loadRecentProjects([])),
-    onUpdateRecentProjects: projects => dispatch(loadRecentProjects(projects)),
     onRequestOpen: () => dispatch(openRecentProjectsMenu())
 });
 

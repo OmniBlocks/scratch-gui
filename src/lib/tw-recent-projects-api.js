@@ -118,9 +118,6 @@ const addRecentProject = async (fileHandle, timestamp) => {
                     // After adding, enforce max limit by removing oldest entries
                     enforceMaxLimit(store, resolve);
                 };
-                addRequest.onerror = () => {
-                    resolve(null);
-                };
             };
 
             if (existingProject) {
@@ -182,10 +179,6 @@ const enforceMaxLimit = (store, resolve) => {
 
             const deleteRequest = store.delete(projectsToDelete[deletedCount].id);
             deleteRequest.onsuccess = () => {
-                deletedCount++;
-                deleteNext();
-            };
-            deleteRequest.onerror = () => {
                 deletedCount++;
                 deleteNext();
             };

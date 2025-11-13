@@ -59,7 +59,6 @@ const rootMenu = new Menu('root')
             .addChild(new Menu(MENU_BLOCKS_THEME))
     )
     .addChild(new Menu(MENU_FILE))
-        .addChild(new Menu(MENU_RECENT_PROJECTS))
     .addChild(new Menu(MENU_EDIT))
     .addChild(new Menu(MENU_MODE))
     .addChild(new Menu(MENU_SETTINGS))
@@ -78,8 +77,7 @@ const initialState = {
     [MENU_SETTINGS]: false,
     [MENU_ACCENT]: false,
     [MENU_BLOCKS_THEME]: false,
-    [MENU_ERRORS]: false,
-    [MENU_RECENT_PROJECTS]: false
+    [MENU_ERRORS]: false
 };
 
 const reducer = function (state, action) {
@@ -163,10 +161,6 @@ const openErrorsMenu = () => openMenu(MENU_ERRORS);
 const closeErrorsMenu = () => closeMenu(MENU_ERRORS);
 const errorsMenuOpen = state => state.scratchGui.menus[MENU_ERRORS];
 
-const openRecentProjectsMenu = () => openMenu(MENU_RECENT_PROJECTS);
-const closeRecentProjectsMenu = () => closeMenu(MENU_RECENT_PROJECTS);
-const recentProjectsMenuOpen = state => state.scratchGui.menus[MENU_RECENT_PROJECTS];
-
 export {
     reducer as default,
     initialState as menuInitialState,
@@ -202,8 +196,5 @@ export {
     blocksThemeMenuOpen,
     openErrorsMenu,
     closeErrorsMenu,
-    errorsMenuOpen,
-    openRecentProjectsMenu,
-    closeRecentProjectsMenu,
-    recentProjectsMenuOpen
+    errorsMenuOpen
 };

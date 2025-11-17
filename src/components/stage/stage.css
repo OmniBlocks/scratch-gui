@@ -43,9 +43,6 @@
     color-scheme: light;
     color: $text-primary-default;
     
-    /* Enhanced animations and transitions */
-    transition: all var(--duration-normal) var(--ease-out-circ);
-    
     /* Subtle entrance animation */
     animation: scaleInStage var(--duration-slow) var(--ease-out-back);
 }
@@ -68,7 +65,6 @@
 }
 .stage.full-screen {
     border: $stage-full-screen-border-width solid $ui-black-transparent;
-    transition: all var(--duration-normal) var(--ease-out-expo);
     
     /* Dramatic entrance for fullscreen */
     animation: zoomInStage var(--duration-slow) var(--ease-out-back);

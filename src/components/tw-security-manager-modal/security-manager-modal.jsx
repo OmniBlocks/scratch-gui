@@ -15,6 +15,7 @@ import Notify from './notify.jsx';
 import Geolocate from './geolocate.jsx';
 import Embed from './embed.jsx';
 import Download from './download.jsx';
+import RunJavaScript from './run-javascript.jsx';
 import DelayedMountPropertyHOC from './delayed-mount-property-hoc.jsx';
 import styles from './security-manager-modal.css';
 
@@ -59,6 +60,8 @@ const SecurityManagerModalComponent = props => (
                 <Embed {...props.data} />
             ) : props.type === SecurityModals.Download ? (
                 <Download {...props.data} />
+            ) : props.type === SecurityModals.RunJavaScript ? (
+                <RunJavaScript {...props.data} />
             ) : null}
 
             <Box className={styles.buttons}>

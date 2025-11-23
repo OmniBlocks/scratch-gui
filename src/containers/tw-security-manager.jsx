@@ -130,6 +130,7 @@ let allowedVideo = false;
 let allowedReadClipboard = false;
 let allowedNotify = false;
 let allowedGeolocation = false;
+let allowedRunJavaScript = false;
 
 const SECURITY_MANAGER_METHODS = [
     'getSandboxMode',
@@ -143,7 +144,8 @@ const SECURITY_MANAGER_METHODS = [
     'canNotify',
     'canGeolocate',
     'canEmbed',
-    'canDownload'
+    'canDownload',
+    'canRunJavaScript'
 ];
 
 class TWSecurityManagerComponent extends React.Component {
@@ -432,6 +434,17 @@ class TWSecurityManagerComponent extends React.Component {
             url,
             name
         });
+    }
+
+    /**
+     * @returns {Promise<boolean>} True if JavaScript execution is allowed
+     */
+    async canRunJavaScript () {
+        if (!allowedRunJavaScript) {
+            const {showModal} = await this.acquireModalLock();
+            allowedRunJavaScript = await showModal(SecurityModals.RunJavaScript);
+        }
+        return allowedRunJavaScript;
     }
 
     render () {

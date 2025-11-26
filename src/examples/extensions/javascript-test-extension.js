@@ -39,7 +39,11 @@ class JavaScriptTestExtension {
 
     async executeJavaScript(args) {
         // Request permission to run JavaScript
-        const securityManager = this.runtime.extensionManager.securityManager;
+        const securityManager = this.runtime?.extensionManager?.securityManager;
+        if (!securityManager) {
+            throw new Error('Security manager not available - runtime not initialized');
+        }
+        
         if (!securityManager || !securityManager.canRunJavaScript) {
             throw new Error('Security manager not available or runJavaScript not supported');
         }
@@ -52,6 +56,10 @@ class JavaScriptTestExtension {
         try {
             // Execute the JavaScript code
             // Note: In a real implementation, you might want to add additional safety measures
+            // Validate that CODE parameter is provided
+            if (typeof args.CODE !== 'string') {
+                throw new Error('Invalid code parameter - must be a string');
+            }
             eval(args.CODE);
         } catch (error) {
             console.error('JavaScript execution error:', error);
@@ -62,7 +70,11 @@ class JavaScriptTestExtension {
     async evaluateExpression(args) {
         // Request permission to run JavaScript
         const securityManager = this.runtime.extensionManager.securityManager;
-        if (!securityManager || !securityManager.canRunJavaScript) {
+        const securityManager = this.runtime?.extensionManager?.securityManager;
+        if (!securityManager) {
+            return 'Error: Security manager not available - runtime not initialized';
+        }
+        
             return 'Security manager not available';
         }
 
@@ -73,6 +85,10 @@ class JavaScriptTestExtension {
 
         try {
             // Evaluate the JavaScript expression and return the result
+            if (typeof args.EXPRESSION !== 'string') {
+                return 'Error: Invalid expression parameter - must be a string';
+            }
+            
             const result = eval(args.EXPRESSION);
             return String(result);
         } catch (error) {

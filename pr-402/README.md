@@ -1,6 +1,5 @@
-# Visual Regression Baseline for PR #402
-
-- **Base SHA**: `4364f3ab82b53c7206218ccc4bb89ca381bb425d`
-- **PR SHA**: `ccf379f7ccaf285b54f02decb617d25c908a0aa2`
-- **Run**: [#276](https://github.com/OmniBlocks/scratch-gui/actions/runs/19747494418)
-- **Date**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+# Visual Regression Baseline
+- Base SHA: `894c0a918fbd2b43fb7eca09dd085589e147379c`
+- PR SHA: `e303361f2bd067a0fac90cd2eddb7a808b643d18`
+- Run: [#291](https://github.com/OmniBlocks/scratch-gui/actions/runs/19748736918)
+- Date: $(date -u +"%Y-%m-%d %H:%M:%S UTC")

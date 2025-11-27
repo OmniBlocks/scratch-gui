@@ -171,32 +171,109 @@ jobs:
           const { defineConfig } = require('@playwright/test');
           module.exports = defineConfig({
             testDir: '.',
-            timeout: 60000,
+            timeout: 90000, // Increased for multiple tabs
             retries: 2,
             workers: 4, // Utilizing multiple cores
             use: {
               trace: 'on-first-retry',
               screenshot: 'only-on-failure',
-              viewport: { width: 1280, height: 800 },
+              viewport: { width: 1366, height: 900 },
             },
             projects: [{ name: 'default', use: { browserName: '${{ matrix.browser }}' } }]
           });
           EOF
 
-          # Create test spec (simplified for brevity)
+          # RESTORED FULL TEST SPEC
           cat > test.spec.js << 'EOF'
           const { test, expect } = require('@playwright/test');
-          const BASE = 'http://localhost:8080';
-          test('Homepage', async ({ page }) => {
-            await page.goto(BASE);
+
+          const PORT = process.env.PORT || '8080';
+          const BASE = `http://localhost:${PORT}`;
+
+          async function waitEditor(page) {
+            await page.goto(`${BASE}/editor.html`);
             await page.waitForLoadState('networkidle');
-            await page.screenshot({ path: 'screenshots-base/home.png', fullPage: true });
+            // Wait for menu bar as a proxy for "app loaded"
+            await page.waitForSelector('[class*="menu-bar"]', { timeout: 30000 });
+            // Small buffer for canvas rendering
+            await page.waitForTimeout(1500);
+          }
+
+          async function clickTabByIndex(page, index) {
+            const tabList = page.locator('[role="tablist"]').first();
+            await expect(tabList).toBeVisible({ timeout: 15000 });
+            const tab = tabList.locator('[role="tab"]').nth(index);
+            await expect(tab).toBeVisible({ timeout: 5000 });
+            await tab.scrollIntoViewIfNeeded();
+            await tab.click();
+            await page.waitForTimeout(1000); // Wait for tab switch animation
+          }
+
+          test.describe('Visual Regression Screenshots', () => {
+            test('Editor - Initial Load', async ({ page }) => {
+              await waitEditor(page);
+              await page.screenshot({ path: 'screenshots/editor-initial.png', fullPage: true });
+            });
+
+            test('Editor - Blocks Workspace', async ({ page }) => {
+              await waitEditor(page);
+              const editorWrapper = page.locator('[class*="editor-wrapper"]').first();
+              if (await editorWrapper.count()) {
+                await editorWrapper.screenshot({ path: 'screenshots/blocks-workspace.png' });
+              } else {
+                await page.screenshot({ path: 'screenshots/blocks-workspace.png' });
+              }
+            });
+
+            test('Editor - Stage and Sprites', async ({ page }) => {
+              await waitEditor(page);
+              const stageWrapper = page.locator('[class*="stage-and-target-wrapper"]').first();
+              if (await stageWrapper.count()) {
+                await stageWrapper.screenshot({ path: 'screenshots/stage-sprites.png' });
+              } else {
+                await page.screenshot({ path: 'screenshots/stage-sprites.png', clip: { x: 0, y: 0, width: 600, height: 800 } });
+              }
+            });
+
+            test('Editor - Code Tab', async ({ page }) => {
+              await waitEditor(page);
+              await clickTabByIndex(page, 0);
+              await page.screenshot({ path: 'screenshots/code-tab.png', fullPage: true });
+            });
+
+            test('Editor - Costumes Tab', async ({ page }) => {
+              await waitEditor(page);
+              await clickTabByIndex(page, 1);
+              await page.screenshot({ path: 'screenshots/costumes-tab.png', fullPage: true });
+            });
+
+            test('Editor - Sounds Tab', async ({ page }) => {
+              await waitEditor(page);
+              await clickTabByIndex(page, 2);
+              await page.screenshot({ path: 'screenshots/sounds-tab.png', fullPage: true });
+            });
+
+            test('Editor - Songs Tab', async ({ page }) => {
+              await waitEditor(page);
+              await clickTabByIndex(page, 3);
+              await page.screenshot({ path: 'screenshots/songs-tab.png', fullPage: true });
+            });
+
+            test('Player View', async ({ page }) => {
+              await page.goto(`${BASE}/`);
+              await page.waitForLoadState('networkidle');
+              await page.waitForTimeout(1000);
+              await page.screenshot({ path: 'screenshots/player-view.png', fullPage: true });
+            });
           });
-          // Add your other tests here...
           EOF
           
-          mkdir -p screenshots-base
-          npx playwright test test.spec.js
+          mkdir -p screenshots
+          # Run on PORT 8080
+          PORT=8080 npx playwright test test.spec.js
+          
+          # Rename output folder
+          mv screenshots screenshots-base
 
       # ----------------------------------------------------
       # BUILD & CAPTURE PR
@@ -216,12 +293,12 @@ jobs:
 
       - name: Playwright Capture PR
         run: |
-          # Update spec for PR port
-          sed -i 's/8080/8081/g' test.spec.js
-          sed -i 's/screenshots-base/screenshots-pr/g' test.spec.js
+          # Use the same spec, just different port
+          mkdir -p screenshots
+          PORT=8081 npx playwright test test.spec.js
           
-          mkdir -p screenshots-pr
-          npx playwright test test.spec.js
+          # Rename output folder
+          mv screenshots screenshots-pr
 
       # ----------------------------------------------------
       # COMPARE WITH GIFS

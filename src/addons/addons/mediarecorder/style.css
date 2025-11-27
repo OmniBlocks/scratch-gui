@@ -1,0 +1,99 @@
+.mediaRecorderPopup {
+  box-sizing: border-box;
+  width: 700px;
+  max-height: min(800px, 80vh);
+  max-width: 85%;
+  margin-top: 12vh;
+  overflow-y: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.mediaRecorderPopupContent {
+  padding: 1.5rem 2.25rem;
+}
+
+.mediaRecorderPopup p {
+  font-size: 1rem;
+  margin: 0.5rem auto;
+}
+
+.mediaRecorderPopup p :last-child {
+  margin-left: 1rem;
+}
+
+.mediaRecorderPopup[dir="rtl"] p :last-child {
+  margin-left: 0;
+  margin-right: 1rem;
+}
+
+p.mediaRecorderPopupOption {
+  display: flex;
+  align-items: center;
+}
+
+.mediaRecorderPopupOption input[type="checkbox"] {
+  height: 1.5rem;
+}
+
+#recordOptionSecondsInput,
+#recordOptionDelayInput {
+  width: 6rem;
+}
+
+.mediaRecorderPopupButtons {
+  margin-top: 1.5rem;
+}
+
+.mediaRecorderPopupButtons button {
+  margin-left: 0.5rem;
+}
+
+.sa-record {
+  display: flex;
+  align-items: center;
+}
+
+.sa-record-icon {
+  width: 2em; /* adjust the size as needed */
+  height: 2em; /* adjust the size as needed */
+  margin-right: 0.5em; /* adjust the spacing as needed */
+}
+
+.mediaRecorderPopupButtons button:nth-of-type(1) {
+  color: black;
+}
+
+/* Custom style for format dropdown */
+#recordOptionFormatInput {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: #fff;
+  border: 1.5px solid #bbb;
+  border-radius: 0.4em;
+  padding: 0.5em 2.5em 0.5em 1em;
+  font-size: 1rem;
+  color: #222;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+  margin-left: 1rem;
+}
+
+#recordOptionFormatInput:focus {
+  
+  box-shadow: 0 0 0 2px rgba(74,144,226,0.15);
+}
+
+#recordOptionFormatInput option {
+  border-radius: 1em;
+}
+
+/* Add a dropdown arrow using a background SVG */
+#recordOptionFormatInput {
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%23333" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 1em center;
+  background-size: 1em;
+}

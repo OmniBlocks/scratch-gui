@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   check-files:
-    # Allow PR events, or /vrt comments by humans on PRs. Ignore dependabot.
+    # Run on PRs or when a human comments '/vrt' on a PR. Ignore dependabot.
     if: |
       github.actor != 'dependabot[bot]' &&
       (
@@ -27,12 +27,12 @@ jobs:
       )
     runs-on: ubuntu-latest
     outputs:
-      should_run: ${{ steps.choose.outputs.should_run }}
+      should_run: ${{ steps.decide.outputs.should_run }}
       pr_number: ${{ steps.pr.outputs.number }}
-      head_sha: ${{ steps.pr.outputs.head_sha }}
-      base_sha: ${{ steps.pr.outputs.base_sha }}
-      requester: ${{ steps.pr.outputs.requester }}
-      is_human: ${{ steps.pr.outputs.is_human }}
+      head_sha:   ${{ steps.pr.outputs.head_sha }}
+      base_sha:   ${{ steps.pr.outputs.base_sha }}
+      requester:  ${{ steps.pr.outputs.requester }}
+      is_human:   ${{ steps.pr.outputs.is_human }}
     steps:
       - name: React to /vrt (comment trigger)
         if: github.event_name == 'issue_comment'
@@ -46,7 +46,7 @@ jobs:
               content: 'rocket'
             });
 
-      - name: Get PR and requester
+      - name: Get PR info
         id: pr
         uses: actions/github-script@v7
         with:
@@ -67,26 +67,23 @@ jobs:
 
             const requesterType = context.eventName === 'issue_comment'
               ? context.payload.comment.user.type
-              : (context.payload.sender && context.payload.sender.type) || 'User';
+              : (context.payload.sender?.type || 'User');
 
-            core.setOutput('number', pr.data.number);
+            core.setOutput('number',  pr.data.number);
             core.setOutput('head_sha', pr.data.head.sha);
             core.setOutput('base_sha', pr.data.base.sha);
             core.setOutput('requester', requesterLogin);
             core.setOutput('is_human', requesterType === 'User' ? 'true' : 'false');
 
       - name: Decide whether to run
-        id: choose
+        id: decide
         uses: actions/github-script@v7
         with:
           script: |
             const prNumber = Number('${{ steps.pr.outputs.number }}');
-            // Force run if /vrt comment triggered
             const forced = (context.eventName === 'issue_comment') &&
-                           context.payload.comment &&
-                           /\/vrt/i.test(context.payload.comment.body);
+                           /\/vrt/i.test(context.payload.comment?.body || '');
 
-            // List changed files
             const files = await github.paginate(github.rest.pulls.listFiles, {
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -96,14 +93,13 @@ jobs:
 
             const changed = files.map(f => f.filename);
             const docsOnly = changed.length > 0 && changed.every(f => /\.(md|txt|ya?ml)$/i.test(f));
-
             const shouldRun = forced || !docsOnly;
 
             core.info(`Changed files (${changed.length}): ${changed.join(', ') || '(none)'}`);
             core.setOutput('should_run', shouldRun ? 'true' : 'false');
 
       - name: Post skip notice
-        if: steps.choose.outputs.should_run == 'false'
+        if: steps.decide.outputs.should_run == 'false'
         uses: actions/github-script@v7
         with:
           script: |
@@ -114,8 +110,8 @@ jobs:
               repo: context.repo.repo,
               issue_number: Number('${{ steps.pr.outputs.number }}'),
               body:
-                `## Visual Regression Testing — Skipped\n\n` +
-                `Hi ${name}! VRT was skipped because this PR only changes .md/.txt/.yml files.\n\n` +
+                `## 🎬 Visual Regression Testing — Skipped\n\n` +
+                `Hi ${name}! VRT skipped because this PR only changes .md/.txt/.yml files.\n\n` +
                 `To force a run, comment \`/vrt\` on this PR.`
             });
 
@@ -131,27 +127,28 @@ jobs:
         uses: actions/github-script@v7
         env:
           REQUESTER: ${{ needs.check-files.outputs.requester }}
-          IS_HUMAN: ${{ needs.check-files.outputs.is_human }}
+          IS_HUMAN:  ${{ needs.check-files.outputs.is_human }}
           PR_NUMBER: ${{ needs.check-files.outputs.pr_number }}
         with:
           script: |
             const name = process.env.IS_HUMAN === 'true' ? '@' + process.env.REQUESTER : process.env.REQUESTER;
+            const body =
+              `## 🚀 ULTRA Visual Regression Tester — LET’S GOOOO\n\n` +
+              `Requester: ${name}\n\n` +
+              `- 🏗️ Build: spinning up\n` +
+              `- 🧪 Matrix: queued (3 OS × 3 browsers = 9 combos)\n` +
+              `- 🎨 Analysis: incoming\n\n` +
+              `_parallelize all the pixels_ ✨`;
             const c = await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: Number(process.env.PR_NUMBER),
-              body:
-                `## ULTRA Visual Regression Testing\n\n` +
-                `Requester: ${name}\n\n` +
-                `- Build: in progress\n` +
-                `- Test matrix: pending (3 platforms × 3 browsers)\n` +
-                `- Analysis: pending`
+              body
             });
             core.setOutput('comment_id', String(c.data.id));
 
       - name: Save comment id
         run: echo "${{ steps.open_comment.outputs.comment_id }}" > comment_id.txt
-        shell: bash
 
       - name: Upload comment id
         uses: actions/upload-artifact@v4
@@ -164,7 +161,7 @@ jobs:
         with:
           node-version: '20'
 
-      # Build BASE at repo root
+      # Build BASE at repo root (with rimraf/mkdirp shims)
       - name: Checkout base
         uses: actions/checkout@v4
         with:
@@ -179,25 +176,19 @@ jobs:
           set -e
           npm ci
 
-          # Provide rimraf/mkdirp shims if CLIs are missing
+          # Provide rimraf/mkdirp shims (no heredocs -> YAML-safe)
           mkdir -p .github/ci-bin
           if ! command -v rimraf >/dev/null 2>&1; then
-            cat > .github/ci-bin/rimraf <<'SH'
-#!/usr/bin/env bash
-rm -rf "$@"
-SH
+            printf '#!/usr/bin/env bash\nrm -rf "$@"\n' > .github/ci-bin/rimraf
             chmod +x .github/ci-bin/rimraf
           fi
           if ! command -v mkdirp >/dev/null 2>&1; then
-            cat > .github/ci-bin/mkdirp <<'SH'
-#!/usr/bin/env bash
-mkdir -p "$@"
-SH
+            printf '#!/usr/bin/env bash\nmkdir -p "$@"\n' > .github/ci-bin/mkdirp
             chmod +x .github/ci-bin/mkdirp
           fi
           export PATH="$PWD/.github/ci-bin:$PATH"
 
-          # Try normal build, fallback to manual clean + webpack if needed
+          # Normal build; fallback if needed
           if ! npm run build; then
             echo "npm run build failed; attempting fallback…"
             rm -rf ./build ./dist && mkdir -p build dist
@@ -212,7 +203,7 @@ SH
           mkdir -p /tmp/vrt-builds
           cp -r build /tmp/vrt-builds/base-build
 
-      # Build PR at repo root
+      # Build PR at repo root (with same shims)
       - name: Checkout PR
         uses: actions/checkout@v4
         with:
@@ -230,17 +221,11 @@ SH
 
           mkdir -p .github/ci-bin
           if ! command -v rimraf >/dev/null 2>&1; then
-            cat > .github/ci-bin/rimraf <<'SH'
-#!/usr/bin/env bash
-rm -rf "$@"
-SH
+            printf '#!/usr/bin/env bash\nrm -rf "$@"\n' > .github/ci-bin/rimraf
             chmod +x .github/ci-bin/rimraf
           fi
           if ! command -v mkdirp >/dev/null 2>&1; then
-            cat > .github/ci-bin/mkdirp <<'SH'
-#!/usr/bin/env bash
-mkdir -p "$@"
-SH
+            printf '#!/usr/bin/env bash\nmkdir -p "$@"\n' > .github/ci-bin/mkdirp
             chmod +x .github/ci-bin/mkdirp
           fi
           export PATH="$PWD/.github/ci-bin:$PATH"
@@ -279,8 +264,8 @@ SH
         uses: actions/github-script@v7
         env:
           COMMENT_ID: ${{ steps.open_comment.outputs.comment_id }}
-          REQUESTER: ${{ needs.check-files.outputs.requester }}
-          IS_HUMAN: ${{ needs.check-files.outputs.is_human }}
+          REQUESTER:  ${{ needs.check-files.outputs.requester }}
+          IS_HUMAN:   ${{ needs.check-files.outputs.is_human }}
         with:
           script: |
             const name = process.env.IS_HUMAN === 'true' ? '@' + process.env.REQUESTER : process.env.REQUESTER;
@@ -289,11 +274,12 @@ SH
               repo: context.repo.repo,
               comment_id: Number(process.env.COMMENT_ID),
               body:
-                `## ULTRA Visual Regression Testing\n\n` +
+                `## 🚀 ULTRA Visual Regression Tester — BUILD READY\n\n` +
                 `Requester: ${name}\n\n` +
-                `- Build: ✅ complete\n` +
-                `- Test matrix: running (3 platforms × 3 browsers)\n` +
-                `- Analysis: pending`
+                `- 🏗️ Build: ✅ done\n` +
+                `- 🧪 Matrix: running across the multiverse\n` +
+                `- 🎨 Analysis: standing by\n\n` +
+                `_snapping screenshots like paparazzi_ 📸`
             });
 
       - name: Update comment (build failed)
@@ -301,8 +287,8 @@ SH
         uses: actions/github-script@v7
         env:
           COMMENT_ID: ${{ steps.open_comment.outputs.comment_id }}
-          REQUESTER: ${{ needs.check-files.outputs.requester }}
-          IS_HUMAN: ${{ needs.check-files.outputs.is_human }}
+          REQUESTER:  ${{ needs.check-files.outputs.requester }}
+          IS_HUMAN:   ${{ needs.check-files.outputs.is_human }}
         with:
           script: |
             const name = process.env.IS_HUMAN === 'true' ? '@' + process.env.REQUESTER : process.env.REQUESTER;
@@ -311,9 +297,9 @@ SH
               repo: context.repo.repo,
               comment_id: Number(process.env.COMMENT_ID),
               body:
-                `## ❌ ULTRA Visual Regression Testing — Build Failed\n\n` +
-                `Hi ${name}, the build phase failed, so VRT could not run.\n\n` +
-                `Please check the workflow logs for details.`
+                `## ❌ VRT couldn’t launch — build tripped over itself\n\n` +
+                `Hey ${name}, the build phase failed so visual checks didn’t run.\n` +
+                `Peek the logs for the exact faceplant. We’ll fix fast and re‑run!`
             });
 
   test-matrix:
@@ -363,7 +349,7 @@ SH
           const browserDevices = {
             chromium: 'Desktop Chrome',
             firefox: 'Desktop Firefox',
-            webkit: 'Desktop Safari'
+            webkit:  'Desktop Safari'
           };
           module.exports = defineConfig({
             testDir: '.',
@@ -386,7 +372,7 @@ SH
           });
           EOF
 
-      - name: Write tests (editor + extension + advanced settings)
+      - name: Write tests (original set + 2 new modals)
         shell: bash
         run: |
           cat > screenshot-test.spec.js << 'EOF'
@@ -406,13 +392,13 @@ SH
             const tabList = page.locator('[role="tablist"]').first();
             await expect(tabList).toBeVisible({ timeout: 10000 });
             const tab = tabList.locator('[role="tab"]').nth(index);
-            await expect(tab).toBeVisible({ timeout: 5000 });
+            await expect(tab).toBeVisible({ timeout: 6000 });
             await tab.scrollIntoViewIfNeeded();
             await tab.click();
-            await page.waitForTimeout(600);
+            await page.waitForTimeout(700);
           }
 
-          test.describe('Visual Regression', () => {
+          test.describe('Visual Regression (full + extras)', () => {
             test('Editor - Initial', async ({ page }) => {
               await waitEditor(page);
               await page.screenshot({ path: 'screenshots/editor-initial.png', fullPage: true });
@@ -430,7 +416,7 @@ SH
 
             test('Editor - Stage and Sprites', async ({ page }) => {
               await waitEditor(page);
-              const el = page.locator('[class*="stage-and-target"]').first();
+              const el = page.locator('[class*="stage-and-target"], [class*="stage-and-target-wrapper"]').first();
               if (await el.count()) {
                 await el.screenshot({ path: 'screenshots/stage-sprites.png' });
               } else {
@@ -438,6 +424,7 @@ SH
               }
             });
 
+            // Tabs by index: Code=0, Costumes=1, Sounds=2, Songs=3
             test('Tab - Code', async ({ page }) => {
               await waitEditor(page);
               await clickTabByIndex(page, 0);
@@ -456,45 +443,46 @@ SH
               await page.screenshot({ path: 'screenshots/sounds-tab.png', fullPage: true });
             });
 
+            test('Tab - Songs', async ({ page }) => {
+              await waitEditor(page);
+              await clickTabByIndex(page, 3);
+              await page.screenshot({ path: 'screenshots/songs-tab.png', fullPage: true });
+            });
+
             test('Player View', async ({ page }) => {
               await page.goto(`${BASE}/`);
               await page.waitForLoadState('networkidle');
-              await page.waitForTimeout(800);
+              await page.waitForTimeout(900);
               await page.screenshot({ path: 'screenshots/player-view.png', fullPage: true });
             });
 
+            // NEW 1: Extension Library Modal
             test('Extension Library Modal', async ({ page }) => {
               await waitEditor(page);
               const extBtn = page.locator(
-                '[aria-label="Add Extension"], [aria-label*="extension" i], button:has-text("Add Extension"), [data-testid="menu-bar__add-extension-button"], [class*="extension-button"]'
+                '[aria-label="Add Extension"], [aria-label*="extension" i], button:has-text("Add Extension"), [data-testid*="extension"], [class*="extension-button"]'
               ).first();
               if (await extBtn.count()) {
                 await extBtn.click();
-                await page.waitForTimeout(800);
+                await page.waitForTimeout(900);
               }
               await page.screenshot({ path: 'screenshots/extension-library.png', fullPage: true });
             });
 
+            // NEW 2: Advanced Settings Modal
             test('Advanced Settings Modal', async ({ page }) => {
               await waitEditor(page);
-              // Try a few common menu/labels
               const candidates = [
                 '[aria-label*="advanced" i]',
                 '[aria-label*="settings" i]',
                 'button:has-text("Advanced")',
                 'button:has-text("Settings")'
               ];
-              let clicked = false;
               for (const sel of candidates) {
-                const handle = page.locator(sel).first();
-                if (await handle.count()) {
-                  await handle.click();
-                  clicked = true;
-                  break;
-                }
+                const h = page.locator(sel).first();
+                if (await h.count()) { await h.click(); break; }
               }
-              if (!clicked) console.log('Advanced settings control not found; taking fallback shot');
-              await page.waitForTimeout(800);
+              await page.waitForTimeout(900);
               await page.screenshot({ path: 'screenshots/advanced-settings.png', fullPage: true });
             });
           });
@@ -524,8 +512,8 @@ SH
           rm -rf screenshots test-results || true
           npx playwright test screenshot-test.spec.js
           [ -d screenshots ] && cp -r screenshots/* screenshots-base/ || true
-          rm -rf screenshots
           find test-results -name "*.webm" -exec cp {} videos-base/ \; 2>/dev/null || true
+          rm -rf screenshots test-results || true
 
       - name: Stop base server
         if: always()
@@ -559,17 +547,10 @@ SH
           rm -rf screenshots test-results || true
           npx playwright test screenshot-test.spec.js
           [ -d screenshots ] && cp -r screenshots/* screenshots-pr/ || true
-          rm -rf screenshots
           find test-results -name "*.webm" -exec cp {} videos-pr/ \; 2>/dev/null || true
+          rm -rf screenshots test-results || true
 
-      - name: Stop PR server
-        if: always()
-        shell: bash
-        run: |
-          [ -f pr-server.pid ] && kill "$(cat pr-server.pid)" 2>/dev/null || true
-          rm -f pr-server.pid
-
-      - name: Compare and create diffs
+      - name: Compare and create diffs (all 10 shots)
         shell: bash
         run: |
           cat > compare.js << 'EOF'
@@ -585,6 +566,7 @@ SH
             'code-tab.png',
             'costumes-tab.png',
             'sounds-tab.png',
+            'songs-tab.png',
             'player-view.png',
             'extension-library.png',
             'advanced-settings.png'
@@ -598,7 +580,7 @@ SH
 
           for (const s of shots) {
             const base = `screenshots-base/${s}`;
-            const pr = `screenshots-pr/${s}`;
+            const pr   = `screenshots-pr/${s}`;
             if (!fs.existsSync(base) || !fs.existsSync(pr)) {
               results.push({ name: s, skipped: true });
               continue;
@@ -617,7 +599,6 @@ SH
             if (n > 0) {
               changesDetected = true;
               fs.writeFileSync(`screenshots-diff/${s}`, PNG.sync.write(diff));
-
               try {
                 const enc = GIFEncoder();
                 for (const frame of [b, p, diff]) {
@@ -627,8 +608,7 @@ SH
                 }
                 enc.finish();
                 fs.writeFileSync(`screenshots-gifs/${s.replace('.png', '.gif')}`, Buffer.from(enc.bytes()));
-              } catch { /* ignore GIF errors */ }
-
+              } catch {}
               results.push({ name: s, diffPixels: n, diffPercentage: pct, hasDiff: true, skipped: false });
             } else {
               results.push({ name: s, diffPixels: 0, diffPercentage: '0.00', hasDiff: false, skipped: false });
@@ -649,6 +629,8 @@ SH
             screenshots-pr/
             screenshots-diff/
             screenshots-gifs/
+            videos-base/
+            videos-pr/
           retention-days: 2
 
   merge-and-report:
@@ -667,9 +649,7 @@ SH
 
       - name: Read comment id
         id: cid
-        shell: bash
-        run: |
-          echo "comment_id=$(cat comment_id.txt)" >> "$GITHUB_OUTPUT"
+        run: echo "comment_id=$(cat comment_id.txt)" >> "$GITHUB_OUTPUT"
 
       - name: Download all results
         uses: actions/download-artifact@v4
@@ -691,7 +671,7 @@ SH
           const path = require('path');
 
           const platforms = ['ubuntu-latest', 'windows-latest', 'macos-latest'];
-          const browsers = ['chromium', 'firefox', 'webkit'];
+          const browsers  = ['chromium', 'firefox', 'webkit'];
 
           const all = {};
           let completed = 0;
@@ -699,7 +679,7 @@ SH
 
           for (const os of platforms) {
             for (const br of browsers) {
-              const dir = path.join('all-results', `vrt-results-${os}-${br}`);
+              const dir  = path.join('all-results', `vrt-results-${os}-${br}`);
               const file = path.join(dir, 'comparison-results.json');
               if (fs.existsSync(file)) {
                 const data = JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -725,9 +705,11 @@ SH
       - name: Push baselines (ubuntu+chromium only)
         if: steps.analyze.outputs.completed != '0'
         shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -e
-          git config --global user.name "github-actions[bot]"
+          git config --global user.name  "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
           git clone --depth 1 "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" vrt-baselines-repo
@@ -747,26 +729,25 @@ SH
           cat > "pr-${{ needs.check-files.outputs.pr_number }}/README.md" <<MD
           # Visual Regression Baseline (Enhanced)
           - Base SHA: \`${{ needs.check-files.outputs.base_sha }}\`
-          - PR SHA: \`${{ needs.check-files.outputs.head_sha }}\`
+          - PR  SHA: \`${{ needs.check-files.outputs.head_sha }}\`
           - Run: #${{ github.run_number }}
-          - Date: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
-          - Platforms tested: ubuntu, windows, macos
-          - Browsers tested: chromium, firefox, webkit
+          - Platforms: ubuntu, windows, macos
+          - Browsers:  chromium, firefox, webkit
           MD
 
           git add .
           git commit -m "Add VRT baselines for PR #${{ needs.check-files.outputs.pr_number }}" || true
           git push -u origin vrt-baselines
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push images for all combos
         id: upload_images
         if: steps.analyze.outputs.completed != '0'
         shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -e
-          git config --global user.name "github-actions[bot]"
+          git config --global user.name  "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
           git clone --depth 1 "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" vrt-images-repo
@@ -789,7 +770,7 @@ SH
                 mkdir -p "$RUN_DIR/${os}-${br}"
                 cp -r "$SRC/comparison-results.json" "$RUN_DIR/${os}-${br}/" || true
                 cp -r "$SRC/screenshots-base" "$RUN_DIR/${os}-${br}/" || true
-                cp -r "$SRC/screenshots-pr" "$RUN_DIR/${os}-${br}/" || true
+                cp -r "$SRC/screenshots-pr"   "$RUN_DIR/${os}-${br}/" || true
                 cp -r "$SRC/screenshots-diff" "$RUN_DIR/${os}-${br}/" || true
                 cp -r "$SRC/screenshots-gifs" "$RUN_DIR/${os}-${br}/" || true
               fi
@@ -801,21 +782,19 @@ SH
           git push -u origin vrt-images
 
           echo "base_url=https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/vrt-images/${RUN_DIR}" >> "$GITHUB_OUTPUT"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update comment (results)
         if: steps.analyze.outputs.completed != '0'
         uses: actions/github-script@v7
         env:
           COMMENT_ID: ${{ steps.cid.outputs.comment_id }}
-          REQUESTER: ${{ needs.check-files.outputs.requester }}
-          IS_HUMAN: ${{ needs.check-files.outputs.is_human }}
-          BASE_URL: ${{ steps.upload_images.outputs.base_url }}
+          REQUESTER:  ${{ needs.check-files.outputs.requester }}
+          IS_HUMAN:   ${{ needs.check-files.outputs.is_human }}
+          BASE_URL:   ${{ steps.upload_images.outputs.base_url }}
         with:
           script: |
             const fs = require('fs');
-            const analysis = JSON.parse(fs.readFileSync('merged-analysis.json', 'utf8'));
+            const analysis = JSON.parse(fs.readFileSync('merged-analysis.json','utf8'));
             const name = process.env.IS_HUMAN === 'true' ? '@' + process.env.REQUESTER : process.env.REQUESTER;
 
             const platforms = {
@@ -823,44 +802,34 @@ SH
               'windows-latest': '<img width="12" height="12" alt="Windows Logo" src="https://github.com/user-attachments/assets/4da4c060-732a-4aaf-b080-6b8de0600c71" /> Windows',
               'macos-latest': '<img width="12" height="12" alt="Apple Logo" src="https://github.com/user-attachments/assets/636ee068-b7a7-489d-a545-a616534900ed" /> Apple'
             };
-            const browsers = { chromium: 'Chrome', firefox: 'Firefox', webkit: 'WebKit' };
+            const browsers = { chromium:'Chrome', firefox:'Firefox', webkit:'WebKit' };
 
             let body = '';
-            body += `## ULTRA Visual Regression Test Results\n\n`;
+            body += `## 🎬 ULTRA Visual Regression — FINAL CUT\n\n`;
             body += `Requester: ${name}\n\n`;
-            body += `Completed: **${analysis.completedCombinations}/${analysis.totalCombinations}**\n\n`;
-            body += analysis.anyChanges ? '⚠️ Visual changes detected.\n\n' : '✅ No visual differences detected.\n\n';
+            body += `Combos finished: **${analysis.completedCombinations}/${analysis.totalCombinations}**\n\n`;
+            body += analysis.anyChanges ? '⚠️ Visual changes detected — see highlights below.\n\n' : '✅ No visual diffs found — ship it! 🛳️\n\n';
 
-            body += '### Matrix Summary\n\n';
-            body += '| Platform | Browser | Changes | Details |\n';
-            body += '|---|---|---|---|\n';
-
+            body += '### 📊 Matrix Summary\n\n';
+            body += '| Platform | Browser | Changes | Details |\n|---|---|---|---|\n';
             for (const [key, r] of Object.entries(analysis.allResults)) {
-              const parts = key.split('-');
-              const br = parts.pop();
-              const os = parts.join('-');
+              const parts = key.split('-'); const br = parts.pop(); const os = parts.join('-');
               const status = r.changesDetected ? '⚠️ Changes' : '✅ No changes';
               const link = `[View](#${key.replace(/[^a-z0-9]/gi,'')})`;
-              body += `| ${platforms[os] || os} | ${browsers[br] || br} | ${status} | ${link} |\n`;
+              body += `| ${platforms[os]||os} | ${browsers[br]||br} | ${status} | ${link} |\n`;
             }
-
             body += '\n---\n\n';
 
             for (const [key, r] of Object.entries(analysis.allResults)) {
-              const parts = key.split('-');
-              const br = parts.pop();
-              const os = parts.join('-');
+              const parts = key.split('-'); const br = parts.pop(); const os = parts.join('-');
               const open = r.changesDetected ? ' open' : '';
               body += `<details id="${key.replace(/[^a-z0-9]/gi,'')}"${open}>\n`;
-              body += `<summary><strong>${platforms[os] || os} + ${browsers[br] || br}</strong></summary>\n\n`;
-              if (!r.results || !r.results.length) {
-                body += `_No results._\n\n</details>\n\n`;
-                continue;
-              }
+              body += `<summary><strong>${platforms[os]||os} + ${browsers[br]||br}</strong></summary>\n\n`;
+              if (!r.results?.length) { body += `_No results._\n\n</details>\n\n`; continue; }
               for (const item of r.results) {
                 if (item.skipped) continue;
-                const name = item.name.replace('.png','').replace(/-/g,' ').replace(/\b\w/g, m => m.toUpperCase());
-                body += `#### ${name}\n\n`;
+                const nice = item.name.replace('.png','').replace(/-/g,' ').replace(/\b\w/g, m => m.toUpperCase());
+                body += `#### ${nice}\n\n`;
                 if (item.hasDiff) {
                   body += `<table><tr><th>Base</th><th>PR</th><th>Diff</th></tr><tr>`;
                   body += `<td><img src="${process.env.BASE_URL}/${key}/screenshots-base/${item.name}" width="280"/></td>`;
@@ -871,7 +840,7 @@ SH
                   body += `<img src="${process.env.BASE_URL}/${key}/screenshots-gifs/${gif}" width="840"/>\n\n`;
                   body += `Diff: ${item.diffPercentage}% (${item.diffPixels} px)\n\n`;
                 } else {
-                  body += `✅ No pixel difference.\n\n`;
+                  body += `✅ Pixel-perfect match.\n\n`;
                 }
               }
               body += `</details>\n\n`;
@@ -889,8 +858,8 @@ SH
         uses: actions/github-script@v7
         env:
           COMMENT_ID: ${{ steps.cid.outputs.comment_id }}
-          REQUESTER: ${{ needs.check-files.outputs.requester }}
-          IS_HUMAN: ${{ needs.check-files.outputs.is_human }}
+          REQUESTER:  ${{ needs.check-files.outputs.requester }}
+          IS_HUMAN:   ${{ needs.check-files.outputs.is_human }}
         with:
           script: |
             const name = process.env.IS_HUMAN === 'true' ? '@' + process.env.REQUESTER : process.env.REQUESTER;
@@ -899,8 +868,8 @@ SH
               repo: context.repo.repo,
               comment_id: Number(process.env.COMMENT_ID),
               body:
-                `## ❌ ULTRA Visual Regression Testing — Tests Failed\n\n` +
-                `Hi ${name}, the test matrix did not produce any results. Please check the logs.`
+                `## ❌ VRT matrix fizzled (0/9 produced results)\n\n` +
+                `Sorry ${name}! Likely a Playwright install or server boot hiccup. Re-run with \`/vrt\` or push again — I’m ready to zoom.`
             });
 
   handle-build-failure:

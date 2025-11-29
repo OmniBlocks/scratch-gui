@@ -236,6 +236,10 @@ const GUIComponent = props => {
                 {...componentProps}
             >
                 {alwaysEnabledModals}
+                {/* Hello World Banner */}
+                <div className={styles.helloWorldBanner}>
+                    Hello World!
+                </div>
                 {telemetryModalVisible ? (
                     <TelemetryModal
                         isRtl={isRtl}

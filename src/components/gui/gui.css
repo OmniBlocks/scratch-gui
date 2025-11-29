@@ -2,6 +2,18 @@
 @import "../../css/colors.css";
 @import "../../css/z-index.css";
 
+.hello-world-banner {
+    background-color: $motion-primary;
+    color: $ui-white;
+    text-align: center;
+    padding: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    border-bottom: 2px solid $motion-tertiary;
+    z-index: 1000;
+    position: relative;
+}
+
 .page-wrapper {
     height: 100%;
 }

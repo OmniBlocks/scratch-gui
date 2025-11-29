@@ -236,10 +236,6 @@ const GUIComponent = props => {
                 {...componentProps}
             >
                 {alwaysEnabledModals}
-                {/* Hello World Banner */}
-                <div className={styles.helloWorldBanner}>
-                    Hello World!
-                </div>
                 {telemetryModalVisible ? (
                     <TelemetryModal
                         isRtl={isRtl}
@@ -328,6 +324,10 @@ const GUIComponent = props => {
                     onStartSelectingFileUpload={onStartSelectingFileUpload}
                     onToggleLoginOpen={onToggleLoginOpen}
                 />
+                {/* Hello World Banner - absolutely positioned to avoid layout interference */}
+                <div className={styles.helloWorldBanner}>
+                    Hello World!
+                </div>
                 <Box className={styles.bodyWrapper}>
                     <Box className={styles.flexWrapper}>
                         <Box className={styles.editorWrapper}>

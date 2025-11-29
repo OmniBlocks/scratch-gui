@@ -16,7 +16,8 @@ import {
     BLOCKS_TAB_INDEX,
     COSTUMES_TAB_INDEX,
     SOUNDS_TAB_INDEX,
-    SONGS_TAB_INDEX
+    SONGS_TAB_INDEX,
+    NANOSCRIPT_TAB_INDEX
 } from '../reducers/editor-tab';
 
 import {

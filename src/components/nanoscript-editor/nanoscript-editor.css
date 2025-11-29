@@ -1,0 +1,69 @@
+.editorContainer {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1rem;
+    background-color: var(--ui-primary);
+}
+
+.header {
+    margin-bottom: 1rem;
+}
+
+.header h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-primary);
+    font-size: 1.2rem;
+}
+
+.header p {
+    margin: 0;
+    color: var(--text-primary-transparent);
+    font-size: 0.9rem;
+}
+
+.textEditor {
+    flex: 1;
+    min-height: 300px;
+    padding: 1rem;
+    border: 1px solid var(--ui-black-transparent);
+    border-radius: 0.25rem;
+    background-color: var(--ui-white);
+    color: var(--text-primary);
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: none;
+    outline: none;
+    white-space: pre;
+    overflow-wrap: normal;
+    overflow-x: auto;
+}
+
+.textEditor:focus {
+    border-color: var(--looks-secondary);
+    box-shadow: 0 0 0 2px var(--looks-secondary-transparent);
+}
+
+.footer {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--ui-black-transparent);
+}
+
+.footer small {
+    color: var(--text-primary-transparent);
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
+/* Dark theme support */
+[theme="dark"] .textEditor {
+    background-color: var(--ui-secondary);
+    color: var(--text-primary);
+    border-color: var(--ui-black-transparent);
+}
+
+[theme="dark"] .textEditor:focus {
+    border-color: var(--looks-secondary);
+}

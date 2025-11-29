@@ -21,6 +21,7 @@ import CostumeLibrary from '../../containers/costume-library.jsx';
 import BackdropLibrary from '../../containers/backdrop-library.jsx';
 import Watermark from '../../containers/watermark.jsx';
 import SongsTab from '../../containers/songs-tab.jsx';
+import NanoScriptTab from '../../containers/nanoscript-tab.jsx';
 import Backpack from '../../containers/backpack.jsx';
 import BrowserModal from '../browser-modal/browser-modal.jsx';
 import TipsLibrary from '../../containers/tips-library.jsx';
@@ -50,6 +51,7 @@ import codeIcon from '!../../lib/tw-recolor/build!./icon--code.svg';
 import costumesIcon from '!../../lib/tw-recolor/build!./icon--costumes.svg';
 import soundsIcon from '!../../lib/tw-recolor/build!./icon--sounds.svg';
 import songsIcon from '!../../lib/tw-recolor/build!./icon--songs.svg';
+import nanoscriptIcon from '!../../lib/tw-recolor/build!./icon--nanoscript.svg';
 const messages = defineMessages({
     addExtension: {
         id: 'gui.gui.addExtension',
@@ -397,6 +399,19 @@ const GUIComponent = props => {
                                             id="gui.gui.songsTab"
                                         />
                                     </Tab>
+                                    <Tab
+                                        className={tabClassNames.tab}
+                                    >
+                                        <img
+                                            draggable={false}
+                                            src={nanoscriptIcon()}
+                                        />
+                                        <FormattedMessage
+                                            defaultMessage="NanoScript"
+                                            description="Button to get to the nanoscript panel"
+                                            id="gui.gui.nanoscriptTab"
+                                        />
+                                    </Tab>
                                 </TabList>
                                 <TabPanel className={tabClassNames.tabPanel}>
                                     <Box className={styles.blocksWrapper}>
@@ -441,6 +456,9 @@ const GUIComponent = props => {
                                 </TabPanel>
                                 <TabPanel className={tabClassNames.tabPanel}>
                                     {songsTabVisible ? <SongsTab vm={vm} /> : null}
+                                </TabPanel>
+                                <TabPanel className={tabClassNames.tabPanel}>
+                                    <NanoScriptTab vm={vm} />
                                 </TabPanel>
                             </Tabs>
                             {backpackVisible ? (

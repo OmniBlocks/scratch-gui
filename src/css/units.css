@@ -6,6 +6,7 @@ $space: 0.5rem;
 $sprites-per-row: 5;
 
 $menu-bar-height: 3rem;
+$hello-world-banner-height: 44px; /* 10px padding top + (18px font * 1.2 line-height) + 10px padding bottom + 2px border ≈ 44px */
 $sprite-info-height: 6rem;
 $stage-menu-height: 2.75rem;
 

@@ -308,18 +308,18 @@ $fade-out-distance: 15px;
 
 /* Menu */
 
-.menu-bar-position {
+.modeToggle {
     position: relative;
     z-index: $z-index-menu-bar;
 }
 /* Alerts */
 
 .alerts-container {
-    display: flex;
+[dir="ltr"] .modeToggle {
     justify-content: center;
     width: 100%;
     z-index: $z-index-alerts;
-    position: absolute;
+[dir="rtl"] .modeToggle {
     margin-top: 53px;
     pointer-events: none;
 }

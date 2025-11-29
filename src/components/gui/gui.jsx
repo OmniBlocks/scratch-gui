@@ -455,10 +455,12 @@ const GUIComponent = props => {
                                     {soundsTabVisible ? <SoundTab vm={vm} /> : null}
                                 </TabPanel>
                                 <TabPanel className={tabClassNames.tabPanel}>
-                                    {songsTabVisible ? <SongsTab vm={vm} /> : null}
+                                        <Box className={styles.modeToggle}>
+                                            <ModeToggle
                                 </TabPanel>
                                 <TabPanel className={tabClassNames.tabPanel}>
-                                    <NanoScriptTab vm={vm} />
+                                            />
+                                        </Box>
                                 </TabPanel>
                             </Tabs>
                             {backpackVisible ? (

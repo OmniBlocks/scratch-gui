@@ -72,7 +72,7 @@ when space key pressed
                     value={this.state.nanoScriptText}
                     onChange={this.handleTextChange}
                     placeholder="Your NanoScript code will appear here..."
-                    spellCheck={false}
+                    placeholder="Your OmniScript code will appear here..."
                 />
                 <div className={styles.footer}>
                     <small>

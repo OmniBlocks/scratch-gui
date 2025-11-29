@@ -174,7 +174,8 @@ const guiReducer = combineReducers({
     vm: vmReducer,
     vmStatus: vmStatusReducer,
     workspaceMetrics: workspaceMetricsReducer
-});
+    workspaceMetrics: workspaceMetricsReducer,
+    omniScriptMode: omniScriptModeReducer
 
 export {
     guiReducer as default,

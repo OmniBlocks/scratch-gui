@@ -58,10 +58,11 @@
 
 .tab-list {
     transition: all 0.2s ease-in-out;
-    height: $stage-menu-height;
-    width: 250px; /* Match width of the toolbox */
+    width: 120px; /* Fixed width for sidebar */
+    height: 100%; /* Full height of the editor area */
     display: flex;
-    align-items: flex-end;
+    flex-direction: column; /* Stack tabs vertically */
+    align-items: stretch;
     flex-shrink: 0;
 
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -71,26 +72,31 @@
     /* Overrides for react-tabs styling */
     margin: 0 !important;
     border-bottom: 0 !important;
+    border-right: 1px solid $ui-black-transparent; /* Right border for sidebar */
 
     color: $text-primary;
     transition: all 0.2s ease-in-out;
+    background-color: $ui-tertiary;
 }
 
 .tab {
-    flex-grow: 1;
-    height: 80% !important;
+    flex-grow: 0;
+    height: 60px !important; /* Fixed height for vertical tabs */
+    width: 100%;
     margin-bottom: 0;
 
-    border-radius: 1rem 1rem 0 0;
-    border: 1px solid $ui-black-transparent;
+    border-radius: 0; /* Remove rounded corners for sidebar */
+    border: none;
+    border-bottom: 1px solid $ui-black-transparent;
 
-    padding: 0.125rem 1.25rem 0;
-    font-size: 0.75rem;
+    padding: 0.75rem 0.5rem;
+    font-size: 0.70rem;
 
     background-color: $ui-tertiary;
     color: $text-primary-transparent;
 
     display: flex;
+    flex-direction: column; /* Stack icon and text vertically */
     justify-content: center;
     align-items: center;
 
@@ -99,12 +105,13 @@
     transition: all 0.3s ease-in-out;
 }
 
+/* Remove horizontal tab margins for vertical layout */
 [dir="ltr"] .tab {
-    margin-left: -0.5rem;
+    margin-left: 0;
 }
 
 [dir="rtl"] .tab {
-    margin-right: -0.5rem;
+    margin-right: 0;
 }
 
 [dir="ltr"] .tab:nth-of-type(1) {
@@ -115,40 +122,44 @@
     margin-right: 0;
 }
 
-/* Use z-indices to force left-on-top for tabs */
+/* Remove z-index stacking for vertical tabs */
 .tab:nth-of-type(1) {
-    z-index: 3;
+    z-index: 1;
 }
 .tab:nth-of-type(2) {
-    z-index: 2;
+    z-index: 1;
 }
 .tab:nth-of-type(3) {
+    z-index: 1;
+}
+.tab:nth-of-type(4) {
     z-index: 1;
 }
 
 .tab:hover {
   background-color: $ui-primary;
-  height: 85% !important;
+  /* Remove height change on hover for vertical tabs */
 }
 
 .tab.is-selected {
-    height: 100% !important;
     color: $looks-secondary;
     background-color: $ui-white;
-    z-index: 4; /* Make sure selected is always above */
+    z-index: 2; /* Make sure selected is above others */
 }
 
 .tab img {
     width: 1.375rem;
     filter: grayscale(100%);
+    margin-bottom: 0.25rem; /* Space between icon and text in vertical layout */
 }
 
+/* Remove horizontal margins for vertical layout */
 [dir="ltr"] .tab img {
-    margin-right: 0.125rem;
+    margin-right: 0;
 }
 
 [dir="rtl"] .tab img {
-    margin-left: 0.125rem;
+    margin-left: 0;
 }
 
 /* mirror blocks and sound tab icons */
@@ -182,6 +193,21 @@
 /* Body of the tabs */
 .tabs {
     position: relative;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row; /* Change to row for sidebar layout */
+}
+
+/* New wrapper for sidebar and content */
+.sidebar-and-content-wrapper {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+}
+
+/* Content area next to sidebar */
+.tab-content-wrapper {
     flex-grow: 1;
     display: flex;
     flex-direction: column;

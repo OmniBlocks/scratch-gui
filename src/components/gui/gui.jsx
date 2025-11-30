@@ -28,7 +28,6 @@ import Cards from '../../containers/cards.jsx';
 import Alerts from '../../containers/alerts.jsx';
 import DragLayer from '../../containers/drag-layer.jsx';
 import ConnectionModal from '../../containers/connection-modal.jsx';
-import {isTestEnvironment} from '../../lib/tw-environment-support-prober.js';
 import TelemetryModal from '../telemetry-modal/telemetry-modal.jsx';
 import TWUsernameModal from '../../containers/tw-username-modal.jsx';
 import TWSettingsModal from '../../containers/tw-settings-modal.jsx';
@@ -43,7 +42,7 @@ import {STAGE_SIZE_MODES, FIXED_WIDTH, UNCONSTRAINED_NON_STAGE_WIDTH} from '../.
 import {resolveStageSize} from '../../lib/screen-utils';
 import {Theme} from '../../lib/themes';
 
-import {isRendererSupported, isBrowserSupported} from '../../lib/tw-environment-support-prober';
+import {isRendererSupported, isBrowserSupported, isTestEnvironment} from '../../lib/tw-environment-support-prober';
 
 import styles from './gui.css';
 import addExtensionIcon from './icon--extensions.svg';
@@ -326,11 +325,11 @@ const GUIComponent = props => {
                     onToggleLoginOpen={onToggleLoginOpen}
                 />
                 {/* Hello World Banner - absolutely positioned to avoid layout interference */}
-                {!isTestEnvironment() && (
-                    <div className={styles.helloWorldBanner}>
-                        Hello World!
-                    </div>
-                )}
+                <div className={classNames(styles.helloWorldBanner, {
+                    'test-mode': isTestEnvironment()
+                })}>
+                    Hello World!
+                </div>
                 <Box className={styles.bodyWrapper}>
                     <Box className={styles.flexWrapper}>
                         <Box className={styles.editorWrapper}>

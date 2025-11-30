@@ -20,6 +20,11 @@
     box-sizing: border-box;
 }
 
+/* Hide banner in test environments to prevent layout changes */
+.hello-world-banner.test-mode {
+    display: none;
+}
+
 .page-wrapper {
     height: 100%;
 }

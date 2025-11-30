@@ -350,7 +350,6 @@ const GUIComponent = props => {
                                         </Tab>
                                         <Tab
                                             className={tabClassNames.tab}
-                                            onClick={onActivateCostumesTab}
                                         >
                                             <img
                                                 draggable={false}
@@ -372,7 +371,6 @@ const GUIComponent = props => {
                                         </Tab>
                                         <Tab
                                             className={tabClassNames.tab}
-                                            onClick={onActivateSoundsTab}
                                         >
                                             <img
                                                 draggable={false}
@@ -386,7 +384,6 @@ const GUIComponent = props => {
                                         </Tab>
                                         <Tab
                                             className={tabClassNames.tab}
-                                            onClick={onActivateSongsTab}
                                         >
                                             <img
                                                 draggable={false}

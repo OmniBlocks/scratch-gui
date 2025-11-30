@@ -209,6 +209,8 @@
 /* Content area next to sidebar */
 .tab-content-wrapper {
     flex-grow: 1;
+    min-width: 0; /* Allow flex shrinking below content size */
+    overflow: hidden; /* Prevent overflow */
     display: flex;
     flex-direction: column;
 }
@@ -216,6 +218,7 @@
 .tab-panel {
     position: relative;
     flex-grow: 1;
+    min-width: 0; /* Critical: allow shrinking */
     display: none;
 }
 

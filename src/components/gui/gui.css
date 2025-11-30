@@ -25,9 +25,9 @@
 }
 
 .body-wrapper {
-    height: calc(100% - $menu-bar-height - $hello-world-banner-height); /* Account for banner height */
+    height: calc(100% - $menu-bar-height);
     background-color: $ui-primary;
-    padding-top: $hello-world-banner-height; /* Account for banner height */
+    
 }
 
 .body-wrapper * {

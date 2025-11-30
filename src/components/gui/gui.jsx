@@ -28,6 +28,7 @@ import Cards from '../../containers/cards.jsx';
 import Alerts from '../../containers/alerts.jsx';
 import DragLayer from '../../containers/drag-layer.jsx';
 import ConnectionModal from '../../containers/connection-modal.jsx';
+import {isTestEnvironment} from '../../lib/tw-environment-support-prober.js';
 import TelemetryModal from '../telemetry-modal/telemetry-modal.jsx';
 import TWUsernameModal from '../../containers/tw-username-modal.jsx';
 import TWSettingsModal from '../../containers/tw-settings-modal.jsx';
@@ -325,9 +326,11 @@ const GUIComponent = props => {
                     onToggleLoginOpen={onToggleLoginOpen}
                 />
                 {/* Hello World Banner - absolutely positioned to avoid layout interference */}
-                <div className={styles.helloWorldBanner}>
-                    Hello World!
-                </div>
+                {!isTestEnvironment() && (
+                    <div className={styles.helloWorldBanner}>
+                        Hello World!
+                    </div>
+                )}
                 <Box className={styles.bodyWrapper}>
                     <Box className={styles.flexWrapper}>
                         <Box className={styles.editorWrapper}>

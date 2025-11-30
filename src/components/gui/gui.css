@@ -103,6 +103,8 @@
     user-select: none;
     white-space: nowrap;
     transition: all 0.3s ease-in-out;
+    
+    
 }
 
 /* Remove horizontal tab margins for vertical layout */

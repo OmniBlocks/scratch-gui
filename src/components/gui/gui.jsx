@@ -41,6 +41,8 @@ import TWInvalidProjectModal from '../../containers/tw-invalid-project-modal.jsx
 import {STAGE_SIZE_MODES, FIXED_WIDTH, UNCONSTRAINED_NON_STAGE_WIDTH} from '../../lib/layout-constants';
 import {resolveStageSize} from '../../lib/screen-utils';
 import {Theme} from '../../lib/themes';
+import ToggleButtons from '../toggle-buttons/toggle-buttons.jsx';
+import nanoscriptIcon from './nanoscriptIcon.svg';
 
 import {isRendererSupported, isBrowserSupported} from '../../lib/tw-environment-support-prober';
 

@@ -3,15 +3,15 @@
   "results": [
     {
       "name": "editor-initial.png",
-      "diffPixels": 1052,
-      "diffPercentage": "0.11",
+      "diffPixels": 692,
+      "diffPercentage": "0.08",
       "hasDiff": true,
       "skipped": false
     },
     {
       "name": "blocks-workspace.png",
-      "diffPixels": 1052,
-      "diffPercentage": "0.20",
+      "diffPixels": 692,
+      "diffPercentage": "0.13",
       "hasDiff": true,
       "skipped": false
     },
@@ -24,8 +24,8 @@
     },
     {
       "name": "code-tab.png",
-      "diffPixels": 1052,
-      "diffPercentage": "0.11",
+      "diffPixels": 692,
+      "diffPercentage": "0.08",
       "hasDiff": true,
       "skipped": false
     },
@@ -45,8 +45,8 @@
     },
     {
       "name": "songs-tab.png",
-      "diffPixels": 53766,
-      "diffPercentage": "5.83",
+      "diffPixels": 32858,
+      "diffPercentage": "3.57",
       "hasDiff": true,
       "skipped": false
     },
@@ -66,8 +66,8 @@
     },
     {
       "name": "advanced-settings.png",
-      "diffPixels": 1053,
-      "diffPercentage": "0.11",
+      "diffPixels": 692,
+      "diffPercentage": "0.08",
       "hasDiff": true,
       "skipped": false
     }

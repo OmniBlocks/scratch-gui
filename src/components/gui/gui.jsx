@@ -42,7 +42,7 @@ import {STAGE_SIZE_MODES, FIXED_WIDTH, UNCONSTRAINED_NON_STAGE_WIDTH} from '../.
 import {resolveStageSize} from '../../lib/screen-utils';
 import {Theme} from '../../lib/themes';
 import ToggleButtons from '../toggle-buttons/toggle-buttons.jsx';
-import nanoscriptIcon from './nanoscriptIcon.svg';
+import nanoscriptIcon from '!../../lib/tw-recolor/build!./nanoscriptIcon.svg';
 
 import {isRendererSupported, isBrowserSupported} from '../../lib/tw-environment-support-prober';
 
@@ -116,7 +116,7 @@ function CMView({ theme, vm }) {
             // NanoScript autocomplete suggestions
             const nanoScriptCompletions = [
                 // Control flow keywords
-                { label: "when green flag clicked", type: "keyword" },
+                { label: "when flag clicked", type: "keyword" },
                 { label: "when key pressed", type: "keyword" },
                 { label: "when this sprite clicked", type: "keyword" },
                 { label: "when I start as a clone", type: "keyword" },
@@ -249,7 +249,7 @@ function CMView({ theme, vm }) {
             }, { dark: theme === Theme.dark });
 
             editorRef.current = new EditorView({
-                doc: `when green flag clicked
+                doc: `when flag clicked
 say "Hello World!"
 repeat 10
     say (join "hi " "there")

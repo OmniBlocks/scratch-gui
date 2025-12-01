@@ -229,6 +229,7 @@ class Blocks extends React.Component {
         }
 
         gentlyRequestPersistentStorage();
+        this.handleEnableProcedureReturns();
     }
     shouldComponentUpdate (nextProps, nextState) {
         return (
@@ -716,7 +717,6 @@ class Blocks extends React.Component {
                     <ExtensionLibrary
                         vm={vm}
                         onCategorySelected={this.handleCategorySelected}
-                        onEnableProcedureReturns={this.handleEnableProcedureReturns}
                         onRequestClose={onRequestCloseExtensionLibrary}
                         onOpenCustomExtensionModal={onOpenCustomExtensionModal || reduxOnOpenCustomExtensionModal}
                     />

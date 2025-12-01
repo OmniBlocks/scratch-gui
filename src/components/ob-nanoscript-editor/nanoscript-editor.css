@@ -9,6 +9,7 @@
     user-select: none;
     font-size: 0.9rem;
     overflow: auto;
+    border: 1px solid $ui-black-transparent;
 }
 
 .sidebar h2, .sidebar h3 {

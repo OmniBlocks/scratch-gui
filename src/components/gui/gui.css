@@ -54,6 +54,7 @@
 
     display: flex;
     flex-direction: column;
+    min-height: 0;
 }
 
 .tab-list {
@@ -358,4 +359,15 @@ $fade-out-distance: 15px;
 .button-row {
     background: $ui-white;
     border-radius: $form-radius;
+}
+
+.sidebar {
+    background: $ui-white;
+    padding-right: 1px;
+    width: 4rem;
+    margin-bottom: 3.25rem;
+}
+
+.codemirror {
+    --space: $space;
 }

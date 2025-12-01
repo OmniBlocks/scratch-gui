@@ -74,6 +74,93 @@ const getFullscreenBackgroundColor = () => {
 
 const fullscreenBackgroundColor = getFullscreenBackgroundColor();
 
+function CMView({ theme }) {
+    const el = React.useRef(null);
+    const editorRef = React.useRef(null);
+
+    React.useEffect(() => {
+        let disposed = false;
+
+        async function loadEditor() {
+            const {
+                EditorView,
+                basicSetup,
+                HighlightStyle,
+                syntaxHighlighting,
+                tags
+            } = await import(/*webpackChunkName: "nanoscript-editor"*/ "./codemirror-imports.js");
+
+            // Define highlight rules using CSS vars
+            const scratchHighlight = HighlightStyle.define([
+                { tag: tags.variableName, color: "var(--cm-variable)" },
+                { tag: tags.keyword, color: "var(--cm-keyword)" },
+                { tag: tags.string, color: "var(--cm-string)" },
+                { tag: tags.number, color: "var(--cm-number)" },
+                { tag: tags.function, color: "var(--cm-function)" },
+                { tag: tags.operator, color: "var(--cm-operator)" }
+            ]);
+
+            const { StreamLanguage } = await import("@codemirror/language");
+            const scratchSyntax = StreamLanguage.define({
+                token(stream) {
+                    if (stream.match(/\b(when .*|say|repeat|if|else|forever|stop|broadcast|end)\b/)) return "keyword";
+                    if (stream.match(/\b(and|or|not|join|\+|\-|\*|\/|(abs|sin|cos) of .*)\b/)) return "operator";
+                    if (stream.match(/\b(join|pick random|length of)\b/)) return "function";
+                    stream.next();
+                    return "variable";
+                }
+            });
+
+            if (!el.current || disposed) return;
+
+            const cmTheme = EditorView.theme({
+                "&": {
+                    backgroundColor: "var(--ui-white)",
+                    color: "var(--text-primary)",
+                    height: "100%",
+                    borderTopRightRadius: "var(--space)",
+                    borderBottomRightRadius: "var(--space)",
+                    border: "1px solid var(--ui-black-transparent)"
+                },
+                ".cm-content": { caretColor: "var(--looks-secondary)" },
+                ".cm-cursor": { borderLeft: "2px solid var(--looks-secondary)" },
+                ".cm-focused": { outline: "none" },
+                ".cm-selectionBackground, ::selection": { backgroundColor: "rgba(255, 140, 26, 0.3)" },
+                ".cm-gutters": {
+                    backgroundColor: "var(--ui-tertiary)",
+                    borderRight: "1px solid var(--ui-black-transparent)"
+                }
+            }, { dark: theme === Theme.dark });
+
+            editorRef.current = new EditorView({
+                doc: `when green flag clicked
+say "Hello World!"
+repeat 10
+    say (join "hi " "there")
+end`,
+                extensions: [
+                    basicSetup,
+                    scratchSyntax,
+                    syntaxHighlighting(scratchHighlight),
+                    cmTheme
+                ],
+                parent: el.current
+            });
+        }
+
+        loadEditor();
+
+        return () => {
+            disposed = true;
+            if (editorRef.current) {
+                editorRef.current.destroy();
+            }
+        };
+    }, [theme]);
+
+    return <><div className={styles.sidebar}></div><div ref={el} className={styles.codemirror} style={{height: '100%', width: '100%'}} /></>;
+}
+
 const GUIComponent = props => {
     const {
         accountNavOpen,
@@ -404,7 +491,7 @@ const GUIComponent = props => {
                                     </Tab>
                                 </TabList>
                                 <TabPanel className={tabClassNames.tabPanel}>
-                                    {isNano ? 'inspired by nanoscratch by A-MARIO-PLAYER (he got banned from scratch RIP) now lets get to coding (nanoscript is not implemented yet)' : <><Box className={styles.blocksWrapper}>
+                                    {isNano ? blocksTabVisible && <CMView theme={theme} /> : <><Box className={styles.blocksWrapper}>
                                             <Blocks
                                                 key={`${blocksId}/${theme.id}`}
                                                 canUseCloud={canUseCloud}
@@ -417,18 +504,19 @@ const GUIComponent = props => {
                                                 onOpenCustomExtensionModal={onOpenCustomExtensionModal}
                                                 theme={theme}
                                                 vm={vm} />
-                                        </Box><Box className={styles.extensionButtonContainer}>
+                                        </Box></>}
+<Box className={styles.extensionButtonContainer}>
                                                 <button
                                                     className={styles.extensionButton}
                                                     title={intl.formatMessage(messages.addExtension)}
-                                                    onClick={onExtensionButtonClick}
+                                                    onClick={isNano ? () => { alert('Adding extensions in NanoScript is not available yet') } : onExtensionButtonClick}
                                                 >
                                                     <img
                                                         className={styles.extensionButtonIcon}
                                                         draggable={false}
                                                         src={addExtensionIcon} />
                                                 </button>
-                                            </Box></>}
+                                            </Box>
                                     <div className={classNames(styles.nanoscriptContainer, !isNano && styles.notNano)}>
                                         {!isNano && <ToggleButtons
                                             className={styles.buttonRow}

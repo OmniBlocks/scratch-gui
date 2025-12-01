@@ -1,0 +1,22 @@
+name: Mega PR Test & Analysis
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+  issues: write
+  actions: write
+
+jobs:
+  dependabot-skip-notice:
+    if: >-
+      (github.actor == 'dependabot[bot]') &&
+      ((github.event_name == 'pull_request') ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '/test pr')))
+    runs-on: ubuntu-latest

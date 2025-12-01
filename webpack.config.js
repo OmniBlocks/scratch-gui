@@ -148,6 +148,7 @@ module.exports = [
     defaultsDeep({}, base, {
         entry: {
             'editor': './src/playground/editor.jsx',
+            'home': './src/playground/home.jsx',
             'player': './src/playground/player.jsx',
             'fullscreen': './src/playground/fullscreen.jsx',
             'embed': './src/playground/embed.jsx',
@@ -196,9 +197,16 @@ module.exports = [
                 ...htmlWebpackPluginCommon
             }),
             new HtmlWebpackPlugin({
+                chunks: ['home'],
+                template: 'src/playground/simple.ejs',
+                filename: 'index.html',
+                title: `${APP_NAME} - The Ultimate MultiLanguage IDE`,
+                ...htmlWebpackPluginCommon
+            }),
+            new HtmlWebpackPlugin({
                 chunks: ['player'],
                 template: 'src/playground/index.ejs',
-                filename: 'index.html',
+                filename: 'player.html',
                 title: `${APP_NAME} - The Ultimate MultiLanguage IDE`,
                 ...htmlWebpackPluginCommon
             }),

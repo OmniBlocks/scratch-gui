@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import VM from 'scratch-vm';
 import Prompt from '../../containers/prompt.jsx';
 import AddonHooks from '../../addons/hooks.js';
-
+import {Theme} from '../../lib/themes';
 import styles from './nanoscript-editor.css';
 
 function NanoscriptEditor({ theme, vm }) {

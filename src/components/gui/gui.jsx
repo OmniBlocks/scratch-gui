@@ -41,7 +41,9 @@ import TWInvalidProjectModal from '../../containers/tw-invalid-project-modal.jsx
 import {STAGE_SIZE_MODES, FIXED_WIDTH, UNCONSTRAINED_NON_STAGE_WIDTH} from '../../lib/layout-constants';
 import {resolveStageSize} from '../../lib/screen-utils';
 import {Theme} from '../../lib/themes';
+import AddonHooks from '../../addons/hooks.js';
 import ToggleButtons from '../toggle-buttons/toggle-buttons.jsx';
+import Prompt from '../../containers/prompt.jsx';
 import nanoscriptIcon from '!../../lib/tw-recolor/build!./nanoscriptIcon.svg';
 
 import {isRendererSupported, isBrowserSupported} from '../../lib/tw-environment-support-prober';
@@ -77,6 +79,11 @@ const fullscreenBackgroundColor = getFullscreenBackgroundColor();
 function CMView({ theme, vm }) {
     const el = React.useRef(null);
     const editorRef = React.useRef(null);
+    const variableRef = React.useRef([]);
+    const listsRef = React.useRef([]);
+    const spriteOnlyVariablesRef = React.useRef([]);
+    const spriteOnlyListsRef = React.useRef([]);
+    const [, setVarsState] = React.useState([]); // used to trigger renders
 
     React.useEffect(() => {
         let disposed = false;
@@ -103,18 +110,35 @@ function CMView({ theme, vm }) {
             ]);
 
             const { StreamLanguage } = await import("@codemirror/language");
+            // helper to escape regex
+            const escapeRegExp = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
             const scratchSyntax = StreamLanguage.define({
                 token(stream) {
+                    // Keywords
                     if (stream.match(/\b(when .*|say|repeat|if|else|forever|stop|broadcast|end)\b/)) return "keyword";
+                    // Operators
                     if (stream.match(/\b(and|or|not|join|\+|\-|\*|\/|(abs|sin|cos) of .*)\b/)) return "operator";
+                    // Functions
                     if (stream.match(/\b(join|pick random|length of)\b/)) return "function";
+
+                    // Try to match variable or list names (take current refs)
+                    const names = (variableRef.current || []).concat(listsRef.current || []);
+                    if (names && names.length) {
+                        // sort by length to match longest first
+                        const sorted = names.slice().sort((a, b) => b.length - a.length).map(escapeRegExp);
+                        const rx = new RegExp('^(' + sorted.join('|') + ')', 'i');
+                        const m = stream.match(rx, true);
+                        if (m) {
+                            return "variableName";
+                        }
+                    }
                     stream.next();
                     return "variable";
                 }
             });
 
-            // NanoScript autocomplete suggestions
-            const nanoScriptCompletions = [
+            // NanoScript autocomplete suggestions (static)
+            const staticCompletions = [
                 // Control flow keywords
                 { label: "when flag clicked", type: "keyword" },
                 { label: "when key pressed", type: "keyword" },
@@ -203,16 +227,20 @@ function CMView({ theme, vm }) {
                 { label: "distance to", type: "function" },
             ];
 
-            // Function to get completions with prefix matching
+            // Function to get completions with prefix matching (dynamic includes variables & lists)
             function scratchCompletions(context) {
                 const word = context.matchBefore(/\w*/);
                 if (!word || (word.from === word.to && !context.explicit)) {
                     return null;
                 }
-                
+
+                const dynamicVars = (variableRef.current || []).map(v => ({ label: v, type: 'variable', info: 'Variable' }));
+                const dynamicLists = (listsRef.current || []).map(l => ({ label: l, type: 'variable', info: 'List' }));
+                const allOptions = staticCompletions.concat(dynamicVars, dynamicLists);
+
                 return {
                     from: word.from,
-                    options: nanoScriptCompletions.filter(option =>
+                    options: allOptions.filter(option =>
                         option.label.toLowerCase().startsWith(word.text.toLowerCase())
                     ),
                     validFor: /\w*/
@@ -275,10 +303,228 @@ end`,
         };
     }, [theme]);
 
-    return <><div className={styles.sidebar}>
-        <h2>Variables</h2>    
-        <button className={styles.button}>Make a Variable (NOT IMPLEMENTED)</button>
-    </div><div ref={el} className={styles.codemirror} style={{height: '100%', width: '100%'}} /></>;
+    // Update variable/list refs from VM and listen for changes
+    React.useEffect(() => {
+        if (!vm) return undefined;
+
+        function updateVarsLists () {
+            try {
+                const editing = vm.editingTarget || vm.runtime.getTargetForStage();
+                if (!editing) {
+                    variableRef.current = [];
+                    listsRef.current = [];
+                    spriteOnlyVariablesRef.current = [];
+                    spriteOnlyListsRef.current = [];
+                    setVarsState([]);
+                    return;
+                }
+
+                const isStage = editing.isStage;
+                let spriteVars = isStage ? [] : (editing.getAllVariableNamesInScopeByType('', true) || []);
+                let spriteLists = isStage ? [] : (editing.getAllVariableNamesInScopeByType('list', true) || []);
+                let stageVars = [];
+                let stageLists = [];
+                
+                // Get stage variables
+                const stage = vm.runtime.getTargetForStage();
+                if (stage) {
+                    stageVars = stage.getAllVariableNamesInScopeByType('') || [];
+                    stageLists = stage.getAllVariableNamesInScopeByType('list') || [];
+                }
+                
+                // For stage: only show stage variables
+                // For sprite: show stage variables in "For all sprites", sprite-only in "For this sprite only"
+                if (isStage) {
+                    variableRef.current = stageVars;
+                    listsRef.current = stageLists;
+                    spriteOnlyVariablesRef.current = [];
+                    spriteOnlyListsRef.current = [];
+                } else {
+                    variableRef.current = stageVars;
+                    listsRef.current = stageLists;
+                    spriteOnlyVariablesRef.current = spriteVars;
+                    spriteOnlyListsRef.current = spriteLists;
+                }
+                
+                // trigger render
+                setVarsState(variableRef.current.slice());
+            } catch (e) {
+                // ignore
+            }
+        }
+
+        updateVarsLists();
+        vm.on('targetsUpdate', updateVarsLists);
+        vm.on('PROJECT_CHANGED', updateVarsLists);
+        return () => {
+            vm.off('targetsUpdate', updateVarsLists);
+            vm.off('PROJECT_CHANGED', updateVarsLists);
+        };
+    }, [vm]);
+
+    // handlers for make variable/list and inserting into editor
+    const [promptProps, setPromptProps] = React.useState(null);
+
+    const makeVariable = (type = '') => {
+        if (!vm) {
+            alert('VM not available');
+            return;
+        }
+
+        // Determine editing target and stage status
+        const editing = vm.editingTarget || vm.runtime.getTargetForStage();
+        const isStage = editing && editing.isStage;
+
+        // Compute props for Prompt component similar to Blocks.handlePromptStart
+        const title = type === 'list' ? 'Make a List' : 'Make a Variable';
+        const varTypeConst = type === 'list' ? 'list' : '';
+        const showListMessage = type === 'list';
+        const showCloudOption = (varTypeConst === '') && (vm.runtime && typeof vm.runtime.canAddCloudVariable === 'function' ? vm.runtime.canAddCloudVariable() : false);
+
+        setPromptProps({
+            defaultValue: '',
+            isStage: !!(editing && editing.isStage),
+            showListMessage,
+            label: type === 'list' ? 'List name' : 'Variable name',
+            showCloudOption,
+            showVariableOptions: true,
+            title,
+            varType: varTypeConst
+        });
+    };
+
+    const insertIntoEditor = name => {
+        if (!editorRef.current) return;
+        try {
+            const view = editorRef.current;
+            const pos = view.state.selection.main.head;
+            view.dispatch({changes: {from: pos, insert: name}});
+            view.focus();
+        } catch (e) {
+            // ignore
+        }
+    };
+
+    const handlePromptCancel = () => setPromptProps(null);
+    const handlePromptOk = (input, variableOptions) => {
+        try {
+            const varType = (promptProps && promptProps.varType) || '';
+            let allVarNames = [];
+            if (vm && vm.runtime && typeof vm.runtime.getAllVarNamesOfType === 'function') {
+                try {
+                    allVarNames = vm.runtime.getAllVarNamesOfType(varType) || [];
+                } catch (e) {
+                    allVarNames = [];
+                }
+            }
+            const editing = vm.editingTarget || (vm.runtime && vm.runtime.getTargetForStage && vm.runtime.getTargetForStage());
+            if (editing && !editing.isStage && vm.runtime && typeof vm.runtime.getTargetForStage === 'function') {
+                try {
+                    const stage = vm.runtime.getTargetForStage();
+                    if (stage && typeof stage.getAllVariableNamesInScopeByType === 'function') {
+                        const stageVars = stage.getAllVariableNamesInScopeByType(varType) || [];
+                        for (const s of stageVars) {
+                            if (!allVarNames.includes(s)) allVarNames.push(s);
+                        }
+                    }
+                } catch (e) {
+                    // ignore
+                }
+            }
+
+            const ws = AddonHooks.blocklyWorkspace;
+            const isLocal = variableOptions && variableOptions.scope === 'local';
+            const isCloud = !!(variableOptions && variableOptions.isCloud);
+            if (ws && typeof ws.createVariable === 'function') {
+                try {
+                    ws.createVariable(input, varType, null, !!isLocal, !!isCloud);
+                } catch (e) {
+                    // ignore
+                }
+            }
+        } finally {
+            setPromptProps(null);
+        }
+    };
+
+    return <>
+        {promptProps ? (
+            <Prompt
+                defaultValue={promptProps.defaultValue}
+                isStage={promptProps.isStage}
+                showListMessage={promptProps.showListMessage}
+                label={promptProps.label}
+                showCloudOption={promptProps.showCloudOption}
+                showVariableOptions={promptProps.showVariableOptions}
+                title={promptProps.title}
+                vm={vm}
+                onCancel={handlePromptCancel}
+                onOk={handlePromptOk}
+            />
+        ) : null}
+        <div className={styles.sidebar}>
+            <h2>Variables</h2>
+            
+            <h3>For all sprites</h3>
+            <div className={styles.varsList}>
+                {(variableRef.current || []).map(v => (
+                    <button
+                        key={`var-${v}`}
+                        className={styles.varItem}
+                        onClick={() => insertIntoEditor(v)}
+                    >{v}</button>
+                ))}
+            </div>
+            {spriteOnlyVariablesRef.current && spriteOnlyVariablesRef.current.length > 0 && (
+                <>
+                    <h3 style={{marginTop: 12}}>For this sprite only</h3>
+                    <div className={styles.varsList}>
+                        {spriteOnlyVariablesRef.current.map(v => (
+                            <button
+                                key={`var-sprite-${v}`}
+                                className={styles.varItem}
+                                onClick={() => insertIntoEditor(v)}
+                            >{v}</button>
+                        ))}
+                    </div>
+                </>
+            )}
+            <div style={{marginTop: 8}}>
+                <button className={styles.button} onClick={() => makeVariable('')}>Make a Variable</button>
+            </div>
+
+            <h2 style={{marginTop: 16}}>Lists</h2>
+            
+            <h3>For all sprites</h3>
+            <div className={styles.varsList}>
+                {(listsRef.current || []).map(l => (
+                    <button
+                        key={`list-${l}`}
+                        className={styles.varItem}
+                        onClick={() => insertIntoEditor(l)}
+                    >{l}</button>
+                ))}
+            </div>
+            {spriteOnlyListsRef.current && spriteOnlyListsRef.current.length > 0 && (
+                <>
+                    <h3 style={{marginTop: 12}}>For this sprite only</h3>
+                    <div className={styles.varsList}>
+                        {spriteOnlyListsRef.current.map(l => (
+                            <button
+                                key={`list-sprite-${l}`}
+                                className={styles.varItem}
+                                onClick={() => insertIntoEditor(l)}
+                            >{l}</button>
+                        ))}
+                    </div>
+                </>
+            )}
+            <div style={{marginTop: 8}}>
+                <button className={styles.button} onClick={() => makeVariable('list')}>Make a List</button>
+            </div>
+        </div>
+        <div ref={el} className={styles.codemirror} style={{height: '100%', width: '100%'}} />
+    </>;
 }
 
 const GUIComponent = props => {

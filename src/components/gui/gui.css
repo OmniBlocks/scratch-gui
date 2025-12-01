@@ -371,7 +371,7 @@ $fade-out-distance: 15px;
     overflow: auto;
 }
 
-.sidebar h2 {
+.sidebar h2, .sidebar h3 {
     font-size: 1rem;
 }
 
@@ -386,4 +386,19 @@ $fade-out-distance: 15px;
     padding: 6px;
     border: $ui-black-transparent 1px solid;
     border-radius: $space;
+}
+
+.vars-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.var-item {
+    font-family: monospace;
+    color: $data-primary;
+    appearance: none;
+    border: none;
+    padding: 0;
+    text-align: left;
+    background: transparent;
 }

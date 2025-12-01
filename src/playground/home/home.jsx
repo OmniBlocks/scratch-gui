@@ -2,7 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import render from '../app-target.js';
 
-import {APP_NAME} from '../../lib/brand.js';
+import { APP_NAMES } from '../../lib/brand';
+
+const APP_NAME = APP_NAMES.PROJECT;
 import {applyGuiColors} from '../../lib/themes/guiHelpers.js';
 import {detectTheme} from '../../lib/themes/themePersistance.js';
 import styles from '../info.css';

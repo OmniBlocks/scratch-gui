@@ -53,6 +53,7 @@ import costumesIcon from '!../../lib/tw-recolor/build!./icon--costumes.svg';
 import soundsIcon from '!../../lib/tw-recolor/build!./icon--sounds.svg';
 import nanoscriptIcon from '!../../lib/tw-recolor/build!./nanoscriptIcon.svg';
 import songsIcon from '!../../lib/tw-recolor/build!./icon--songs.svg';
+import SpinnerComponent from '../tw-loading-spinner/spinner.jsx';
 const messages = defineMessages({
     addExtension: {
         id: 'gui.gui.addExtension',
@@ -74,7 +75,7 @@ const getFullscreenBackgroundColor = () => {
 
 const fullscreenBackgroundColor = getFullscreenBackgroundColor();
 
-function CMView({ theme }) {
+function CMView({ theme, vm }) {
     const el = React.useRef(null);
     const editorRef = React.useRef(null);
 
@@ -88,12 +89,12 @@ function CMView({ theme }) {
                 HighlightStyle,
                 syntaxHighlighting,
                 tags
-            } = await import(/*webpackChunkName: "nanoscript-editor"*/ "./codemirror-imports.js");
+            } = await import(/*webpackChunkName: "nanoscript-editor"*/ "./ob-codemirror-imports.js");
 
             // Define highlight rules using CSS vars
             const scratchHighlight = HighlightStyle.define([
-                { tag: tags.variableName, color: "var(--cm-variable)" },
-                { tag: tags.keyword, color: "var(--cm-keyword)" },
+                { tag: tags.variableName, color: "var(--data-primary)" },
+                { tag: tags.keyword, color: "var(--pen-primary)" },
                 { tag: tags.string, color: "var(--cm-string)" },
                 { tag: tags.number, color: "var(--cm-number)" },
                 { tag: tags.function, color: "var(--cm-function)" },
@@ -120,7 +121,12 @@ function CMView({ theme }) {
                     height: "100%",
                     borderTopRightRadius: "var(--space)",
                     borderBottomRightRadius: "var(--space)",
-                    border: "1px solid var(--ui-black-transparent)"
+                    border: "1px solid var(--ui-black-transparent)",
+                    height: "100%",
+                },
+                ".cm-scroller": {
+                    maxHeight: "100%",
+                    overflow: "auto"
                 },
                 ".cm-content": { caretColor: "var(--looks-secondary)" },
                 ".cm-cursor": { borderLeft: "2px solid var(--looks-secondary)" },
@@ -158,7 +164,10 @@ end`,
         };
     }, [theme]);
 
-    return <><div className={styles.sidebar}></div><div ref={el} className={styles.codemirror} style={{height: '100%', width: '100%'}} /></>;
+    return <><div className={styles.sidebar}>
+        <h2>Variables</h2>    
+        <button className={styles.button}>Make a Variable (NOT IMPLEMENTED)</button>
+    </div><div ref={el} className={styles.codemirror} style={{height: '100%', width: '100%'}} /></>;
 }
 
 const GUIComponent = props => {
@@ -491,7 +500,7 @@ const GUIComponent = props => {
                                     </Tab>
                                 </TabList>
                                 <TabPanel className={tabClassNames.tabPanel}>
-                                    {isNano ? blocksTabVisible && <CMView theme={theme} /> : <><Box className={styles.blocksWrapper}>
+                                    {isNano ? blocksTabVisible && <CMView theme={theme} vm={vm} /> : <><Box className={styles.blocksWrapper}>
                                             <Blocks
                                                 key={`${blocksId}/${theme.id}`}
                                                 canUseCloud={canUseCloud}
@@ -504,8 +513,7 @@ const GUIComponent = props => {
                                                 onOpenCustomExtensionModal={onOpenCustomExtensionModal}
                                                 theme={theme}
                                                 vm={vm} />
-                                        </Box></>}
-<Box className={styles.extensionButtonContainer}>
+                                                <Box className={styles.extensionButtonContainer}>
                                                 <button
                                                     className={styles.extensionButton}
                                                     title={intl.formatMessage(messages.addExtension)}
@@ -514,9 +522,10 @@ const GUIComponent = props => {
                                                     <img
                                                         className={styles.extensionButtonIcon}
                                                         draggable={false}
-                                                        src={addExtensionIcon} />
+                                                        src={addExtensionIcon} />{isNano && intl.formatMessage(messages.addExtension)}
                                                 </button>
                                             </Box>
+                                        </Box></>}
                                     <div className={classNames(styles.nanoscriptContainer, !isNano && styles.notNano)}>
                                         {!isNano && <ToggleButtons
                                             className={styles.buttonRow}

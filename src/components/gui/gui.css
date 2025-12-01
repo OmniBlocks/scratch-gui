@@ -363,11 +363,27 @@ $fade-out-distance: 15px;
 
 .sidebar {
     background: $ui-white;
-    padding-right: 1px;
-    width: 4rem;
-    margin-bottom: 3.25rem;
+    padding: $space;
+    width: 20rem;
+    color: $text-primary;
+    user-select: none;
+    font-size: 0.9rem;
+    overflow: auto;
+}
+
+.sidebar h2 {
+    font-size: 1rem;
 }
 
 .codemirror {
     --space: $space;
+    overflow: hidden;
+}
+
+.button {
+    appearance: none;
+    background: transparent;
+    padding: 6px;
+    border: $ui-black-transparent 1px solid;
+    border-radius: $space;
 }

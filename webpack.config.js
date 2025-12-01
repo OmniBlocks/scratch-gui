@@ -146,7 +146,7 @@ module.exports = [
     defaultsDeep({}, base, {
         entry: {
             'editor': './src/playground/editor.jsx',
-            'home': './src/playground/home.jsx',
+            'home': './src/playground/home/home.jsx',
             'player': './src/playground/player.jsx',
             'fullscreen': './src/playground/fullscreen.jsx',
             'embed': './src/playground/embed.jsx',

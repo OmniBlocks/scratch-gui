@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import render from '../app-target';
-import styles from './credits.css';
+import styles from '../info.css';
+import Header from '../ws-components/header/header.jsx';
 
 import {APP_NAME} from '../../lib/brand';
 import {applyGuiColors} from '../../lib/themes/guiHelpers';
@@ -53,7 +54,7 @@ UserList.propTypes = {
 };
 
 const Credits = () => (
-    <main className={styles.main}>
+    <><Header /><main className={styles.main}>
         <header className={styles.headerContainer}>
             <h1 className={styles.headerText}>
                 {APP_NAME} Credits
@@ -115,7 +116,7 @@ const Credits = () => (
                 </i>
             </p>
         </section>
-    </main>
+    </main></>
 );
 
 render(<Credits />);

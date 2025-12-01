@@ -1,0 +1,44 @@
+@import "../../css/units.css";
+@import "../../css/colors.css";
+
+.sidebar {
+    background: $ui-white;
+    padding: $space;
+    width: 20rem;
+    color: $text-primary;
+    user-select: none;
+    font-size: 0.9rem;
+    overflow: auto;
+}
+
+.sidebar h2, .sidebar h3 {
+    font-size: 1rem;
+}
+
+.codemirror {
+    --space: $space;
+    overflow: auto;
+}
+
+.button {
+    appearance: none;
+    background: transparent;
+    padding: 6px;
+    border: $ui-black-transparent 1px solid;
+    border-radius: $space;
+}
+
+.vars-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.var-item {
+    font-family: monospace;
+    color: $data-primary;
+    appearance: none;
+    border: none;
+    padding: 0;
+    text-align: left;
+    background: transparent;
+}

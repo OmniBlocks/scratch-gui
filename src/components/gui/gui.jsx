@@ -85,10 +85,12 @@ function CMView({ theme, vm }) {
                 basicSetup,
                 HighlightStyle,
                 syntaxHighlighting,
-                tags
+                tags,
+                autocompletion,
+                completeFromList
             } = await import(/*webpackChunkName: "nanoscript-editor"*/ "./ob-codemirror-imports.js");
 
-            // Define highlight rules using CSS vars
+            // Define hghlight rules using CSS vars
             const scratchHighlight = HighlightStyle.define([
                 { tag: tags.variableName, color: "var(--data-primary)" },
                 { tag: tags.keyword, color: "var(--pen-primary)" },
@@ -108,6 +110,112 @@ function CMView({ theme, vm }) {
                     return "variable";
                 }
             });
+
+            // NanoScript autocomplete suggestions
+            const nanoScriptCompletions = [
+                // Control flow keywords
+                { label: "when green flag clicked", type: "keyword" },
+                { label: "when key pressed", type: "keyword" },
+                { label: "when this sprite clicked", type: "keyword" },
+                { label: "when I start as a clone", type: "keyword" },
+                { label: "forever", type: "keyword" },
+                { label: "repeat", type: "keyword" },
+                { label: "if", type: "keyword" },
+                { label: "else", type: "keyword" },
+                { label: "end", type: "keyword" },
+                { label: "wait", type: "keyword" },
+                { label: "stop", type: "keyword" },
+                
+                // Motion blocks
+                { label: "move", type: "function" },
+                { label: "turn right", type: "function" },
+                { label: "turn left", type: "function" },
+                { label: "go to", type: "function" },
+                { label: "glide to", type: "function" },
+                { label: "point in direction", type: "function" },
+                { label: "point towards", type: "function" },
+                { label: "change x by", type: "function" },
+                { label: "set x to", type: "function" },
+                { label: "change y by", type: "function" },
+                { label: "set y to", type: "function" },
+                
+                // Looks blocks
+                { label: "say", type: "function" },
+                { label: "think", type: "function" },
+                { label: "show", type: "function" },
+                { label: "hide", type: "function" },
+                { label: "switch costume to", type: "function" },
+                { label: "next costume", type: "function" },
+                { label: "change size by", type: "function" },
+                { label: "set size to", type: "function" },
+                { label: "change color effect by", type: "function" },
+                { label: "set color effect to", type: "function" },
+                { label: "clear graphic effects", type: "function" },
+                
+                // Sound blocks
+                { label: "play sound", type: "function" },
+                { label: "stop all sounds", type: "function" },
+                { label: "change volume by", type: "function" },
+                { label: "set volume to", type: "function" },
+                
+                // Events
+                { label: "broadcast", type: "function" },
+                { label: "broadcast and wait", type: "function" },
+                { label: "when I receive", type: "keyword" },
+                
+                // Variables and lists
+                { label: "set variable to", type: "function" },
+                { label: "change variable by", type: "function" },
+                { label: "add to list", type: "function" },
+                { label: "delete from list", type: "function" },
+                { label: "insert into list", type: "function" },
+                { label: "replace list item", type: "function" },
+                
+                // Operators
+                { label: "and", type: "operator" },
+                { label: "or", type: "operator" },
+                { label: "not", type: "operator" },
+                { label: "join", type: "function" },
+                { label: "letter of", type: "function" },
+                { label: "length of", type: "function" },
+                { label: "round", type: "function" },
+                { label: "abs of", type: "function" },
+                { label: "floor of", type: "function" },
+                { label: "ceiling of", type: "function" },
+                { label: "sqrt of", type: "function" },
+                { label: "sin of", type: "function" },
+                { label: "cos of", type: "function" },
+                { label: "tan of", type: "function" },
+                { label: "asin of", type: "function" },
+                { label: "acos of", type: "function" },
+                { label: "atan of", type: "function" },
+                { label: "pick random", type: "function" },
+                
+                // Sensing blocks
+                { label: "touching", type: "function" },
+                { label: "touching color", type: "function" },
+                { label: "color is touching", type: "function" },
+                { label: "ask", type: "function" },
+                { label: "key pressed", type: "function" },
+                { label: "mouse down", type: "function" },
+                { label: "distance to", type: "function" },
+            ];
+
+            // Function to get completions with prefix matching
+            function scratchCompletions(context) {
+                const word = context.matchBefore(/\w*/);
+                if (!word || (word.from === word.to && !context.explicit)) {
+                    return null;
+                }
+                
+                return {
+                    from: word.from,
+                    options: nanoScriptCompletions.filter(option =>
+                        option.label.toLowerCase().startsWith(word.text.toLowerCase())
+                    ),
+                    validFor: /\w*/
+                };
+            }
 
             if (!el.current || disposed) return;
 
@@ -132,6 +240,9 @@ function CMView({ theme, vm }) {
                 ".cm-gutters": {
                     backgroundColor: "var(--ui-tertiary)",
                     borderRight: "1px solid var(--ui-black-transparent)"
+                },
+                ".cm-completionLabel": {
+                    fontSize: "13px"
                 }
             }, { dark: theme === Theme.dark });
 
@@ -145,6 +256,7 @@ end`,
                     basicSetup,
                     scratchSyntax,
                     syntaxHighlighting(scratchHighlight),
+                    autocompletion({ override: [scratchCompletions] }),
                     cmTheme
                 ],
                 parent: el.current

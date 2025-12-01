@@ -179,7 +179,7 @@ function CMView({ theme, vm }) {
                 { label: "clear graphic effects", type: "function" },
                 
                 // Sound blocks
-                { label: "play sound", type: "function" },
+                { label: "start sound", type: "function" },
                 { label: "stop all sounds", type: "function" },
                 { label: "change volume by", type: "function" },
                 { label: "set volume to", type: "function" },

@@ -38,8 +38,6 @@ import TWFontsModal from '../../containers/tw-fonts-modal.jsx';
 import TWUnknownPlatformModal from '../../containers/tw-unknown-platform-modal.jsx';
 import TWInvalidProjectModal from '../../containers/tw-invalid-project-modal.jsx';
 
-import ToggleButtons from '../toggle-buttons/toggle-buttons.jsx';
-
 import {STAGE_SIZE_MODES, FIXED_WIDTH, UNCONSTRAINED_NON_STAGE_WIDTH} from '../../lib/layout-constants';
 import {resolveStageSize} from '../../lib/screen-utils';
 import {Theme} from '../../lib/themes';
@@ -51,7 +49,6 @@ import addExtensionIcon from './icon--extensions.svg';
 import codeIcon from '!../../lib/tw-recolor/build!./icon--code.svg';
 import costumesIcon from '!../../lib/tw-recolor/build!./icon--costumes.svg';
 import soundsIcon from '!../../lib/tw-recolor/build!./icon--sounds.svg';
-import nanoscriptIcon from '!../../lib/tw-recolor/build!./nanoscriptIcon.svg';
 import songsIcon from '!../../lib/tw-recolor/build!./icon--songs.svg';
 import SpinnerComponent from '../tw-loading-spinner/spinner.jsx';
 const messages = defineMessages({

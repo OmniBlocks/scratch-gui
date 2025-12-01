@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import VM from 'scratch-vm';
 import Prompt from '../../containers/prompt.jsx';
-import {Theme} from '../../lib/themes';
 import AddonHooks from '../../addons/hooks.js';
 
 import styles from './nanoscript-editor.css';
@@ -205,7 +204,7 @@ function NanoscriptEditor({ theme, vm }) {
                 ".cm-completionLabel": {
                     fontSize: "13px"
                 }
-            }, { dark: theme === Theme.dark });
+            }, { dark: theme.isDark() ?? false });
 
             editorRef.current = new EditorView({
                 doc: `when flag clicked

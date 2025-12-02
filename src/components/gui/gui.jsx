@@ -160,10 +160,14 @@ const GUIComponent = props => {
         unknownPlatformModalVisible,
         invalidProjectModalVisible,
         showWelcomeModal,
+        onRequestCloseWelcomeModal,
         vm,
         ...componentProps
     } = omit(props, 'dispatch');
     console.log('🎯 showWelcomeModal:', showWelcomeModal);
+        const welcomeModalElement = showWelcomeModal ? (
+        <WelcomeModal onRequestClose={onRequestCloseWelcomeModal} />
+    ) : null;
     if (children) {
         return <Box {...componentProps}>{children}</Box>;
     }
@@ -239,15 +243,7 @@ const GUIComponent = props => {
                 {...componentProps}
             >
                 {alwaysEnabledModals}
-                {showWelcomeModal ? (() => {
-    console.log('🚨 About to render WelcomeModal!');
-    console.log('🚨 WelcomeModal is:', WelcomeModal);
-    console.log('🚨 WelcomeModal typeof:', typeof WelcomeModal);
-    return (
-        <WelcomeModal
-            onRequestClose={onRequestCloseWelcomeModal} />
-    );
-})() : null}
+               
                 {telemetryModalVisible ? (
                     <TelemetryModal
                         isRtl={isRtl}

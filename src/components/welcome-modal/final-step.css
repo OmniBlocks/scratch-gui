@@ -1,0 +1,110 @@
+.final-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+}
+
+.illustration-container {
+    flex: 0 0 auto;
+    margin-bottom: 2rem;
+}
+
+.illustration-placeholder {
+    font-size: 4rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, #FFAB19 0%, #FF6B6B 100%);
+    border-radius: 16px;
+    color: white;
+}
+
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.title {
+    font-size: 3rem;
+    font-weight: 900;
+    margin: 0 0 1rem 0;
+    color: #333;
+}
+
+.subtitle {
+    font-size: 1.25rem;
+    color: #666;
+    margin: 0 0 2rem 0;
+}
+
+/* Tips section */
+.tips-section {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 2rem auto;
+    max-width: 500px;
+}
+
+.tips-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 1rem 0;
+    color: #333;
+}
+
+.tips {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.tip {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-align: left;
+    padding: 0.5rem;
+}
+
+.tip-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+/* Celebration */
+.celebration {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+.emoji {
+    animation: bounce 1s infinite;
+}
+
+.emoji:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.emoji:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.emoji:nth-child(4) {
+    animation-delay: 0.3s;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}

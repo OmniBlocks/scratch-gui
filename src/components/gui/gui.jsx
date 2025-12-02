@@ -8,7 +8,7 @@ import MediaQuery from 'react-responsive';
 import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
 import tabStyles from 'react-tabs/style/react-tabs.css';
 import VM from 'scratch-vm';
-
+import WelcomeModal from '../welcome-modal/welcome-modal.jsx';
 import Blocks from '../../containers/blocks.jsx';
 import CostumeTab from '../../containers/costume-tab.jsx';
 import TargetPane from '../../containers/target-pane.jsx';
@@ -160,9 +160,11 @@ const GUIComponent = props => {
         fontsModalVisible,
         unknownPlatformModalVisible,
         invalidProjectModalVisible,
+        showWelcomeModal,
         vm,
         ...componentProps
     } = omit(props, 'dispatch');
+    console.log('🎯 showWelcomeModal:', showWelcomeModal);
     if (children) {
         return <Box {...componentProps}>{children}</Box>;
     }
@@ -238,6 +240,10 @@ const GUIComponent = props => {
                 {...componentProps}
             >
                 {alwaysEnabledModals}
+                {showWelcomeModal ? (
+                <WelcomeModal
+                    onRequestClose={onRequestCloseWelcomeModal} />
+                    ) : null}
                 {telemetryModalVisible ? (
                     <TelemetryModal
                         isRtl={isRtl}
@@ -557,6 +563,8 @@ GUIComponent.propTypes = {
     customExtensionModalVisible: PropTypes.bool,
     fontsModalVisible: PropTypes.bool,
     unknownPlatformModalVisible: PropTypes.bool,
+    showWelcomeModal: PropTypes.bool, 
+    onRequestCloseWelcomeModal: PropTypes.func,
     invalidProjectModalVisible: PropTypes.bool,
     vm: PropTypes.instanceOf(VM).isRequired
 };

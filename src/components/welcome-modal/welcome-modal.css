@@ -1,0 +1,134 @@
+@import "../../css/colors.css";
+@import "../../css/units.css";
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    outline: none;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 600px;
+}
+
+/* Step indicator dots */
+.step-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    padding: 1.5rem 0;
+    background: linear-gradient(to bottom, #f8f9fa, white);
+}
+
+.step-dot,
+.step-dot-active,
+.step-dot-completed {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.step-dot {
+    background: #e0e0e0;
+}
+
+.step-dot-active {
+    background: #4C97FF;
+    transform: scale(1.3);
+    box-shadow: 0 0 0 4px rgba(76, 151, 255, 0.2);
+}
+
+.step-dot-completed {
+    background: #0FBD8C;
+}
+
+/* Step content */
+.step-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 2rem;
+}
+
+/* Navigation buttons */
+.button-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-top: 2px solid #f0f0f0;
+    background: #fafafa;
+}
+
+.right-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-left: auto;
+}
+
+.back-button,
+.skip-button,
+.next-button {
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.back-button {
+    background: transparent;
+    color: #666;
+}
+
+.back-button:hover {
+    background: #f0f0f0;
+}
+
+.skip-button {
+    background: transparent;
+    color: #999;
+    text-decoration: underline;
+}
+
+.skip-button:hover {
+    color: #666;
+}
+
+.next-button {
+    background: linear-gradient(135deg, #4C97FF 0%, #3373CC 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(76, 151, 255, 0.3);
+}
+
+.next-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 151, 255, 0.4);
+}
+
+.next-button:active {
+    transform: translateY(0);
+}

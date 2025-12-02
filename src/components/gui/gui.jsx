@@ -598,7 +598,9 @@ const mapStateToProps = state => ({
     // This is the button's mode, as opposed to the actual current state
     blocksId: state.scratchGui.timeTravel.year.toString(),
     stageSizeMode: state.scratchGui.stageSize.stageSize,
+    showWelcomeModal: !hasCompletedWelcome(),
     theme: state.scratchGui.theme.theme
+
 });
 
 export default injectIntl(connect(

@@ -239,10 +239,15 @@ const GUIComponent = props => {
                 {...componentProps}
             >
                 {alwaysEnabledModals}
-                {showWelcomeModal ? (
-                <WelcomeModal
-                    onRequestClose={onRequestCloseWelcomeModal} />
-                    ) : null}
+                {showWelcomeModal ? (() => {
+    console.log('🚨 About to render WelcomeModal!');
+    console.log('🚨 WelcomeModal is:', WelcomeModal);
+    console.log('🚨 WelcomeModal typeof:', typeof WelcomeModal);
+    return (
+        <WelcomeModal
+            onRequestClose={onRequestCloseWelcomeModal} />
+    );
+})() : null}
                 {telemetryModalVisible ? (
                     <TelemetryModal
                         isRtl={isRtl}

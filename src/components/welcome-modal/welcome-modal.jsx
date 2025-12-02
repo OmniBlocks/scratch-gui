@@ -10,9 +10,7 @@ import FinalStep from './final-step.jsx';
 
 import styles from './welcome-modal.css';
 
-if (typeof document !== 'undefined') {
-    ReactModal.setAppElement('#app');
-}
+
 
 const WELCOME_COMPLETED_KEY = 'omniblocks:welcome_completed';
 
@@ -36,6 +34,9 @@ class WelcomeModal extends React.Component {
     constructor (props) {
         super(props);
         console.log('🎉 WelcomeModal constructor called!');
+         if (typeof document !== 'undefined') {
+            ReactModal.setAppElement('#app');
+        }
         bindAll(this, [
             'handleNext',
             'handleBack',

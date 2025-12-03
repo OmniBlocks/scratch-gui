@@ -33,7 +33,7 @@ import ChangeUsername from '../../containers/tw-change-username.jsx';
 import CloudVariablesToggler from '../../containers/tw-cloud-toggler.jsx';
 import TWSaveStatus from './tw-save-status.jsx';
 
-import {openTipsLibrary, openSettingsModal, openRestorePointModal} from '../../reducers/modals';
+import {openTipsLibrary, openSettingsModal, openRestorePointModal, openAmpHeroModal} from '../../reducers/modals';
 import {setPlayer} from '../../reducers/mode';
 import {
     isTimeTravel220022BC,
@@ -223,11 +223,15 @@ class MenuBar extends React.Component {
             'handleClickSeeCommunity',
             'handleClickShare',
             'handleSetMode',
+            'handleLogoClick',
             'handleKeyPress',
             'handleRestoreOption',
             'getSaveToComputerHandler',
             'restoreOptionMessage'
         ]);
+        
+        this.logoClickCount = 0;
+        this.logoClickTimer = null;
     }
     componentDidMount () {
         document.addEventListener('keydown', this.handleKeyPress);
@@ -348,6 +352,20 @@ class MenuBar extends React.Component {
             }
         }
     }
+    handleLogoClick () {
+    // amp easter egg, click logo 5 times in 3 seconds
+    clearTimeout(this.logoClickTimer);
+    this.logoClickCount++;
+    
+    if (this.logoClickCount >= 5) {
+        this.props.onOpenAmpHero();
+        this.logoClickCount = 0;
+    } else {
+        this.logoClickTimer = setTimeout(() => {
+            this.logoClickCount = 0;
+        }, 3000);
+    }
+}
     getSaveToComputerHandler (downloadProjectCallback) {
         return () => {
             this.props.onRequestCloseFile();

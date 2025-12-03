@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dedicated to Amp</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #4d97ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #scratch-player {
+            width: 480px;
+            height: 360px;
+        }
+    </style>
+</head>
+<body>
+    <div id="scratch-player"></div>
+    <script src="https://unpkg.com/scratch-vm@latest/dist/web/scratch-vm.js"></script>
+    <script src="https://unpkg.com/scratch-render@latest/dist/web/scratch-render.js"></script>
+    <script src="https://unpkg.com/scratch-storage@latest/dist/web/scratch-storage.js"></script>
+    <script>
+        // init svm
+        const vm = new window.VirtualMachine();
+        const storage = new window.ScratchStorage();
+        const AssetType = storage.AssetType;
+        vm.attachStorage(storage);
+        
+        // load the easter egg sb3
+        fetch('Internal.OmniBlocks.AmpHero.sb3')
+            .then(response => response.arrayBuffer())
+            .then(buffer => {
+                vm.loadProject(buffer).then(() => {
+                    vm.greenFlag();
+                    vm.start();
+                });
+            })
+            .catch(err => console.error('Failed to load project:', err));
+    </script>
+</body>
+</html>

@@ -4,6 +4,15 @@ This file is automatically updated by the Changelog Updater bot.
 
 <!-- UNRELEASED_COMMITS_START -->
 
+### Commit [`abc14d68f`](https://github.com/OmniBlocks/scratch-gui/commit/abc14d68fb1398b5d8f282f2eeddfc19b4d1a4c2) - 2025-12-03 10:52:49 -0600
+
+**Add import for AmpHeroModal component**
+
+*Author: Graison P*
+
+---
+
+
 ### Commit [`5af6de6f2`](https://github.com/OmniBlocks/scratch-gui/commit/5af6de6f26502dae1e172ce038a02533c561492e) - 2025-12-03 10:51:55 -0600
 
 **Add AmpHeroModal component with Redux connection**

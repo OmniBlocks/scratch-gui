@@ -26,6 +26,7 @@ import BrowserModal from '../browser-modal/browser-modal.jsx';
 import TipsLibrary from '../../containers/tips-library.jsx';
 import Cards from '../../containers/cards.jsx';
 import Alerts from '../../containers/alerts.jsx';
+import AmpHeroModal from '../../containers/tw-amp-hero-modal.jsx';
 import DragLayer from '../../containers/drag-layer.jsx';
 import ConnectionModal from '../../containers/connection-modal.jsx';
 import TelemetryModal from '../telemetry-modal/telemetry-modal.jsx';
@@ -349,6 +350,7 @@ const GUIComponent = props => {
                                             id="gui.gui.codeTab"
                                         />
                                     </Tab>
+                                    <AmpHeroModal />
                                     <Tab
                                         className={tabClassNames.tab}
                                         onClick={onActivateCostumesTab}

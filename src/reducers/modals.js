@@ -15,6 +15,7 @@ const MODAL_USERNAME = 'usernameModal';
 const MODAL_SETTINGS = 'settingsModal';
 const MODAL_CUSTOM_EXTENSION = 'customExtensionModal';
 const MODAL_RESTORE_POINTS = 'restorePointModal';
+const MODAL_AMP_HERO = 'ampHeroModal';
 const MODAL_FONTS = 'fontsModal';
 const MODAL_UNKNOWN_PLATFORM = 'unknownPlatformModal';
 const MODAL_INVALID_PROJECT = 'invalidProjectModal';
@@ -31,6 +32,7 @@ const initialState = {
     [MODAL_CONNECTION]: false,
     [MODAL_TIPS_LIBRARY]: false,
     [MODAL_USERNAME]: false,
+    [MODAL_AMP_HERO]: false,
     [MODAL_SETTINGS]: false,
     [MODAL_CUSTOM_EXTENSION]: false,
     [MODAL_RESTORE_POINTS]: false,
@@ -75,6 +77,9 @@ const openCostumeLibrary = function () {
 const openExtensionLibrary = function () {
     return openModal(MODAL_EXTENSION_LIBRARY);
 };
+const openAmpHeroModal = function () {
+    return openModal(MODAL_AMP_HERO);
+};
 const openLoadingProject = function () {
     return openModal(MODAL_LOADING_PROJECT);
 };
@@ -116,6 +121,9 @@ const openUnknownPlatformModal = function () {
 };
 const openInvalidProjectModal = function () {
     return openModal(MODAL_INVALID_PROJECT);
+};
+const closeAmpHeroModal = function () {
+    return closeModal(MODAL_AMP_HERO);
 };
 const closeBackdropLibrary = function () {
     return closeModal(MODAL_BACKDROP_LIBRARY);
@@ -186,11 +194,13 @@ export {
     openCustomExtensionModal,
     openRestorePointModal,
     openFontsModal,
+    openAmpHeroModal,
     openUnknownPlatformModal,
     openInvalidProjectModal,
     closeBackdropLibrary,
     closeCostumeLibrary,
     closeExtensionLibrary,
+    closeAmpHeroModal,
     closeLoadingProject,
     closeSpriteLibrary,
     closeSoundLibrary,

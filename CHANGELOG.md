@@ -4,6 +4,89 @@ This file is automatically updated by the Changelog Updater bot.
 
 <!-- UNRELEASED_COMMITS_START -->
 
+### Commit [`53b1e9115`](https://github.com/OmniBlocks/scratch-gui/commit/53b1e911541e10d0411e9ec01b78f8558ccf8c16) - 2025-12-03 11:08:15 -0600
+
+**WIP COMMIT DO NOT BLAME ME**
+
+Added logo click handler for amp easter egg feature.
+
+*Author: Graison P*
+
+---
+
+
+### Commit [`065579cf6`](https://github.com/OmniBlocks/scratch-gui/commit/065579cf6607175fe012151ab1a871df570cf5de) - 2025-12-03 10:55:11 -0600
+
+**Add AmpHeroModal component to GUI**
+
+*Author: Graison P*
+
+---
+
+
+### Commit [`abc14d68f`](https://github.com/OmniBlocks/scratch-gui/commit/abc14d68fb1398b5d8f282f2eeddfc19b4d1a4c2) - 2025-12-03 10:52:49 -0600
+
+**Add import for AmpHeroModal component**
+
+*Author: Graison P*
+
+---
+
+
+### Commit [`5af6de6f2`](https://github.com/OmniBlocks/scratch-gui/commit/5af6de6f26502dae1e172ce038a02533c561492e) - 2025-12-03 10:51:55 -0600
+
+**Add AmpHeroModal component with Redux connection**
+
+*Author: Graison P*
+
+---
+
+
+### Commit [`56552959a`](https://github.com/OmniBlocks/scratch-gui/commit/56552959ac4c63de1187d78303f068b8c23c2d15) - 2025-12-03 10:36:31 -0600
+
+**Add AMP Hero modal functionality**
+
+*Author: Graison P*
+
+---
+
+
+### Commit [`e374a91d7`](https://github.com/OmniBlocks/scratch-gui/commit/e374a91d758f0aeb7f2bb3f8d22534b000aaba0d) - 2025-12-03 10:33:08 -0600
+
+**Add CSS styles for amp-hero-modal component**
+
+*Author: Graison P*
+
+---
+
+
+### Commit [`965b4efcd`](https://github.com/OmniBlocks/scratch-gui/commit/965b4efcdac897e3a7c42b12b6f94c141770a6d6) - 2025-12-03 10:30:15 -0600
+
+**Add AmpHeroModal component for displaying a modal**
+
+*Author: Graison P*
+
+---
+
+
+### Commit [`abbe0af3a`](https://github.com/OmniBlocks/scratch-gui/commit/abbe0af3a68db81c1896d4835395bd2c03c4cff8) - 2025-12-03 10:14:12 -0600
+
+**Add files via upload**
+
+*Author: Graison P*
+
+---
+
+
+### Commit [`6e3ecbd96`](https://github.com/OmniBlocks/scratch-gui/commit/6e3ecbd960a3cdbe4d26dd02b76e0f0419f5765c) - 2025-12-03 16:07:38 +0000
+
+**enable open source pro tier i think this does that**
+
+*Author: ampelectrecuted*
+
+---
+
+
 ### Commit [`da27c905d`](https://github.com/OmniBlocks/scratch-gui/commit/da27c905d50d22a2e296c14d472808a3c32942eb) - 2025-12-03 15:49:23 +0000
 
 **fix: songedito iframe... hopefully**

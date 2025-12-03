@@ -4,6 +4,17 @@ This file is automatically updated by the Changelog Updater bot.
 
 <!-- UNRELEASED_COMMITS_START -->
 
+### Commit [`53b1e9115`](https://github.com/OmniBlocks/scratch-gui/commit/53b1e911541e10d0411e9ec01b78f8558ccf8c16) - 2025-12-03 11:08:15 -0600
+
+**WIP COMMIT DO NOT BLAME ME**
+
+Added logo click handler for amp easter egg feature.
+
+*Author: Graison P*
+
+---
+
+
 ### Commit [`065579cf6`](https://github.com/OmniBlocks/scratch-gui/commit/065579cf6607175fe012151ab1a871df570cf5de) - 2025-12-03 10:55:11 -0600
 
 **Add AmpHeroModal component to GUI**

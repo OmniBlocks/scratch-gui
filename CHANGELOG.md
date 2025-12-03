@@ -4,6 +4,15 @@ This file is automatically updated by the Changelog Updater bot.
 
 <!-- UNRELEASED_COMMITS_START -->
 
+### Commit [`e374a91d7`](https://github.com/OmniBlocks/scratch-gui/commit/e374a91d758f0aeb7f2bb3f8d22534b000aaba0d) - 2025-12-03 10:33:08 -0600
+
+**Add CSS styles for amp-hero-modal component**
+
+*Author: Graison P*
+
+---
+
+
 ### Commit [`965b4efcd`](https://github.com/OmniBlocks/scratch-gui/commit/965b4efcdac897e3a7c42b12b6f94c141770a6d6) - 2025-12-03 10:30:15 -0600
 
 **Add AmpHeroModal component for displaying a modal**

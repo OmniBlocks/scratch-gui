@@ -350,6 +350,7 @@ const GUIComponent = props => {
                                             id="gui.gui.codeTab"
                                         />
                                     </Tab>
+                                    <AmpHeroModal />
                                     <Tab
                                         className={tabClassNames.tab}
                                         onClick={onActivateCostumesTab}

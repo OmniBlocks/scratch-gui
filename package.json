@@ -1,6 +1,6 @@
 {
   "name": "scratch-gui",
-  "version": "3.2.37",
+  "version": "0.6.0-alpha",
   "description": "Graphical User Interface for creating and running Scratch 3.0 projects",
   "author": "Massachusetts Institute of Technology",
   "license": "GPL-3.0",
@@ -116,6 +116,7 @@
     "@babel/plugin-transform-async-to-generator": "7.14.5",
     "@babel/preset-env": "7.14.8",
     "@babel/preset-react": "7.14.5",
+    "@playwright/test": "^1.57.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.1.0",
     "babel-loader": "8.3.0",

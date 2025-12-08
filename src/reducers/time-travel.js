@@ -8,6 +8,8 @@ const YEAR_2020 = '2020';
 const YEAR_1990 = '1990';
 const YEAR_1920 = '1920';
 const YEAR_220022BC = '220022BC';
+const YEAR_NEG92BC = '-92BC';
+const CHRISTMAS_2025 = 'CHRISTMAS_2025';
 
 const reducer = function (state, action) {
     if (typeof state === 'undefined') state = initialState;

@@ -141,7 +141,8 @@ GUI.propTypes = {
 
 GUI.defaultProps = {
     isScratchDesktop: false,
-    isTotallyNormal: false,
+    isTotallyNormal: true, // we should make an easter egg var called isNotTotallyNormal - Graison | shure vro - void
+    // isNotTotallyNormal: false, | unused, placeholder for easter egg - Graison
     onStorageInit: storageInstance => storageInstance.addOfficialScratchWebStores(),
     onProjectLoaded: () => {},
     onUpdateProjectId: () => {},
@@ -208,6 +209,7 @@ const ConnectedGUI = injectIntl(connect(
 /* why are the og developers using double slashes
  for multiline comments? when you can just use
    /* and  */
+// because it's cooler and easy - Graison
 const WrappedGui = compose(
     LocalizationHOC,
     ErrorBoundaryHOC('Top Level App'),

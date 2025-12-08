@@ -313,7 +313,7 @@ class MenuBar extends React.Component {
                 document.documentElement.style.filter = '';
                 document.documentElement.style.height = '';
             }
-
+/*
             // Change logo for modes
             if (mode === '1990') {
                 document.getElementById('logo_img').src = ninetiesLogo;
@@ -327,7 +327,11 @@ class MenuBar extends React.Component {
                 document.getElementById('logo_img').src = this.props.logo;
             }
 
-            this.props.onSetTimeTravelMode(mode);
+            this.props.onSetTimeTravelMode(mode); 
+        
+            */
+           // ob: removed logo changing since the logo was removed in upstream turbowarp 
+           // and looking for it causes issues - void
         };
     }
     handleRestoreOption (restoreFun) {
@@ -855,6 +859,7 @@ class MenuBar extends React.Component {
                                     place={this.props.isRtl ? 'left' : 'right'}
                                 >
                                     <MenuSection>
+                                        {/*ob: add back april fools modes - void*/}
                                         <MenuItem onClick={this.handleSetMode('NOW')}>
                                             <span className={classNames({[styles.inactive]: !this.props.modeNow})}>
                                                 {'✓'}
@@ -875,6 +880,40 @@ class MenuBar extends React.Component {
                                                 defaultMessage="Caturday mode"
                                                 description="April fools: Cat blocks mode"
                                                 id="gui.menuBar.caturdayMode"
+                                                
+                                            />
+                                        </MenuItem>
+                                        <MenuItem onClick={this.handleSetMode('1990')}>
+                                            <span className={classNames({[styles.inactive]: !this.props.mode1990})}>
+                                                {'✓'}
+                                            </span>
+                                            {' '}
+                                            <FormattedMessage
+                                                defaultMessage="Old Timey mode"
+                                                description="April fools: Old Timey mode"
+                                                id="gui.menuBar.oldTimeyMode"
+                                            />
+                                        </MenuItem>
+                                        <MenuItem onClick={this.handleSetMode('1920')}>
+                                            <span className={classNames({[styles.inactive]: !this.props.mode1920})}>
+                                                {'✓'}
+                                            </span>
+                                            {' '}
+                                            <FormattedMessage
+                                                defaultMessage="Roaring Twenties mode"
+                                                description="April fools: Roaring Twenties mode"
+                                                id="gui.menuBar.roaringTwentiesMode"
+                                            />
+                                        </MenuItem>
+                                        <MenuItem onClick={this.handleSetMode('220022BC')}>
+                                            <span className={classNames({[styles.inactive]: !this.props.mode220022BC})}>
+                                                {'✓'}
+                                            </span>
+                                            {' '}
+                                            <FormattedMessage
+                                                defaultMessage="Prehistoric mode"
+                                                description="April fools: Prehistoric mode"
+                                                id="gui.menuBar.prehistoricMode"
                                             />
                                         </MenuItem>
                                     </MenuSection>

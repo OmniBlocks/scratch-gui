@@ -168,7 +168,15 @@ UsernameModal.propTypes = {
         width: PropTypes.number,
         height: PropTypes.number
     }),
-    disableCompiler: PropTypes.bool
+    disableCompiler: PropTypes.bool,
+    autoOpenEnabled: PropTypes.bool,
+    onSetAutoOpenEnabled: PropTypes.func,
+    recentFiles: PropTypes.arrayOf(PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        lastOpened: PropTypes.number.isRequired
+    })),
+    selectedRecentFileIndex: PropTypes.number,
+    onSetSelectedRecentFile: PropTypes.func
 };
 
 const mapStateToProps = state => ({
@@ -182,11 +190,16 @@ const mapStateToProps = state => ({
     removeLimits: !state.scratchGui.tw.runtimeOptions.miscLimits,
     warpTimer: state.scratchGui.tw.compilerOptions.warpTimer,
     customStageSize: state.scratchGui.customStageSize,
-    disableCompiler: !state.scratchGui.tw.compilerOptions.enabled
+    disableCompiler: !state.scratchGui.tw.compilerOptions.enabled,
+    autoOpenEnabled: state.scratchGui.tw.autoOpenEnabled,
+    recentFiles: state.scratchGui.tw.recentFiles,
+    selectedRecentFileIndex: state.scratchGui.tw.selectedRecentFileIndex
 });
 
 const mapDispatchToProps = dispatch => ({
-    onClose: () => dispatch(closeSettingsModal())
+    onClose: () => dispatch(closeSettingsModal()),
+    onSetAutoOpenEnabled: enabled => dispatch(setAutoOpenEnabled(enabled)),
+    onSetSelectedRecentFile: index => dispatch(setSelectedRecentFile(index))
 });
 
 export default injectIntl(connect(

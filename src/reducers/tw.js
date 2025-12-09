@@ -152,11 +152,13 @@ const reducer = function (state, action) {
             autoOpenEnabled: action.autoOpenEnabled
         });
     case ADD_RECENT_FILE:
+    {
         // Add file to recent files list, maintaining max 5 items
         const newRecentFiles = [action.recentFile, ...state.recentFiles.filter(f => f.name !== action.recentFile.name)].slice(0, 5);
         return Object.assign({}, state, {
             recentFiles: newRecentFiles
         });
+    }
     case SET_SELECTED_RECENT_FILE:
         return Object.assign({}, state, {
             selectedRecentFileIndex: action.selectedRecentFileIndex

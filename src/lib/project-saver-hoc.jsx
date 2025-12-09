@@ -33,6 +33,12 @@ import {
     getIsUpdating,
     projectError
 } from '../reducers/project-state';
+import {
+    addRecentFile
+} from '../reducers/tw';
+import {
+    addToRecentFiles
+} from './recent-files-manager';
 
 /**
  * Higher Order Component to provide behavior for saving projects.
@@ -247,6 +253,17 @@ const ProjectSaverHOC = function (WrappedComponent) {
                 .then(() => this.props.onUpdateProjectData(projectId, savedVMState, requestParams))
                 .then(response => {
                     this.props.onSetProjectUnchanged();
+                    
+                    // Add to recent files when project is saved
+                    if (this.props.reduxProjectTitle) {
+                        const recentFile = {
+                            name: this.props.reduxProjectTitle,
+                            lastOpened: Date.now(),
+                            handle: this.props.fileHandle
+                        };
+                        this.props.onAddRecentFile(recentFile);
+                    }
+                    
                     const id = response.id.toString();
                     if (id && this.props.onUpdateProjectThumbnail) {
                         this.storeProjectThumbnail(id);
@@ -395,7 +412,9 @@ const ProjectSaverHOC = function (WrappedComponent) {
         reduxProjectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         reduxProjectTitle: PropTypes.string,
         setAutoSaveTimeoutId: PropTypes.func.isRequired,
-        vm: PropTypes.instanceOf(VM).isRequired
+        vm: PropTypes.instanceOf(VM).isRequired,
+        fileHandle: PropTypes.object,
+        onAddRecentFile: PropTypes.func
     };
     ProjectSaverComponent.defaultProps = {
         autoSaveIntervalSecs: 600, // 10 minutes = 600 seconds
@@ -424,7 +443,8 @@ const ProjectSaverHOC = function (WrappedComponent) {
             projectChanged: state.scratchGui.projectChanged,
             reduxProjectId: state.scratchGui.projectState.projectId,
             reduxProjectTitle: state.scratchGui.projectTitle,
-            vm: state.scratchGui.vm
+            vm: state.scratchGui.vm,
+            fileHandle: state.scratchGui.tw.fileHandle
         };
     };
     const mapDispatchToProps = dispatch => ({
@@ -441,7 +461,8 @@ const ProjectSaverHOC = function (WrappedComponent) {
         onShowSaveSuccessAlert: () => showAlertWithTimeout(dispatch, 'saveSuccess'),
         onShowSavingAlert: () => showAlertWithTimeout(dispatch, 'saving'),
         onUpdatedProject: loadingState => dispatch(doneUpdatingProject(loadingState)),
-        setAutoSaveTimeoutId: id => dispatch(setAutoSaveTimeoutId(id))
+        setAutoSaveTimeoutId: id => dispatch(setAutoSaveTimeoutId(id)),
+        onAddRecentFile: file => dispatch(addRecentFile(file))
     });
     // Allow incoming props to override redux-provided props. Used to mock in tests.
     const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign(

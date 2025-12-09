@@ -6,6 +6,12 @@ import {connect} from 'react-redux';
 import log from '../lib/log';
 import sharedMessages from './shared-messages';
 import {setFileHandle, setProjectError} from '../reducers/tw';
+import {
+    addRecentFile
+} from '../reducers/tw';
+import {
+    addToRecentFiles
+} from './recent-files-manager';
 
 import {
     LoadingStates,
@@ -200,6 +206,15 @@ const SBFileUploaderHOC = function (WrappedComponent) {
                         if (filename) {
                             const uploadedProjectTitle = this.getProjectTitleFromFilename(filename);
                             this.props.onSetProjectTitle(uploadedProjectTitle);
+                            
+                            // Add to recent files when a project is successfully loaded
+                            const fileHandle = this.props.fileHandle;
+                            const recentFile = {
+                                name: uploadedProjectTitle || filename,
+                                lastOpened: Date.now(),
+                                handle: fileHandle
+                            };
+                            this.props.onAddRecentFile(recentFile);
                         }
                         this.props.vm.renderer.draw();
                         loadingSuccess = true;
@@ -282,7 +297,8 @@ const SBFileUploaderHOC = function (WrappedComponent) {
             })
         }),
         onSetFileHandle: PropTypes.func
-    };
+        onSetFileHandle: PropTypes.func,
+        onAddRecentFile: PropTypes.func
     SBFileUploaderComponent.defaultProps = {
         showOpenFilePicker: typeof showOpenFilePicker === 'function' ? window.showOpenFilePicker.bind(window) : null
     };
@@ -297,7 +313,8 @@ const SBFileUploaderHOC = function (WrappedComponent) {
             projectChanged: state.scratchGui.projectChanged,
             userOwnsProject: ownProps.authorUsername && user &&
                 (ownProps.authorUsername === user.username),
-            vm: state.scratchGui.vm
+            vm: state.scratchGui.vm,
+            fileHandle: state.scratchGui.tw.fileHandle
         };
     };
     const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -322,7 +339,8 @@ const SBFileUploaderHOC = function (WrappedComponent) {
         // noticed by componentDidUpdate()
         requestProjectUpload: loadingState => dispatch(requestProjectUpload(loadingState)),
         onSetFileHandle: fileHandle => dispatch(setFileHandle(fileHandle))
-    });
+        onSetFileHandle: fileHandle => dispatch(setFileHandle(fileHandle)),
+        onAddRecentFile: file => dispatch(addRecentFile(file))
     // Allow incoming props to override redux-provided props. Used to mock in tests.
     const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign(
         {}, stateProps, dispatchProps, ownProps

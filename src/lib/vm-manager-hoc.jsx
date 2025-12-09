@@ -2,6 +2,7 @@ import bindAll from 'lodash.bindall';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
+import log from './log';
 
 import VM from 'scratch-vm';
 import AudioEngine from 'scratch-audio';
@@ -13,7 +14,18 @@ import {
     onLoadedProject,
     projectError
 } from '../reducers/project-state';
-import log from './log';
+import {
+    setAutoOpenEnabled,
+    addRecentFile,
+    setSelectedRecentFile
+} from '../reducers/tw';
+import {
+    loadRecentFiles,
+    loadAutoOpenSetting,
+    loadSelectedRecentFileIndex,
+    getMostRecentValidFile,
+    getRecentFileAtIndex
+} from './recent-files-manager';
 
 /**
  * List of fonts that could be used by security prompts.
@@ -51,6 +63,45 @@ const vmManagerHOC = function (WrappedComponent) {
                 }
                 this.props.vm.initialized = true;
                 this.props.vm.setLocale(this.props.locale, this.props.messages);
+            }
+            
+            // Load recent files and auto-open settings on startup
+            this.loadRecentFilesAndAutoOpen();
+        }
+        
+        loadRecentFilesAndAutoOpen () {
+            try {
+                // Load recent files and settings from localStorage
+                const recentFiles = loadRecentFiles();
+                const autoOpenEnabled = loadAutoOpenSetting();
+                const selectedIndex = loadSelectedRecentFileIndex();
+                
+                // Dispatch to Redux store
+                recentFiles.forEach(file => {
+                    this.props.onAddRecentFile(file);
+                });
+                this.props.onSetAutoOpenEnabled(autoOpenEnabled);
+                this.props.onSetSelectedRecentFile(selectedIndex);
+                
+                // Trigger auto-open if enabled and we have recent files
+                if (autoOpenEnabled && recentFiles.length > 0) {
+                    this.triggerAutoOpen(recentFiles, selectedIndex);
+                }
+            } catch (error) {
+                log.warn('Failed to load recent files and auto-open settings:', error);
+            }
+        }
+        
+        async triggerAutoOpen (recentFiles, selectedIndex) {
+            try {
+                const fileToOpen = selectedIndex !== null && selectedIndex >= 0 && selectedIndex < recentFiles.length
+                    ? await getRecentFileAtIndex(recentFiles, selectedIndex)
+                    : await getMostRecentValidFile(recentFiles);
+                
+                // Note: File handle auto-opening would need integration with the file loading system
+                // This is a placeholder for future implementation when file handles are properly stored
+            } catch (error) {
+                log.warn('Failed to auto-open recent file:', error);
             }
             if (!this.props.isPlayerOnly && !this.props.isStarted) {
                 this.props.vm.start();
@@ -158,7 +209,10 @@ const vmManagerHOC = function (WrappedComponent) {
         onError: error => dispatch(projectError(error)),
         onLoadedProject: (loadingState, canSave) =>
             dispatch(onLoadedProject(loadingState, canSave, true)),
-        onSetProjectUnchanged: () => dispatch(setProjectUnchanged())
+        onSetProjectUnchanged: () => dispatch(setProjectUnchanged()),
+        onSetAutoOpenEnabled: enabled => dispatch(setAutoOpenEnabled(enabled)),
+        onAddRecentFile: file => dispatch(addRecentFile(file)),
+        onSetSelectedRecentFile: index => dispatch(setSelectedRecentFile(index))
     });
 
     // Allow incoming props to override redux-provided props. Used to mock in tests.

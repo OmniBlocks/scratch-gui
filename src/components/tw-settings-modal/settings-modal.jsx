@@ -325,6 +325,82 @@ const DisableCompiler = props => (
     />
 );
 
+const AutoOpen = props => (
+    <BooleanSetting
+        {...props}
+        label={
+            <FormattedMessage
+                defaultMessage="Auto-open Recent File"
+                description="Auto-open setting"
+                id="tw.settingsModal.autoOpen"
+            />
+        }
+        help={
+            <FormattedMessage
+                // eslint-disable-next-line max-len
+                defaultMessage="Automatically opens your selected recent file when OmniBlocks starts. Uses the File System Access API to access your files. Only works in supported browsers when installed as a PWA."
+                description="Auto-open setting help"
+                id="tw.settingsModal.autoOpenHelp"
+            />
+        }
+        slug="auto-open"
+    />
+);
+
+const RecentFilesSelector = ({
+    recentFiles,
+    selectedRecentFileIndex,
+    onSelectedRecentFileChange,
+    autoOpenEnabled
+}) => {
+    if (!autoOpenEnabled || !recentFiles || recentFiles.length === 0) {
+        return null;
+    }
+
+    return (
+        <Setting
+            active={autoOpenEnabled}
+            primary={(
+                <div className={classNames(styles.label, styles.recentFilesSelector)}>
+                    <FormattedMessage
+                        defaultMessage="Select file to auto-open:"
+                        description="Recent files selector label"
+                        id="tw.settingsModal.recentFilesSelector"
+                    />
+                    <select
+                        value={selectedRecentFileIndex}
+                        onChange={onSelectedRecentFileChange}
+                        className={styles.recentFilesSelect}
+                    >
+                        {recentFiles.map((file, index) => (
+                            <option key={`${file.name}-${file.lastOpened}`} value={index}>
+                                {file.name} ({new Date(file.lastOpened).toLocaleDateString()})
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            )}
+            help={(
+                <FormattedMessage
+                    // eslint-disable-next-line max-len
+                    defaultMessage="Choose which of your recent files to automatically open when OmniBlocks starts. The list shows your 5 most recently opened files."
+                    description="Recent files selector help"
+                    id="tw.settingsModal.recentFilesSelectorHelp"
+                />
+            )}
+        />
+    );
+};
+RecentFilesSelector.propTypes = {
+    recentFiles: PropTypes.arrayOf(PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        lastOpened: PropTypes.number.isRequired
+    })),
+    selectedRecentFileIndex: PropTypes.number,
+    onSelectedRecentFileChange: PropTypes.func,
+    autoOpenEnabled: PropTypes.bool
+};
+
 const CustomStageSize = ({
     customStageSizeEnabled,
     stageWidth,
@@ -499,6 +575,16 @@ const SettingsModalComponent = props => (
                 value={props.disableCompiler}
                 onChange={props.onDisableCompilerChange}
             />
+            <AutoOpen
+                value={props.autoOpenEnabled}
+                onChange={props.onAutoOpenChange}
+            />
+            <RecentFilesSelector
+                recentFiles={props.recentFiles}
+                selectedRecentFileIndex={props.selectedRecentFileIndex}
+                onSelectedRecentFileChange={props.onSelectedRecentFileChange}
+                autoOpenEnabled={props.autoOpenEnabled}
+            />
             {!props.isEmbedded && (
                 <StoreProjectOptions
                     {...props}
@@ -528,7 +614,15 @@ SettingsModalComponent.propTypes = {
     warpTimer: PropTypes.bool,
     onWarpTimerChange: PropTypes.func,
     disableCompiler: PropTypes.bool,
-    onDisableCompilerChange: PropTypes.func
+    onDisableCompilerChange: PropTypes.func,
+    autoOpenEnabled: PropTypes.bool,
+    onAutoOpenChange: PropTypes.func,
+    recentFiles: PropTypes.arrayOf(PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        lastOpened: PropTypes.number.isRequired
+    })),
+    selectedRecentFileIndex: PropTypes.number,
+    onSelectedRecentFileChange: PropTypes.func
 };
 
 export default injectIntl(SettingsModalComponent);

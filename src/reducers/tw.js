@@ -17,6 +17,10 @@ const SET_HAS_CLOUD_VARIABLES = 'tw/SET_HAS_CLOUD_VARIABLES';
 const SET_CLOUD_HOST = 'tw/SET_CLOUD_HOST';
 const SET_PLATFORM_MISMATCH_DETAILS = 'tw/SET_PLATFORM_MISMATCH_DETAILS';
 const SET_PROJECT_ERROR = 'tw/SET_PROJECT_ERROR';
+const SET_AUTO_OPEN_ENABLED = 'tw/SET_AUTO_OPEN_ENABLED';
+const ADD_RECENT_FILE = 'tw/ADD_RECENT_FILE';
+const SET_SELECTED_RECENT_FILE = 'tw/SET_SELECTED_RECENT_FILE';
+const CLEAR_RECENT_FILES = 'tw/CLEAR_RECENT_FILES';
 
 export const initialState = {
     framerate: 30,
@@ -52,7 +56,10 @@ export const initialState = {
         platform: null,
         callback: null
     },
-    projectError: null
+    projectError: null,
+    autoOpenEnabled: false,
+    recentFiles: [],
+    selectedRecentFileIndex: 0
 };
 
 const reducer = function (state, action) {
@@ -139,6 +146,25 @@ const reducer = function (state, action) {
     case SET_PROJECT_ERROR:
         return Object.assign({}, state, {
             projectError: action.projectError
+        });
+    case SET_AUTO_OPEN_ENABLED:
+        return Object.assign({}, state, {
+            autoOpenEnabled: action.autoOpenEnabled
+        });
+    case ADD_RECENT_FILE:
+        // Add file to recent files list, maintaining max 5 items
+        const newRecentFiles = [action.recentFile, ...state.recentFiles.filter(f => f.name !== action.recentFile.name)].slice(0, 5);
+        return Object.assign({}, state, {
+            recentFiles: newRecentFiles
+        });
+    case SET_SELECTED_RECENT_FILE:
+        return Object.assign({}, state, {
+            selectedRecentFileIndex: action.selectedRecentFileIndex
+        });
+    case CLEAR_RECENT_FILES:
+        return Object.assign({}, state, {
+            recentFiles: [],
+            selectedRecentFileIndex: 0
         });
     default:
         return state;
@@ -278,6 +304,33 @@ const setProjectError = function (projectError) {
     };
 };
 
+const setAutoOpenEnabled = function (autoOpenEnabled) {
+    return {
+        type: SET_AUTO_OPEN_ENABLED,
+        autoOpenEnabled
+    };
+};
+
+const addRecentFile = function (recentFile) {
+    return {
+        type: ADD_RECENT_FILE,
+        recentFile
+    };
+};
+
+const setSelectedRecentFile = function (selectedRecentFileIndex) {
+    return {
+        type: SET_SELECTED_RECENT_FILE,
+        selectedRecentFileIndex
+    };
+};
+
+const clearRecentFiles = function () {
+    return {
+        type: CLEAR_RECENT_FILES
+    };
+};
+
 export {
     reducer as default,
     initialState as twInitialState,
@@ -299,5 +352,9 @@ export {
     setHasCloudVariables,
     setCloudHost,
     setPlatformMismatchDetails,
-    setProjectError
+    setProjectError,
+    setAutoOpenEnabled,
+    addRecentFile,
+    setSelectedRecentFile,
+    clearRecentFiles
 };

@@ -6,6 +6,14 @@ import {connect} from 'react-redux';
 import {closeSettingsModal} from '../reducers/modals';
 import SettingsModalComponent from '../components/tw-settings-modal/settings-modal.jsx';
 import {defaultStageSize} from '../reducers/custom-stage-size';
+import {
+    setAutoOpenEnabled,
+    setSelectedRecentFile
+} from '../reducers/tw';
+import {
+    saveAutoOpenSetting,
+    saveSelectedRecentFileIndex
+} from '../lib/recent-files-manager';
 
 const messages = defineMessages({
     newFramerate: {
@@ -30,7 +38,9 @@ class UsernameModal extends React.Component {
             'handleStageWidthChange',
             'handleStageHeightChange',
             'handleDisableCompilerChange',
-            'handleStoreProjectOptions'
+            'handleStoreProjectOptions',
+            'handleAutoOpenChange',
+            'handleSelectedRecentFileChange'
         ]);
     }
     handleFramerateChange (e) {
@@ -85,6 +95,16 @@ class UsernameModal extends React.Component {
     handleStoreProjectOptions () {
         this.props.vm.storeProjectOptions();
     }
+    handleAutoOpenChange (e) {
+        const enabled = e.target.checked;
+        this.props.onSetAutoOpenEnabled(enabled);
+        saveAutoOpenSetting(enabled);
+    }
+    handleSelectedRecentFileChange (e) {
+        const index = parseInt(e.target.value, 10);
+        this.props.onSetSelectedRecentFile(index);
+        saveSelectedRecentFileIndex(index);
+    }
     render () {
         const {
             /* eslint-disable no-unused-vars */
@@ -114,6 +134,8 @@ class UsernameModal extends React.Component {
                     this.props.customStageSize.height !== defaultStageSize.height
                 }
                 onStoreProjectOptions={this.handleStoreProjectOptions}
+                onAutoOpenChange={this.handleAutoOpenChange}
+                onSelectedRecentFileChange={this.handleSelectedRecentFileChange}
                 {...props}
             />
         );

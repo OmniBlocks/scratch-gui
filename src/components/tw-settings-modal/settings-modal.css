@@ -145,3 +145,27 @@
     background: rgb(233, 233, 53);
     color: $text-primary-default;
 }
+
+.recent-files-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.recent-files-select {
+    font-family: inherit;
+    font-size: 14px;
+    padding: 0.5rem;
+    border: 1px solid $ui-tertiary;
+    border-radius: 4px;
+    background: $ui-primary;
+    color: $text-primary;
+    cursor: pointer;
+    min-width: 300px;
+}
+
+.recent-files-select:focus {
+    outline: none;
+    border-color: $looks-secondary;
+    box-shadow: 0 0 0 2px $looks-transparent;
+}

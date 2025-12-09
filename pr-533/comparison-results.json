@@ -45,8 +45,8 @@
     },
     {
       "name": "songs-tab.png",
-      "diffPixels": 53902,
-      "diffPercentage": "5.85",
+      "diffPixels": 54398,
+      "diffPercentage": "5.90",
       "hasDiff": true,
       "skipped": false
     },
@@ -66,9 +66,9 @@
     },
     {
       "name": "advanced-settings.png",
-      "diffPixels": 0,
+      "diffPixels": 1,
       "diffPercentage": "0.00",
-      "hasDiff": false,
+      "hasDiff": true,
       "skipped": false
     }
   ]

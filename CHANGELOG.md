@@ -4,6 +4,124 @@ This file is automatically updated by the Changelog Updater bot.
 
 <!-- UNRELEASED_COMMITS_START -->
 
+### Commit [`d463e8c97`](https://github.com/OmniBlocks/scratch-gui/commit/d463e8c97c02483e77ee3f382b8e9fbd4f1aed4e) - 2025-12-11 20:04:50 -0500
+
+**docs: update readme misconceptions, add details**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`ebd427769`](https://github.com/OmniBlocks/scratch-gui/commit/ebd42776903fee8cc32702a11daffbbe4fb44915) - 2025-12-10 21:30:21 -0500
+
+**Update test.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`53eda584c`](https://github.com/OmniBlocks/scratch-gui/commit/53eda584cc9887258e60d11f97c5e378e06645a8) - 2025-12-10 21:04:54 -0500
+
+**Update test.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`9a527149f`](https://github.com/OmniBlocks/scratch-gui/commit/9a527149f65cc22d566f77e9631c05606798a7cf) - 2025-12-10 14:34:49 -0600
+
+**Clarify rules for joke features in contributions**
+
+Added a humorous warning against spamming PRs with joke features.
+
+*Author: Graison P*
+
+---
+
+
+### Commit [`2a2428bef`](https://github.com/OmniBlocks/scratch-gui/commit/2a2428befc4fcfeb3ee7d31ad1363b27e3a1d489) - 2025-12-09 15:21:37 -0500
+
+**Update test.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`328ba3289`](https://github.com/OmniBlocks/scratch-gui/commit/328ba328955a05bb9fb4c8ea5a2a945993f1aab0) - 2025-12-09 13:36:43 -0500
+
+**refactor: Refactor test video discovery and AI workflow prompts**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`a11dcaad8`](https://github.com/OmniBlocks/scratch-gui/commit/a11dcaad8664e4042d630374cf572c168ccef71f) - 2025-12-08 22:47:41 -0500
+
+**fix: set actual type for issue**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`d67c657fc`](https://github.com/OmniBlocks/scratch-gui/commit/d67c657fcc86af51c2998ae5ba270562f64151c1) - 2025-12-08 15:12:43 -0500
+
+**Merge pull request #530 from OmniBlocks/dependabot/npm_and_yarn/scratch-vm-89175c7**
+
+build(deps): bump scratch-vm from `e384517` to `89175c7`
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`dbae7df14`](https://github.com/OmniBlocks/scratch-gui/commit/dbae7df1481fc1cd649b711591e425163522c7e7) - 2025-12-08 07:26:42 -0500
+
+**fix: (ci) javascript heap memory allocation error**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`cb52b77fc`](https://github.com/OmniBlocks/scratch-gui/commit/cb52b77fca5c469da87265c3ddedd42785b7658f) - 2025-12-08 07:03:31 -0500
+
+**Update prtest.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`2a5e792d6`](https://github.com/OmniBlocks/scratch-gui/commit/2a5e792d625c486e5a2d9fbea2a074b86d3c15d3) - 2025-12-08 00:25:29 -0500
+
+**feat: (ci) add anotations to mega pr test**
+
+* **Enhancements**
+  * Enhanced PR validation with inline annotations highlighting test errors directly in code
+  * Integrated Lighthouse performance and accessibility metrics into test result reporting
+  * Improved test feedback with comprehensive result summaries in pull request comments
+  * Better error diagnostics with clear references to specific file changes
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`8d8cd69e7`](https://github.com/OmniBlocks/scratch-gui/commit/8d8cd69e78fa6806c739e102a748c452135a9836) - 2025-12-07 23:25:26 -0500
+
+**fix: (coderabbit) change coderabbit ci timeout to 15 minutes**
+
+*Author: supervoidcoder*
+
+---
+
+
 ### Commit [`0fc542895`](https://github.com/OmniBlocks/scratch-gui/commit/0fc542895c442155d777e3ff101274be9b25b432) - 2025-12-07 22:55:06 -0500
 
 **feat: (github) Update issue templates**

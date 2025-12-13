@@ -44,7 +44,7 @@ class JavaScriptTestExtension {
             throw new Error('Security manager not available - runtime not initialized');
         }
         
-        if (!securityManager || !securityManager.canRunJavaScript) {
+        if (!securityManager.canRunJavaScript) {
             throw new Error('Security manager not available or runJavaScript not supported');
         }
 
@@ -69,12 +69,12 @@ class JavaScriptTestExtension {
 
     async evaluateExpression(args) {
         // Request permission to run JavaScript
-        const securityManager = this.runtime.extensionManager.securityManager;
         const securityManager = this.runtime?.extensionManager?.securityManager;
         if (!securityManager) {
             return 'Error: Security manager not available - runtime not initialized';
         }
         
+        if (!securityManager.canRunJavaScript) {
             return 'Security manager not available';
         }
 

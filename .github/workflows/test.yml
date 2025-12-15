@@ -174,8 +174,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        browser: [chromium]
+        include:
+          - os: windows-latest
+            browser: chromium
+            primary: true
+          - os: windows-latest
+            browser: firefox
+          - os: windows-latest
+            browser: webkit
+          - os: ubuntu-latest
+            browser: chromium
+          - os: ubuntu-latest
+            browser: firefox
+          - os: macos-latest
+            browser: chromium
+          - os: macos-latest
+            browser: webkit
     
     steps:
       - name: Download build artifact
@@ -210,6 +224,7 @@ jobs:
 
           module.exports = defineConfig({
             testDir: '.',
+            outputDir: 'test-results',
             timeout: 120000,
             fullyParallel: false,
             forbidOnly: !!process.env.CI,
@@ -221,7 +236,6 @@ jobs:
               screenshot: 'on',
               video: 'on',
               baseURL: 'http://localhost:8080',
-              permissions: ['midi', 'midi-sysex'],
             },
             projects: [
               {
@@ -229,6 +243,18 @@ jobs:
                 use: { 
                   ...devices['Desktop Chrome'],
                   permissions: ['midi', 'midi-sysex'],
+                },
+              },
+              {
+                name: 'firefox',
+                use: { 
+                  ...devices['Desktop Firefox'],
+                },
+              },
+              {
+                name: 'webkit',
+                use: { 
+                  ...devices['Desktop Safari'],
                 },
               },
             ],
@@ -242,8 +268,14 @@ jobs:
           const { test } = require('@playwright/test');
 
           test.describe('Main Branch Screenshots', () => {
-            test('Stage and Sprites', async ({ page, context }) => {
-              await context.grantPermissions(['midi', 'midi-sysex'], { origin: 'http://localhost:8080' });
+            test('Stage and Sprites', async ({ page, context, browserName }) => {
+              if (browserName === 'chromium') {
+                try {
+                  await context.grantPermissions(['midi', 'midi-sysex'], { origin: 'http://localhost:8080' });
+                } catch (e) {
+                  console.log('MIDI permissions not available');
+                }
+              }
               
               await page.goto('/editor.html');
               await page.waitForLoadState('networkidle');
@@ -258,8 +290,14 @@ jobs:
               }
             });
 
-            test('Blocks Workspace', async ({ page, context }) => {
-              await context.grantPermissions(['midi', 'midi-sysex'], { origin: 'http://localhost:8080' });
+            test('Blocks Workspace', async ({ page, context, browserName }) => {
+              if (browserName === 'chromium') {
+                try {
+                  await context.grantPermissions(['midi', 'midi-sysex'], { origin: 'http://localhost:8080' });
+                } catch (e) {
+                  console.log('MIDI permissions not available');
+                }
+              }
               
               await page.goto('/editor.html');
               await page.waitForLoadState('networkidle');
@@ -281,8 +319,14 @@ jobs:
               await page.screenshot({ path: 'screenshots/player-view.png', fullPage: true });
             });
 
-            test('Editor Initial (Code Tab)', async ({ page, context }) => {
-              await context.grantPermissions(['midi', 'midi-sysex'], { origin: 'http://localhost:8080' });
+            test('Editor Initial (Code Tab)', async ({ page, context, browserName }) => {
+              if (browserName === 'chromium') {
+                try {
+                  await context.grantPermissions(['midi', 'midi-sysex'], { origin: 'http://localhost:8080' });
+                } catch (e) {
+                  console.log('MIDI permissions not available');
+                }
+              }
               
               await page.goto('/editor.html');
               await page.waitForLoadState('networkidle');
@@ -291,13 +335,29 @@ jobs:
               await page.screenshot({ path: 'screenshots/editor-initial.png', fullPage: true });
             });
 
-            test('Code Tab', async ({ page, context }) => {
-              await context.grantPermissions(['midi', 'midi-sysex'], { origin: 'http://localhost:8080' });
+            test('Code Tab', async ({ page, context, browserName }) => {
+              if (browserName === 'chromium') {
+                try {
+                  await context.grantPermissions(['midi', 'midi-sysex'], { origin: 'http://localhost:8080' });
+                } catch (e) {
+                  console.log('MIDI permissions not available');
+                }
+              }
               
               await page.goto('/editor.html');
               await page.waitForLoadState('networkidle');
               await page.waitForSelector('[class*="menu-bar"]', { timeout: 20000 });
               await page.waitForTimeout(3000);
+              
+              // ✅ FIX: Dismiss browser compat modal (Firefox)
+              const modalOverlay = page.locator('.ReactModal__Overlay');
+              if (await modalOverlay.count() > 0) {
+                const closeButton = page.locator('.ReactModal__Content button, [class*="modal"] button').first();
+                if (await closeButton.count() > 0) {
+                  await closeButton.click({ timeout: 2000 }).catch(() => {});
+                  await page.waitForTimeout(500);
+                }
+              }
               
               const tabList = await page.locator('[class*="react-tabs_react-tabs__tab-list"]').first();
               const codeTab = await tabList.locator('[class*="react-tabs_react-tabs__tab"]').nth(0);
@@ -307,13 +367,29 @@ jobs:
               await page.screenshot({ path: 'screenshots/code-tab.png', fullPage: true });
             });
 
-            test('Costumes Tab', async ({ page, context }) => {
-              await context.grantPermissions(['midi', 'midi-sysex'], { origin: 'http://localhost:8080' });
+            test('Costumes Tab', async ({ page, context, browserName }) => {
+              if (browserName === 'chromium') {
+                try {
+                  await context.grantPermissions(['midi', 'midi-sysex'], { origin: 'http://localhost:8080' });
+                } catch (e) {
+                  console.log('MIDI permissions not available');
+                }
+              }
               
               await page.goto('/editor.html');
               await page.waitForLoadState('networkidle');
               await page.waitForSelector('[class*="menu-bar"]', { timeout: 20000 });
               await page.waitForTimeout(3000);
+              
+              // ✅ FIX: Dismiss browser compat modal (Firefox)
+              const modalOverlay = page.locator('.ReactModal__Overlay');
+              if (await modalOverlay.count() > 0) {
+                const closeButton = page.locator('.ReactModal__Content button, [class*="modal"] button').first();
+                if (await closeButton.count() > 0) {
+                  await closeButton.click({ timeout: 2000 }).catch(() => {});
+                  await page.waitForTimeout(500);
+                }
+              }
               
               const tabList = await page.locator('[class*="react-tabs_react-tabs__tab-list"]').first();
               const costumesTab = await tabList.locator('[class*="react-tabs_react-tabs__tab"]').nth(1);
@@ -323,13 +399,29 @@ jobs:
               await page.screenshot({ path: 'screenshots/costumes-tab.png', fullPage: true });
             });
 
-            test('Sounds Tab', async ({ page, context }) => {
-              await context.grantPermissions(['midi', 'midi-sysex'], { origin: 'http://localhost:8080' });
+            test('Sounds Tab', async ({ page, context, browserName }) => {
+              if (browserName === 'chromium') {
+                try {
+                  await context.grantPermissions(['midi', 'midi-sysex'], { origin: 'http://localhost:8080' });
+                } catch (e) {
+                  console.log('MIDI permissions not available');
+                }
+              }
               
               await page.goto('/editor.html');
               await page.waitForLoadState('networkidle');
               await page.waitForSelector('[class*="menu-bar"]', { timeout: 20000 });
               await page.waitForTimeout(3000);
+              
+              // ✅ FIX: Dismiss browser compat modal (Firefox)
+              const modalOverlay = page.locator('.ReactModal__Overlay');
+              if (await modalOverlay.count() > 0) {
+                const closeButton = page.locator('.ReactModal__Content button, [class*="modal"] button').first();
+                if (await closeButton.count() > 0) {
+                  await closeButton.click({ timeout: 2000 }).catch(() => {});
+                  await page.waitForTimeout(500);
+                }
+              }
               
               const tabList = await page.locator('[class*="react-tabs_react-tabs__tab-list"]').first();
               const soundsTab = await tabList.locator('[class*="react-tabs_react-tabs__tab"]').nth(2);
@@ -339,13 +431,29 @@ jobs:
               await page.screenshot({ path: 'screenshots/sounds-tab.png', fullPage: true });
             });
 
-            test('Songs Tab', async ({ page, context }) => {
-              await context.grantPermissions(['midi', 'midi-sysex'], { origin: 'http://localhost:8080' });
+            test('Songs Tab', async ({ page, context, browserName }) => {
+              if (browserName === 'chromium') {
+                try {
+                  await context.grantPermissions(['midi', 'midi-sysex'], { origin: 'http://localhost:8080' });
+                } catch (e) {
+                  console.log('MIDI permissions not available');
+                }
+              }
               
               await page.goto('/editor.html');
               await page.waitForLoadState('networkidle');
               await page.waitForSelector('[class*="menu-bar"]', { timeout: 20000 });
               await page.waitForTimeout(3000);
+              
+              // ✅ FIX: Dismiss browser compat modal (Firefox)
+              const modalOverlay = page.locator('.ReactModal__Overlay');
+              if (await modalOverlay.count() > 0) {
+                const closeButton = page.locator('.ReactModal__Content button, [class*="modal"] button').first();
+                if (await closeButton.count() > 0) {
+                  await closeButton.click({ timeout: 2000 }).catch(() => {});
+                  await page.waitForTimeout(500);
+                }
+              }
               
               const tabList = await page.locator('[class*="react-tabs_react-tabs__tab-list"]').first();
               const songsTab = await tabList.locator('[class*="react-tabs_react-tabs__tab"]').nth(3);
@@ -355,13 +463,29 @@ jobs:
               await page.screenshot({ path: 'screenshots/songs-tab.png', fullPage: true });
             });
 
-            test('Extension Library', async ({ page, context }) => {
-              await context.grantPermissions(['midi', 'midi-sysex'], { origin: 'http://localhost:8080' });
+            test('Extension Library', async ({ page, context, browserName }) => {
+              if (browserName === 'chromium') {
+                try {
+                  await context.grantPermissions(['midi', 'midi-sysex'], { origin: 'http://localhost:8080' });
+                } catch (e) {
+                  console.log('MIDI permissions not available');
+                }
+              }
               
               await page.goto('/editor.html');
               await page.waitForLoadState('networkidle');
               await page.waitForSelector('[class*="menu-bar"]', { timeout: 20000 });
               await page.waitForTimeout(3000);
+              
+              // ✅ FIX: Dismiss browser compat modal (Firefox)
+              const modalOverlay = page.locator('.ReactModal__Overlay');
+              if (await modalOverlay.count() > 0) {
+                const closeButton = page.locator('.ReactModal__Content button, [class*="modal"] button').first();
+                if (await closeButton.count() > 0) {
+                  await closeButton.click({ timeout: 2000 }).catch(() => {});
+                  await page.waitForTimeout(500);
+                }
+              }
               
               const extensionButton = page.locator('[class*="extension-button"]').first()
                 .or(page.locator('button:has-text("Add Extension")'))
@@ -375,13 +499,29 @@ jobs:
               await page.screenshot({ path: 'screenshots/extension-library.png', fullPage: true });
             });
 
-            test('Advanced Settings', async ({ page, context }) => {
-              await context.grantPermissions(['midi', 'midi-sysex'], { origin: 'http://localhost:8080' });
+            test('Advanced Settings', async ({ page, context, browserName }) => {
+              if (browserName === 'chromium') {
+                try {
+                  await context.grantPermissions(['midi', 'midi-sysex'], { origin: 'http://localhost:8080' });
+                } catch (e) {
+                  console.log('MIDI permissions not available');
+                }
+              }
               
               await page.goto('/editor.html');
               await page.waitForLoadState('networkidle');
               await page.waitForSelector('[class*="menu-bar"]', { timeout: 20000 });
               await page.waitForTimeout(3000);
+              
+              // ✅ FIX: Dismiss browser compat modal (Firefox)
+              const modalOverlay = page.locator('.ReactModal__Overlay');
+              if (await modalOverlay.count() > 0) {
+                const closeButton = page.locator('.ReactModal__Content button, [class*="modal"] button').first();
+                if (await closeButton.count() > 0) {
+                  await closeButton.click({ timeout: 2000 }).catch(() => {});
+                  await page.waitForTimeout(500);
+                }
+              }
               
               const settingsButton = page.locator('[class*="menu-bar"]')
                 .locator('[class*="settings"], [aria-label*="settings" i], [aria-label*="advanced" i]')
@@ -409,12 +549,10 @@ jobs:
         run: |
           mkdir -p .github/chaos-tests
           
-          # Copy from repo if exists
           if [ -d "repo-source/.github/chaos-tests" ]; then
             cp -r repo-source/.github/chaos-tests/* .github/chaos-tests/ 2>/dev/null || true
           fi
           
-          # Create sample if none exist
           if [ ! "$(ls -A .github/chaos-tests/*.json 2>/dev/null)" ]; then
             cat > .github/chaos-tests/sample-tabs.json << 'JSONEOF'
           {
@@ -437,14 +575,20 @@ jobs:
       - name: Generate chaos and recorded tests
         shell: bash
         run: |
-          # Create random click chaos test
+          # ✅ FIX: NO service worker filtering - catch ALL errors!
           cat > chaos-test.spec.js << 'EOF'
           const { test } = require('@playwright/test');
           const fs = require('fs');
 
           test.describe('🌪️ Chaos Testing', () => {
-            test('Random Click Spam', async ({ page, context }) => {
-              await context.grantPermissions(['midi', 'midi-sysex'], { origin: 'http://localhost:8080' });
+            test('Random Click Spam', async ({ page, context, browserName }) => {
+              if (browserName === 'chromium') {
+                try {
+                  await context.grantPermissions(['midi', 'midi-sysex'], { origin: 'http://localhost:8080' });
+                } catch (e) {
+                  console.log('MIDI permissions not available');
+                }
+              }
               
               const consoleErrors = [];
               const eventLog = [];
@@ -506,6 +650,7 @@ jobs:
               
               const results = {
                 testName: 'Random Click Spam',
+                browser: browserName,
                 clickCount,
                 errors: consoleErrors,
                 events: eventLog
@@ -520,7 +665,7 @@ jobs:
           });
           EOF
           
-          # Generate recorded actions tests
+          # ✅ FIX: NO service worker filtering - catch ALL errors!
           cat > generate-custom-tests.js << 'GENEOF'
           const fs = require('fs');
           const path = require('path');
@@ -536,8 +681,14 @@ jobs:
             const testSlug = file.replace('.json', '');
             
             allTests += `
-              test('${testName}', async ({ page, context }) => {
-                await context.grantPermissions(['midi', 'midi-sysex'], { origin: 'http://localhost:8080' });
+              test('${testName}', async ({ page, context, browserName }) => {
+                if (browserName === 'chromium') {
+                  try {
+                    await context.grantPermissions(['midi', 'midi-sysex'], { origin: 'http://localhost:8080' });
+                  } catch (e) {
+                    console.log('MIDI permissions not available');
+                  }
+                }
                 
                 const consoleErrors = [];
                 const eventLog = [];
@@ -545,9 +696,6 @@ jobs:
                 page.on('console', msg => {
                   if (msg.type() === 'error') {
                     const text = msg.text();
-                    if (text.includes('service_worker.js') && text.includes('404')) {
-                      return;
-                    }
                     consoleErrors.push({
                       text: text,
                       timestamp: Date.now(),
@@ -585,6 +733,7 @@ jobs:
                 const results = {
                   testName: '${testName}',
                   testFile: '${file}',
+                  browser: browserName,
                   actionsExecuted: actions.length,
                   errors: consoleErrors,
                   events: eventLog
@@ -638,7 +787,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p screenshots
-          npx playwright test screenshot-test.spec.js --project=chromium 2>&1 | tee screenshot-output.txt
+          npx playwright test screenshot-test.spec.js --project=${{ matrix.browser }} 2>&1 | tee screenshot-output.txt
           if [ $? -eq 0 ]; then
             echo "screenshot_status=success" >> $GITHUB_OUTPUT
           else
@@ -655,18 +804,31 @@ jobs:
         run: |
           set +e
           set -o pipefail
-          mkdir -p test-videos chaos-reports
+          mkdir -p test-results chaos-reports
           
-          npx playwright test chaos-test.spec.js --project=chromium --output=test-videos/ 2>&1 | tee chaos-test-output.txt
+          npx playwright test chaos-test.spec.js --project=${{ matrix.browser }} 2>&1 | tee chaos-test-output.txt
           CHAOS_EXIT=${PIPESTATUS[0]}
           
-          npx playwright test recorded-actions-test.spec.js --project=chromium --output=test-videos/ 2>&1 | tee recorded-actions-output.txt
+          npx playwright test recorded-actions-test.spec.js --project=${{ matrix.browser }} 2>&1 | tee recorded-actions-output.txt
           RECORDED_EXIT=${PIPESTATUS[0]}
           
           set -e
           
-          echo "🎬 Test videos directory structure:"
-          find test-videos -type f -name "*.webm" 2>/dev/null | head -20
+          echo "🎬 Searching for test videos..."
+          echo "Directory structure:"
+          find test-results -type f 2>/dev/null | head -30
+          
+          VIDEO_COUNT=$(find test-results -type f -name "*.webm" 2>/dev/null | wc -l)
+          echo "Found $VIDEO_COUNT video files"
+          
+          if [ $VIDEO_COUNT -gt 0 ]; then
+            echo "Video files:"
+            find test-results -type f -name "*.webm" -exec ls -lh {} \;
+          else
+            echo "⚠️ WARNING: No video files found!"
+            echo "Contents of test-results:"
+            ls -R test-results/ 2>/dev/null || echo "test-results directory not found"
+          fi
           
           if [ $CHAOS_EXIT -eq 0 ] && [ $RECORDED_EXIT -eq 0 ]; then
             echo "chaos_status=passed" >> $GITHUB_OUTPUT
@@ -706,7 +868,7 @@ jobs:
             screenshots/
             chaos-results.json
             recorded-*-results.json
-            test-videos/
+            test-results/
             screenshot-output.txt
             chaos-test-output.txt
             recorded-actions-output.txt
@@ -731,7 +893,7 @@ jobs:
           name: test-logs
         continue-on-error: true
 
-      - name: Download Windows results
+      - name: Download Windows+Chromium results (primary)
         uses: actions/download-artifact@v4
         with:
           name: chaos-results-windows-latest-chromium
@@ -854,55 +1016,49 @@ jobs:
           
           mkdir -p "$VIDEO_DIR"
           
-          echo "🔍 Searching for test videos in ../windows-results/test-videos..."
-          find ../windows-results/test-videos -type f -name "*.webm" 2>/dev/null | while read -r video; do
-            echo "  Found: $video"
-          done
-          
-          # 🎯 FIX: Find videos by searching for specific test names in Playwright's directory structure
+          # ✅ FIX: Simplified video discovery - find by prefix
+          echo "🔍 Searching for test videos in Windows+Chromium results..."
           echo ""
-          echo "🌪️ Looking for chaos test video..."
-          CHAOS_VIDEO=$(find ../windows-results/test-videos -type f -name "video.webm" 2>/dev/null | \
-            xargs -I {} sh -c 'dirname "{}"' | \
-            grep -i "chaos\|random.*click" | head -1)
           
-          if [ -n "$CHAOS_VIDEO" ]; then
-            VIDEO_FILE="$CHAOS_VIDEO/video.webm"
-            if [ -f "$VIDEO_FILE" ]; then
-              cp "$VIDEO_FILE" "$VIDEO_DIR/chaos-test-chromium-video.webm"
-              echo "✅ Found chaos test video at: $VIDEO_FILE"
+          echo "🌪️ Looking for chaos test video..."
+          CHAOS_DIR=$(find ../windows-results/test-results -type d -name "chaos-test-*" 2>/dev/null | head -1)
+          if [ -n "$CHAOS_DIR" ] && [ -d "$CHAOS_DIR" ]; then
+            echo "Found chaos test directory: $CHAOS_DIR"
+            CHAOS_VIDEO="$CHAOS_DIR/video.webm"
+            if [ -f "$CHAOS_VIDEO" ]; then
+              cp "$CHAOS_VIDEO" "$VIDEO_DIR/chaos-test-chromium-video.webm"
+              echo "✅ Copied chaos video from: $CHAOS_VIDEO"
+            else
+              echo "⚠️ No video.webm in chaos directory"
+              ls -la "$CHAOS_DIR" 2>/dev/null || echo "Can't list directory"
             fi
           else
-            echo "⚠️ No chaos test video found, trying fallback..."
-            # Fallback: find first video that's not in a "Recorded" or "Sample" directory
-            find ../windows-results/test-videos -type f -name "video.webm" 2>/dev/null | \
-              grep -v -i "recorded\|sample" | head -1 | \
-              xargs -I {} cp {} "$VIDEO_DIR/chaos-test-chromium-video.webm" 2>/dev/null && \
-              echo "✅ Used fallback video" || echo "⚠️ No fallback video found"
+            echo "❌ No chaos test directory found"
+            echo "Directories in test-results:"
+            ls ../windows-results/test-results 2>/dev/null || echo "test-results not found"
           fi
           
           echo ""
           echo "🎬 Looking for recorded actions video..."
-          RECORDED_VIDEO=$(find ../windows-results/test-videos -type f -name "video.webm" 2>/dev/null | \
-            xargs -I {} sh -c 'dirname "{}"' | \
-            grep -i "recorded\|sample" | head -1)
-          
-          if [ -n "$RECORDED_VIDEO" ]; then
-            VIDEO_FILE="$RECORDED_VIDEO/video.webm"
-            if [ -f "$VIDEO_FILE" ]; then
-              cp "$VIDEO_FILE" "$VIDEO_DIR/recorded-actions-chromium-video.webm"
-              echo "✅ Found recorded actions video at: $VIDEO_FILE"
+          RECORDED_DIR=$(find ../windows-results/test-results -type d -name "recorded-actions-test-*" 2>/dev/null | head -1)
+          if [ -n "$RECORDED_DIR" ] && [ -d "$RECORDED_DIR" ]; then
+            echo "Found recorded actions directory: $RECORDED_DIR"
+            RECORDED_VIDEO="$RECORDED_DIR/video.webm"
+            if [ -f "$RECORDED_VIDEO" ]; then
+              cp "$RECORDED_VIDEO" "$VIDEO_DIR/recorded-actions-chromium-video.webm"
+              echo "✅ Copied recorded actions video from: $RECORDED_VIDEO"
+            else
+              echo "⚠️ No video.webm in recorded actions directory"
+              ls -la "$RECORDED_DIR" 2>/dev/null || echo "Can't list directory"
             fi
           else
-            echo "⚠️ No recorded actions video found"
+            echo "❌ No recorded actions directory found"
           fi
           
-          # List what we have
           echo ""
-          echo "📦 Videos collected:"
+          echo "📦 Videos collected in $VIDEO_DIR:"
           ls -lh "$VIDEO_DIR"/*.webm 2>/dev/null || echo "⚠️ No videos found!"
           
-          # Convert videos to GIF for inline display
           echo ""
           echo "🎨 Converting videos to GIF..."
           for webm in "$VIDEO_DIR"/*.webm; do
@@ -921,7 +1077,7 @@ jobs:
           if [ -n "$(git status --porcelain)" ]; then
             git commit -m "Add chaos test videos from run $RUN_ID"
             git push origin chaos-videos
-            echo "✅ Videos pushed!"
+            echo "✅ Videos pushed to chaos-videos branch!"
           else
             echo "⚠️ No changes to push"
           fi
@@ -1215,6 +1371,8 @@ jobs:
           mkdir -p dashboard
           
           echo "📸 Copying screenshots from all platforms..."
+          SCREENSHOT_COUNT=0
+          
           for platform_dir in all-matrix-results/chaos-results-*/; do
             if [ -d "$platform_dir" ]; then
               platform_name=$(basename "$platform_dir" | sed 's/chaos-results-//')
@@ -1223,19 +1381,14 @@ jobs:
               if [ -d "$platform_dir/screenshots" ]; then
                 target_dir="dashboard/screenshots-${platform_name}"
                 mkdir -p "$target_dir"
-                screenshot_count=$(find "$platform_dir/screenshots" -name "*.png" 2>/dev/null | wc -l)
-                echo "    Found $screenshot_count screenshots"
                 
-                if [ "$screenshot_count" -gt 0 ]; then
-                  cp "$platform_dir/screenshots"/*.png "$target_dir/" 2>/dev/null && \
-                    echo "    ✅ Copied to $target_dir" || \
-                    echo "    ⚠️ Failed to copy"
-                  
-                  # Verify copy
-                  copied_count=$(find "$target_dir" -name "*.png" 2>/dev/null | wc -l)
-                  echo "    Verified: $copied_count files in destination"
+                if ls "$platform_dir/screenshots"/*.png 1> /dev/null 2>&1; then
+                  cp "$platform_dir/screenshots"/*.png "$target_dir/" 2>/dev/null
+                  copied=$(ls "$target_dir"/*.png 2>/dev/null | wc -l)
+                  SCREENSHOT_COUNT=$((SCREENSHOT_COUNT + copied))
+                  echo "    ✅ Copied $copied screenshots to $target_dir"
                 else
-                  echo "    ⚠️ Screenshots directory is empty"
+                  echo "    ⚠️ No PNG files in screenshots directory"
                 fi
               else
                 echo "    ⚠️ No screenshots directory found"
@@ -1244,13 +1397,12 @@ jobs:
           done
           
           echo ""
-          echo "📊 Dashboard screenshot summary:"
-          echo "  Total screenshot directories: $(find dashboard -type d -name "screenshots-*" | wc -l)"
-          find dashboard -name "*.png" 2>/dev/null | wc -l | xargs echo "  Total screenshots:"
-          
-          echo ""
-          echo "📁 Dashboard directory structure:"
-          ls -R dashboard/
+          echo "📊 Screenshot summary: $SCREENSHOT_COUNT total files copied"
+          echo "📁 Dashboard directories created:"
+          find dashboard -type d -name "screenshots-*" | while read dir; do
+            count=$(ls "$dir"/*.png 2>/dev/null | wc -l)
+            echo "  $dir: $count images"
+          done
           
           python3 .github/scripts/generate-dashboard.py dashboard
 
@@ -1337,6 +1489,11 @@ jobs:
                 font-size: 2em;
                 margin: 20px 0;
               }
+              
+              .browsers {
+                font-size: 1.2em;
+                margin: 15px 0;
+              }
             </style>
           </head>
           <body>
@@ -1344,9 +1501,10 @@ jobs:
               <h1>🚀 OmniBlocks</h1>
               <h2>Main Branch Test Results</h2>
               <div class="chaos">🌪️ ULTRA CHAOS TESTING! 🌪️</div>
-              <p>Multi-platform chaos testing with AI-powered error analysis!</p>
+              <div class="browsers">🌐 Multi-Browser Testing: Chromium • Firefox • WebKit</div>
+              <p>Comprehensive chaos testing across Windows, Ubuntu, and macOS with multiple browsers!</p>
               <a href="latest/index.html" class="button">📊 View Latest Dashboard</a>
-              <p class="note">Now testing across Windows, Ubuntu, and macOS! 🎉</p>
+              <p class="note">Now featuring Firefox 🦊 and WebKit 🧭 alongside Chromium! 🎉</p>
             </div>
           </body>
           </html>
@@ -1356,7 +1514,7 @@ jobs:
           git add tests/
           
           if [ -n "$(git status --porcelain)" ]; then
-            git commit -m "Update test results with ULTRA chaos testing 🌪️ - $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+            git commit -m "Update test results with multi-browser chaos testing 🌪️🦊🧭 - $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
             git push origin gh-pages || git push -u origin gh-pages
           else
             echo "No changes to commit."

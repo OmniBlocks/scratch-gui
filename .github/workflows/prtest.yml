@@ -883,6 +883,11 @@ jobs:
 
       - name: Update comment - Accessibility Testing
         uses: actions/github-script@v7
+        env:
+          A11Y_SUCCESS: ${{ steps.a11y_test.outputs.a11y_success }}
+          A11Y_PARSED: ${{ steps.a11y_parse.outputs.a11y_parsed }}
+          A11Y_VIOLATIONS: ${{ steps.a11y_test.outputs.violations }}
+          A11Y_PASSES: ${{ steps.a11y_test.outputs.passes }}
         with:
           script: |
             const initial_spinner = '<img src="https://lh5.googleusercontent.com/proxy/OUqG0HgVNVMNorlPCmI4VgJa-3h7uHLkkMy9vdJ0eRsQlvJBytFUS-HvuW-O9EJd-c9xB7KAqlwby4Fzp59g1705FzBuP-F8dC1ZaBQtmLeCu5i6FfSd6Mmzh8mjOwgrEYZwy5UStg" width="20" height="20">';
@@ -1138,10 +1143,10 @@ jobs:
             }
             
             // Accessibility results WITH DETAILED VIOLATIONS
-            const a11ySuccess = '${{ steps.a11y_test.outputs.a11y_success }}' === 'true';
-            const a11yParsed = '${{ steps.a11y_parse.outputs.a11y_parsed }}' === 'true';
-            const a11yViolations = '${{ steps.a11y_test.outputs.violations }}';
-            const a11yPasses = '${{ steps.a11y_test.outputs.passes }}';
+            const a11ySuccess = process.env.A11Y_SUCCESS === 'true';
+            const a11yParsed = process.env.A11Y_PARSED === 'true';
+            const a11yViolations = process.env.A11Y_VIOLATIONS;
+            const a11yPasses = process.env.A11Y_PASSES;
             let a11ySection = '';
             
             if (a11ySuccess && a11yViolations !== 'error') {

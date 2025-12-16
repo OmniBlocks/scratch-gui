@@ -4,6 +4,42 @@ This file is automatically updated by the Changelog Updater bot.
 
 <!-- UNRELEASED_COMMITS_START -->
 
+### Commit [`24258d01f`](https://github.com/OmniBlocks/scratch-gui/commit/24258d01f035c560874967d296f8d409e010988b) - 2025-12-15 21:20:44 -0500
+
+**docs: changed package names in package.json**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`3c4324780`](https://github.com/OmniBlocks/scratch-gui/commit/3c432478029f39e4900c2ee89bafdac056765b2d) - 2025-12-15 01:09:47 -0500
+
+**Update stale-pr-checker.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`8717a4fb4`](https://github.com/OmniBlocks/scratch-gui/commit/8717a4fb4ea012a02ebe48ed9a7bc216c33a7ae6) - 2025-12-15 01:05:12 -0500
+
+**Update stale-pr-checker.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`b5797e041`](https://github.com/OmniBlocks/scratch-gui/commit/b5797e041b091413bf81200219810705f90582f2) - 2025-12-15 00:57:57 -0500
+
+**fix: (ci) fix syntax error (probably)**
+
+*Author: supervoidcoder*
+
+---
+
+
 ### Commit [`0b44c0adf`](https://github.com/OmniBlocks/scratch-gui/commit/0b44c0adf96633dc3266f37080173ece856bcd96) - 2025-12-14 23:30:29 -0500
 
 **Update .eslintignore**

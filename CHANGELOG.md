@@ -4,6 +4,33 @@ This file is automatically updated by the Changelog Updater bot.
 
 <!-- UNRELEASED_COMMITS_START -->
 
+### Commit [`3257b47a3`](https://github.com/OmniBlocks/scratch-gui/commit/3257b47a3ac5ad6c9d4b1f7a9329d43853b60257) - 2025-12-15 23:06:32 -0500
+
+**Merge branch 'main' of https://github.com/OmniBlocks/scratch-gui**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`5ca5d0a2c`](https://github.com/OmniBlocks/scratch-gui/commit/5ca5d0a2c80d6470311d41816885499e43852e0c) - 2025-12-15 22:24:18 -0500
+
+**docs: updated readme (not the main one) and deleted the ultrabox patch notes because those ain't ours :trollface:**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`c196cfce1`](https://github.com/OmniBlocks/scratch-gui/commit/c196cfce18cbe73587b01582bd0e90a62bd51268) - 2025-12-15 21:58:37 -0500
+
+**fix: (ci) fix js heap errors by removing 2gb heap limit**
+
+*Author: supervoidcoder*
+
+---
+
+
 ### Commit [`24258d01f`](https://github.com/OmniBlocks/scratch-gui/commit/24258d01f035c560874967d296f8d409e010988b) - 2025-12-15 21:20:44 -0500
 
 **docs: changed package names in package.json**

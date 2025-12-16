@@ -45,8 +45,8 @@
     },
     {
       "name": "songs-tab.png",
-      "diffPixels": 54379,
-      "diffPercentage": "5.90",
+      "diffPixels": 53792,
+      "diffPercentage": "5.84",
       "hasDiff": true,
       "skipped": false
     },
@@ -59,9 +59,9 @@
     },
     {
       "name": "extension-library.png",
-      "diffPixels": 2538,
-      "diffPercentage": "0.28",
-      "hasDiff": true,
+      "diffPixels": 0,
+      "diffPercentage": "0.00",
+      "hasDiff": false,
       "skipped": false
     },
     {

@@ -1,7 +1,7 @@
 # Visual Regression Baseline (Enhanced)
-- Base SHA: `946077b9bfaa1b4895ac48c88c49e985a1d5c9b0`
-- PR SHA: `72c32929b1817b352d476db542a694a8d181e854`
-- Run: [#1733](https://github.com/OmniBlocks/scratch-gui/actions/runs/20344254139)
+- Base SHA: `2e5117c3c8585085a14422bfa654c07edfefa6b7`
+- PR SHA: `3bf29823eea3459f50d57ccbd28a5f7f3542fe29`
+- Run: [#1772](https://github.com/OmniBlocks/scratch-gui/actions/runs/20346802440)
 - Date: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
 - Platforms tested: ubuntu, windows, macos
 - Browsers tested: chromium, firefox, webkit

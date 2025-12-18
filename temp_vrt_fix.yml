@@ -1,0 +1,119 @@
+name: Visual Regression Testing (Enhanced)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  # ============================================================
+  # JOB 1: CHECK FILE CHANGES - Skip if only docs
+  # ============================================================
+  check-files:
+    if: >-
+      (github.actor != 'dependabot[bot]') &&
+      ((github.event_name == 'pull_request') ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '/vrt')))
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.check.outputs.should_run }}
+      pr_number: ${{ steps.pr.outputs.number }}
+      pr_sha: ${{ steps.pr.outputs.sha }}
+      base_sha: ${{ steps.pr.outputs.base_sha }}
+      username: ${{ steps.pr.outputs.username }}
+      
+    steps:
+      - name: React to comment (if triggered by comment)
+        if: github.event_name == 'issue_comment'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: context.payload.comment.id,
+              content: 'rocket'
+            });
+
+      - name: Get PR details
+        id: pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.eventName === 'issue_comment'
+              ? context.issue.number
+              : context.payload.number;
+
+            const pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+            
+            const username = context.eventName === 'issue_comment'
+              ? context.payload.comment.user.login
+              : context.payload.pull_request.user.login;
+              
+            core.setOutput('number', pr.data.number);
+            core.setOutput('sha', pr.data.head.sha);
+            core.setOutput('base_sha', pr.data.base.sha);
+            core.setOutput('username', username);
+
+      - name: Configure git for network resilience
+        run: |
+          # Configure git with longer timeouts and retry settings for better network resilience
+          git config --global http.lowSpeedLimit 1000
+          git config --global http.lowSpeedTime 300
+          git config --global http.postBuffer 524288000
+          git config --global core.preloadindex true
+          git config --global core.fscache true
+          echo "✅ Git configured for better network resilience"
+
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        timeout-minutes: 15
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check changed files
+        id: check
+        timeout-minutes: 10
+        run: |
+          # Get list of changed files with retry mechanism for network resilience
+          echo "🔍 Fetching base SHA with retry logic for network resilience..."
+          
+          for attempt in 1 2 3; do
+            echo "📡 Attempt $attempt to fetch origin ${{ steps.pr.outputs.base_sha }}"
+            if timeout 300 git fetch origin ${{ steps.pr.outputs.base_sha }}; then
+              echo "✅ Successfully fetched on attempt $attempt"
+              break
+            else
+              echo "❌ Fetch attempt $attempt failed"
+              if [ $attempt -eq 3 ]; then
+                echo "🚨 All fetch attempts failed after 3 tries"
+                echo "🔧 Trying alternative approach with shallow fetch..."
+                git fetch --depth=50 origin ${{ steps.pr.outputs.base_sha }} || exit 1
+                break
+              fi
+              echo "⏳ Waiting 30 seconds before retry..."
+              sleep 30
+            fi
+          done
+          
+          CHANGED_FILES=$(git diff --name-only ${{ steps.pr.outputs.base_sha }} ${{ steps.pr.outputs.sha }})
+          
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+          
+          # Check if only .md, .txt, or .yml files changed
+          if echo "$CHANGED_FILES" | grep -qvE '\.(md|txt|yml|yaml)$'; then
+            echo "should_run=true" >> $GITHUB_OUTPUT
+            echo "Code changes detected - VRT will run"
+          else

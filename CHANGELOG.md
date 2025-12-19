@@ -4,6 +4,723 @@ This file is automatically updated by the Changelog Updater bot.
 
 <!-- UNRELEASED_COMMITS_START -->
 
+### Commit [`043922a8f`](https://github.com/OmniBlocks/scratch-gui/commit/043922a8f3c07cf6e1a71a21c802ff953990015e) - 2025-12-18 22:34:53 -0500
+
+**Merge pull request #554 from OmniBlocks/supervoidcoder-patch-7**
+
+feat: better autofix lint
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`67b11c922`](https://github.com/OmniBlocks/scratch-gui/commit/67b11c922a539213f89f8086f6d38066f0620ee4) - 2025-12-18 14:43:44 -0500
+
+**Update autofix-lint.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`62d77822d`](https://github.com/OmniBlocks/scratch-gui/commit/62d77822dba444258caa9ed5fbe02acdb3750b21) - 2025-12-18 14:34:21 -0500
+
+**Update autofix-lint.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`9404574c0`](https://github.com/OmniBlocks/scratch-gui/commit/9404574c064ee2e42e841c222077ae84b3e31c25) - 2025-12-18 12:40:34 -0500
+
+**7uhisfdgbhe**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`a9d8c06e4`](https://github.com/OmniBlocks/scratch-gui/commit/a9d8c06e49afad0145460a207b572867a65e0516) - 2025-12-18 11:42:00 -0500
+
+**fix: (ci) yes**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`a0b005619`](https://github.com/OmniBlocks/scratch-gui/commit/a0b005619b0e8c79240b1b0cbcf9d0fa1af42f4f) - 2025-12-18 10:19:25 -0500
+
+**feat: add github annotations to prtest (this probably works or not idk)**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`94ee38742`](https://github.com/OmniBlocks/scratch-gui/commit/94ee387420472b5f0a5a71b45f77b9a63e4e745f) - 2025-12-18 09:31:32 -0500
+
+**do thingy**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`0b3f1af0c`](https://github.com/OmniBlocks/scratch-gui/commit/0b3f1af0c9db5d5ffb167daf1523d141d0a159c0) - 2025-12-16 21:53:19 -0500
+
+**Delete .github/workflows/start.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`c71e9912a`](https://github.com/OmniBlocks/scratch-gui/commit/c71e9912aeb09fbc1deda5e938cf68c92f060d46) - 2025-12-16 21:36:53 -0500
+
+**Create start.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`bd70e29e3`](https://github.com/OmniBlocks/scratch-gui/commit/bd70e29e372a055b6425b4dced07054a6967d9c9) - 2025-12-16 13:31:00 +0000
+
+**scratch-blocks only uses python for the build script**
+
+*Author: 8to16*
+
+---
+
+
+### Commit [`3257b47a3`](https://github.com/OmniBlocks/scratch-gui/commit/3257b47a3ac5ad6c9d4b1f7a9329d43853b60257) - 2025-12-15 23:06:32 -0500
+
+**Merge branch 'main' of https://github.com/OmniBlocks/scratch-gui**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`5ca5d0a2c`](https://github.com/OmniBlocks/scratch-gui/commit/5ca5d0a2c80d6470311d41816885499e43852e0c) - 2025-12-15 22:24:18 -0500
+
+**docs: updated readme (not the main one) and deleted the ultrabox patch notes because those ain't ours :trollface:**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`c196cfce1`](https://github.com/OmniBlocks/scratch-gui/commit/c196cfce18cbe73587b01582bd0e90a62bd51268) - 2025-12-15 21:58:37 -0500
+
+**fix: (ci) fix js heap errors by removing 2gb heap limit**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`24258d01f`](https://github.com/OmniBlocks/scratch-gui/commit/24258d01f035c560874967d296f8d409e010988b) - 2025-12-15 21:20:44 -0500
+
+**docs: changed package names in package.json**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`3c4324780`](https://github.com/OmniBlocks/scratch-gui/commit/3c432478029f39e4900c2ee89bafdac056765b2d) - 2025-12-15 01:09:47 -0500
+
+**Update stale-pr-checker.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`8717a4fb4`](https://github.com/OmniBlocks/scratch-gui/commit/8717a4fb4ea012a02ebe48ed9a7bc216c33a7ae6) - 2025-12-15 01:05:12 -0500
+
+**Update stale-pr-checker.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`b5797e041`](https://github.com/OmniBlocks/scratch-gui/commit/b5797e041b091413bf81200219810705f90582f2) - 2025-12-15 00:57:57 -0500
+
+**fix: (ci) fix syntax error (probably)**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`0b44c0adf`](https://github.com/OmniBlocks/scratch-gui/commit/0b44c0adf96633dc3266f37080173ece856bcd96) - 2025-12-14 23:30:29 -0500
+
+**Update .eslintignore**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`913fcb697`](https://github.com/OmniBlocks/scratch-gui/commit/913fcb69708f460f5090c9bbdebef11f4015b959) - 2025-12-14 10:33:43 +0000
+
+**dumb copilot commit messages but anyways remove incompatible confirmation**
+
+*Author: 8to16*
+
+---
+
+
+### Commit [`50ed42c0f`](https://github.com/OmniBlocks/scratch-gui/commit/50ed42c0fe2e02c4b8af93f036adc9a7dc90f46c) - 2025-12-13 18:38:49 -0500
+
+**Update test.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`f40120456`](https://github.com/OmniBlocks/scratch-gui/commit/f40120456d282243b596060125c9726bab74d45f) - 2025-12-13 17:31:24 +0000
+
+**rounded**
+
+*Author: 8to16*
+
+---
+
+
+### Commit [`d463e8c97`](https://github.com/OmniBlocks/scratch-gui/commit/d463e8c97c02483e77ee3f382b8e9fbd4f1aed4e) - 2025-12-11 20:04:50 -0500
+
+**docs: update readme misconceptions, add details**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`ebd427769`](https://github.com/OmniBlocks/scratch-gui/commit/ebd42776903fee8cc32702a11daffbbe4fb44915) - 2025-12-10 21:30:21 -0500
+
+**Update test.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`53eda584c`](https://github.com/OmniBlocks/scratch-gui/commit/53eda584cc9887258e60d11f97c5e378e06645a8) - 2025-12-10 21:04:54 -0500
+
+**Update test.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`9a527149f`](https://github.com/OmniBlocks/scratch-gui/commit/9a527149f65cc22d566f77e9631c05606798a7cf) - 2025-12-10 14:34:49 -0600
+
+**Clarify rules for joke features in contributions**
+
+Added a humorous warning against spamming PRs with joke features.
+
+*Author: Graison P*
+
+---
+
+
+### Commit [`2a2428bef`](https://github.com/OmniBlocks/scratch-gui/commit/2a2428befc4fcfeb3ee7d31ad1363b27e3a1d489) - 2025-12-09 15:21:37 -0500
+
+**Update test.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`328ba3289`](https://github.com/OmniBlocks/scratch-gui/commit/328ba328955a05bb9fb4c8ea5a2a945993f1aab0) - 2025-12-09 13:36:43 -0500
+
+**refactor: Refactor test video discovery and AI workflow prompts**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`a11dcaad8`](https://github.com/OmniBlocks/scratch-gui/commit/a11dcaad8664e4042d630374cf572c168ccef71f) - 2025-12-08 22:47:41 -0500
+
+**fix: set actual type for issue**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`d67c657fc`](https://github.com/OmniBlocks/scratch-gui/commit/d67c657fcc86af51c2998ae5ba270562f64151c1) - 2025-12-08 15:12:43 -0500
+
+**Merge pull request #530 from OmniBlocks/dependabot/npm_and_yarn/scratch-vm-89175c7**
+
+build(deps): bump scratch-vm from `e384517` to `89175c7`
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`dbae7df14`](https://github.com/OmniBlocks/scratch-gui/commit/dbae7df1481fc1cd649b711591e425163522c7e7) - 2025-12-08 07:26:42 -0500
+
+**fix: (ci) javascript heap memory allocation error**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`cb52b77fc`](https://github.com/OmniBlocks/scratch-gui/commit/cb52b77fca5c469da87265c3ddedd42785b7658f) - 2025-12-08 07:03:31 -0500
+
+**Update prtest.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`2a5e792d6`](https://github.com/OmniBlocks/scratch-gui/commit/2a5e792d625c486e5a2d9fbea2a074b86d3c15d3) - 2025-12-08 00:25:29 -0500
+
+**feat: (ci) add anotations to mega pr test**
+
+* **Enhancements**
+  * Enhanced PR validation with inline annotations highlighting test errors directly in code
+  * Integrated Lighthouse performance and accessibility metrics into test result reporting
+  * Improved test feedback with comprehensive result summaries in pull request comments
+  * Better error diagnostics with clear references to specific file changes
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`8d8cd69e7`](https://github.com/OmniBlocks/scratch-gui/commit/8d8cd69e78fa6806c739e102a748c452135a9836) - 2025-12-07 23:25:26 -0500
+
+**fix: (coderabbit) change coderabbit ci timeout to 15 minutes**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`0fc542895`](https://github.com/OmniBlocks/scratch-gui/commit/0fc542895c442155d777e3ff101274be9b25b432) - 2025-12-07 22:55:06 -0500
+
+**feat: (github) Update issue templates**
+
+Added GitHub issue templates for feature requests, bug reports, and blank issues to standardize and streamline issue submission processes.
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`e2b4f9f70`](https://github.com/OmniBlocks/scratch-gui/commit/e2b4f9f70345a2a1d3ac567e19af68bfb177a0f8) - 2025-12-07 22:22:14 +0000
+
+**bleh**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`dab50f99e`](https://github.com/OmniBlocks/scratch-gui/commit/dab50f99eb9055d7ed04a0f6779316f106d9d5a2) - 2025-12-07 15:03:29 -0500
+
+**Delete .github/workflows/bundle-size.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`82bbeda8d`](https://github.com/OmniBlocks/scratch-gui/commit/82bbeda8d26a50a9834b67ae2744bbab7c53b796) - 2025-12-07 14:58:45 -0500
+
+**Update bundle-size.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`cf4e3bc7d`](https://github.com/OmniBlocks/scratch-gui/commit/cf4e3bc7d3613f5f5ee1ab11911cd8720674f4a1) - 2025-12-07 14:57:26 -0500
+
+**Update bundle-size.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`76b288482`](https://github.com/OmniBlocks/scratch-gui/commit/76b28848246d5e67390dd427dfd4ac09ba05997d) - 2025-12-07 14:42:38 -0500
+
+**Create bundle-size.yml**
+
+One time bundle size calculator
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`ac2175e7b`](https://github.com/OmniBlocks/scratch-gui/commit/ac2175e7bfed5c8e85d45d7895616321f0008f9b) - 2025-12-06 01:24:28 +0000
+
+**will this work**
+
+*Author: ampelectrecuted*
+
+---
+
+
+### Commit [`de043d359`](https://github.com/OmniBlocks/scratch-gui/commit/de043d359e4623b80decf1d3e93b47b0461d7e90) - 2025-12-05 16:53:34 -0500
+
+**fix: videos not showing in chaos tests and deduplicate issues to reduce clutter**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`5d1c9394d`](https://github.com/OmniBlocks/scratch-gui/commit/5d1c9394d7a8bfb409bba39ea1f81a33516d9816) - 2025-12-05 13:39:51 -0500
+
+**feat: add new spam guard workflow**
+
+Merge pull request #519 from OmniBlocks/new-spam-guard
+  Added automated spam detection for issue and discussion comments that analyzes contributions from new community members and takes appropriate moderation actions while notifying maintainers.
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`62d9397fb`](https://github.com/OmniBlocks/scratch-gui/commit/62d9397fb3121cc31c8685e39cb169dd609dfe6c) - 2025-12-05 11:28:01 -0500
+
+**Merge pull request #515 from OmniBlocks/dependabot/npm_and_yarn/scratch-vm-e384517**
+
+Bump scratch-vm from `9f709a3` to `e384517`
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`583116acb`](https://github.com/OmniBlocks/scratch-gui/commit/583116acbd753f075a3d3487494b6c36e094df73) - 2025-12-04 23:07:51 -0500
+
+**feat: Merge pull request #439 from OmniBlocks/supervoidcoder-patch-6**
+
+make it so embed works on non-production while keeping restriction
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`7f728f4fb`](https://github.com/OmniBlocks/scratch-gui/commit/7f728f4fb15a3ba78858cd115c477ae3466d2715) - 2025-12-04 15:12:51 -0600
+
+**Update ulti.yaml to include CODERS section**
+
+Added a section for CODERS with specific names and nicknames.
+
+*Author: Graison P*
+
+---
+
+
+### Commit [`2367372ab`](https://github.com/OmniBlocks/scratch-gui/commit/2367372ab15570dc96a35e8c58626d3667833139) - 2025-12-04 06:24:53 -0600
+
+**Add files via upload**
+
+*Author: Graison P*
+
+---
+
+
+### Commit [`ef33206b9`](https://github.com/OmniBlocks/scratch-gui/commit/ef33206b9c75c333993dc640ed006429e4d865c9) - 2025-12-04 03:26:32 +0000
+
+**Merge branch 'main' of https://github.com/OmniBlocks/scratch-gui**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`4ca62550e`](https://github.com/OmniBlocks/scratch-gui/commit/4ca62550e454ce24da734e3b06c7583c9aaeab87) - 2025-12-04 02:47:32 +0000
+
+**docs: revamp docs entirely and remove ai clanker slop garbage trash skibidi**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`8df35c92e`](https://github.com/OmniBlocks/scratch-gui/commit/8df35c92e0a2c470f15c6a757b249cbad546abc4) - 2025-12-03 18:24:15 -0600
+
+**will this fix the syntax error?**
+
+I dunno! it'sa bunch sh(bleeeeeeep)
+
+*Author: Graison P*
+
+---
+
+
+### Commit [`14e100420`](https://github.com/OmniBlocks/scratch-gui/commit/14e1004207eaff279196b5e7d7e86fb17d09ce4c) - 2025-12-03 18:20:55 -0600
+
+**Add files via upload**
+
+*Author: Graison P*
+
+---
+
+
+### Commit [`bcf6abc6b`](https://github.com/OmniBlocks/scratch-gui/commit/bcf6abc6b397c6f695d1f0be262079c293bc93ec) - 2025-12-03 18:20:18 -0600
+
+**?**
+
+*Author: Graison P*
+
+---
+
+
+### Commit [`1ae74b428`](https://github.com/OmniBlocks/scratch-gui/commit/1ae74b4288757f2b5248cb5fc5d8695be4155a71) - 2025-12-03 18:00:13 +0000
+
+**enable open source pro tier i think this does that**
+
+*Author: ampelectrecuted*
+
+---
+
+
+### Commit [`da27c905d`](https://github.com/OmniBlocks/scratch-gui/commit/da27c905d50d22a2e296c14d472808a3c32942eb) - 2025-12-03 15:49:23 +0000
+
+**fix: songedito iframe... hopefully**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`1911e214b`](https://github.com/OmniBlocks/scratch-gui/commit/1911e214b607ec30664f56803d5927c504ad73aa) - 2025-12-03 14:00:56 +0000
+
+**update github actions**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`d3d797df6`](https://github.com/OmniBlocks/scratch-gui/commit/d3d797df67114e989a436544b8698e8819148e5b) - 2025-12-03 08:52:34 -0500
+
+**fix: (ci) made AI know that it's github-actions**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`3c0066cbf`](https://github.com/OmniBlocks/scratch-gui/commit/3c0066cbfaaaf7190784afe518cacc039e4b51ab) - 2025-12-02 21:46:22 -0500
+
+**feat: Add matrix-driven chaos testing workflow with multi-platform support and automated reporting**
+
+* **Chores**
+  * Expanded automated testing across multiple operating systems (Windows, macOS, Ubuntu) and browsers for improved platform compatibility validation
+  * Enhanced chaos testing capabilities to strengthen reliability assessment
+  * Improved test analytics and streamlined failure reporting infrastructure
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`081cc796f`](https://github.com/OmniBlocks/scratch-gui/commit/081cc796f16b38b851879f4e298e6cf1df0a4966) - 2025-12-03 01:51:54 +0000
+
+**feat: (ci) added commit author to test workflow and show videos in issues**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`31abb9c34`](https://github.com/OmniBlocks/scratch-gui/commit/31abb9c348151ee5cceea4889e8f8ccf2504ee6a) - 2025-12-02 19:49:38 -0500
+
+**Update test.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`2817a7c3c`](https://github.com/OmniBlocks/scratch-gui/commit/2817a7c3c8c700357e991a18955d5961433b3cfb) - 2025-12-02 19:01:04 -0500
+
+**Rename stale-pr-checker.yaml to stale-pr-checker.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`d20c0f156`](https://github.com/OmniBlocks/scratch-gui/commit/d20c0f156b04b814b652ecbb84e63523015740f2) - 2025-12-02 19:00:12 -0500
+
+**Update prtest.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`c576af334`](https://github.com/OmniBlocks/scratch-gui/commit/c576af33425a96afa16f2c7b1f8441f434dba3f7) - 2025-12-02 18:58:26 -0500
+
+**Delete .github/workflows/node.js.yml**
+
+this is redundant because of test.yml which is infinitely better anyways
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`ee2b08168`](https://github.com/OmniBlocks/scratch-gui/commit/ee2b081688da27fd76655b7c12695d5a80b924a5) - 2025-12-02 18:56:57 -0500
+
+**feat: (ci) main branch monitor**
+
+✅ Actually detect test failures
+✅ Find and upload videos 
+✅ Create chaos-videos branch automatically
+✅ Push videos + screenshots + traces to the branch
+✅ Create issues with video links when errors are found
+✅ Run AI analysis on the errors
+✅ Deploy dashboard with embedded videos
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`48158dd49`](https://github.com/OmniBlocks/scratch-gui/commit/48158dd49f15178bd4515fcbaf58fe53a02b7452) - 2025-12-02 18:31:24 -0500
+
+**Update test.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`e7c082dba`](https://github.com/OmniBlocks/scratch-gui/commit/e7c082dba79adf9462cddb3d3bf13a3b58e5e405) - 2025-12-02 22:34:54 +0000
+
+**Update AI mention from github-actions to OmniBlocks/ai**
+
+*Author: ampelectrecuted*
+
+---
+
+
+### Commit [`597f3a16d`](https://github.com/OmniBlocks/scratch-gui/commit/597f3a16d3f2d10b3b7f05ef7107f2dca500ea08) - 2025-12-02 22:32:56 +0000
+
+**i hate clanker commit messages**
+
+*Author: ampelectrecuted*
+
+---
+
+
+### Commit [`f7acd46a7`](https://github.com/OmniBlocks/scratch-gui/commit/f7acd46a789baf5819d0da532488870d1d5e604c) - 2025-12-02 22:27:47 +0000
+
+**Update ulti.yaml**
+
+*Author: ampelectrecuted*
+
+---
+
+
+### Commit [`791adc4f5`](https://github.com/OmniBlocks/scratch-gui/commit/791adc4f5e2ba359babcf754c2898011dc9d97fd) - 2025-12-02 22:26:27 +0000
+
+**👀**
+
+*Author: ampelectrecuted*
+
+---
+
+
+### Commit [`ad779c3ce`](https://github.com/OmniBlocks/scratch-gui/commit/ad779c3ce6fe7946d5ea9547fa3243c8bf8ae8be) - 2025-12-02 22:23:16 +0000
+
+**mistral ai for issue assistant**
+
+*Author: ampelectrecuted*
+
+---
+
+
+### Commit [`997dd692e`](https://github.com/OmniBlocks/scratch-gui/commit/997dd692ec5bb1ae6c6dd0a9293dd279e8ff2c21) - 2025-12-02 22:00:59 +0000
+
+**thing**
+
+*Author: ampelectrecuted*
+
+---
+
+
+### Commit [`ae0fcf831`](https://github.com/OmniBlocks/scratch-gui/commit/ae0fcf831edaa05c5dcf711cd2b88dd967b1e398) - 2025-12-02 21:47:11 +0000
+
+**replaced with ulti**
+
+*Author: ampelectrecuted*
+
+---
+
+
+### Commit [`1a4c6cfd6`](https://github.com/OmniBlocks/scratch-gui/commit/1a4c6cfd6d7f693e0d1a9675a17340e77d9e4b66) - 2025-12-02 21:46:02 +0000
+
+**make stale checker work**
+
+*Author: ampelectrecuted*
+
+---
+
+
+### Commit [`1d12ab945`](https://github.com/OmniBlocks/scratch-gui/commit/1d12ab9456026d040df3acd6454ca7d2a681aeae) - 2025-12-02 21:45:11 +0000
+
+**ulti**
+
+*Author: ampelectrecuted*
+
+---
+
+
+### Commit [`3514c6d13`](https://github.com/OmniBlocks/scratch-gui/commit/3514c6d137fdbc8c72441779780527ecceb0e2a9) - 2025-12-02 18:58:34 +0000
+
+**bump version to 0.6.0**
+
+*Author: ampelectrecuted*
+
+---
+
+
+### Commit [`eee973bf5`](https://github.com/OmniBlocks/scratch-gui/commit/eee973bf50d111d3c78803614fd313c63ffb6291) - 2025-12-02 18:41:04 +0000
+
+**Merge branch 'main' of https://github.com/OmniBlocks/scratch-gui**
+
+*Author: ampelectrecuted*
+
+---
+
+
+### Commit [`01e1aa0e3`](https://github.com/OmniBlocks/scratch-gui/commit/01e1aa0e36f70fdbaf8cba5e4801ac7f00ac9de2) - 2025-12-02 18:40:11 +0000
+
+**Merge branch 'main' of https://github.com/OmniBlocks/scratch-gui**
+
+*Author: ampelectrecuted*
+
+---
+
+
 ### Commit [`df2c5e030`](https://github.com/OmniBlocks/scratch-gui/commit/df2c5e030cb13a7bad0776c3f4cb7d65d10da856) - 2025-12-02 18:18:35 +0000
 
 **feat: (ci) add super cool test dashboard thing**

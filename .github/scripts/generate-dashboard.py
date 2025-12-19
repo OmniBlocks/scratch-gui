@@ -4,6 +4,7 @@ import sys
 import html
 import subprocess
 from pathlib import Path
+import re
 
 def read_file_safe(filename):
     """Read file content safely, return default message if file doesn't exist."""
@@ -15,18 +16,61 @@ def read_file_safe(filename):
         print(f"Error reading {filename}: {e}", file=sys.stderr)
     return f"No {filename} available"
 
-def generate_screenshot_html(screenshots_dir):
-    """Generate HTML for screenshot cards."""
+def get_platform_icon(platform_name):
+    """Get emoji icon for platform."""
+    if 'ubuntu' in platform_name or 'linux' in platform_name:
+        return '🐧'
+    elif 'windows' in platform_name:
+        return '🪟'
+    elif 'macos' in platform_name or 'mac' in platform_name:
+        return '🍎'
+    else:
+        return '🖥️'
+
+def get_platform_display_name(platform_name):
+    """Convert platform directory name to display name."""
+    name = platform_name.replace('screenshots-', '')
+    
+    if 'ubuntu-latest' in name:
+        return 'Ubuntu'
+    elif 'windows-latest' in name:
+        return 'Windows'
+    elif 'macos-latest' in name:
+        return 'macOS'
+    else:
+        return name.replace('-', ' ').title()
+
+def generate_screenshot_html_for_platform(screenshots_dir, platform_name):
+    """Generate HTML for screenshot cards from a specific platform."""
+    print(f"🔍 Checking screenshots in: {screenshots_dir}", file=sys.stderr)
+    
     if not os.path.exists(screenshots_dir):
-        return '<p>No screenshots available</p>'
+        print(f"⚠️  Directory does not exist: {screenshots_dir}", file=sys.stderr)
+        return '<p>No screenshots available for this platform</p>'
+    
+    screenshot_files = sorted(Path(screenshots_dir).glob('*.png'))
+    
+    if not screenshot_files:
+        print(f"⚠️  No PNG files found in: {screenshots_dir}", file=sys.stderr)
+        # List what's actually in the directory
+        all_files = list(Path(screenshots_dir).iterdir()) if os.path.exists(screenshots_dir) else []
+        print(f"   Contents: {[f.name for f in all_files]}", file=sys.stderr)
+        return '<p>No screenshots available for this platform</p>'
+    
+    print(f"✅ Found {len(screenshot_files)} screenshots in {screenshots_dir}", file=sys.stderr)
     
     screenshots_html = []
-    for screenshot in sorted(Path(screenshots_dir).glob('*.png')):
+    for screenshot in screenshot_files:
         filename = screenshot.name
-        # Convert filename to nice title (e.g., "stage-sprites.png" -> "Stage Sprites")
         name = filename.replace('-', ' ').replace('.png', '').title()
         
-        # Add note only for editor-initial (which is redundant with code-tab)
+        # 🎯 FIX: Use only the directory basename for relative paths
+        # This ensures paths are correct relative to index.html location
+        dir_basename = os.path.basename(screenshots_dir)
+        rel_path = f"{dir_basename}/{filename}"
+        
+        print(f"   Screenshot: {filename} -> {rel_path}", file=sys.stderr)
+        
         note = ''
         if filename == 'editor-initial.png':
             note = '<div class="note">ℹ️ Note: Shows code tab (redundant with code-tab)</div>'
@@ -34,39 +78,87 @@ def generate_screenshot_html(screenshots_dir):
         screenshots_html.append(f'''
                 <div class="screenshot-card">
                   <h3>{name}</h3>
-                  <img src="screenshots/{filename}" alt="{name}">
+                  <img src="{rel_path}" alt="{name}" data-platform="{platform_name}">
                   {note}
                 </div>''')
     
-    return ''.join(screenshots_html) if screenshots_html else '<p>No screenshots available</p>'
+    return ''.join(screenshots_html)
+
+def generate_all_screenshots_html(output_dir):
+    """Generate HTML for all platform screenshots organized by platform."""
+    print(f"\n📊 Generating screenshots HTML from: {output_dir}", file=sys.stderr)
+    print(f"   Directory exists: {os.path.exists(output_dir)}", file=sys.stderr)
+    
+    if os.path.exists(output_dir):
+        print(f"   Contents: {os.listdir(output_dir)}", file=sys.stderr)
+    
+    screenshot_dirs = []
+    for entry in os.listdir(output_dir):
+        full_path = os.path.join(output_dir, entry)
+        if entry.startswith('screenshots-') and os.path.isdir(full_path):
+            screenshot_dirs.append(entry)
+            print(f"✅ Found screenshot directory: {entry}", file=sys.stderr)
+    
+    # Also check for legacy single screenshots/ directory
+    if os.path.exists(os.path.join(output_dir, 'screenshots')) and os.path.isdir(os.path.join(output_dir, 'screenshots')):
+        screenshot_dirs.append('screenshots')
+        print(f"✅ Found legacy screenshots directory", file=sys.stderr)
+    
+    if not screenshot_dirs:
+        print("⚠️  No screenshot directories found!", file=sys.stderr)
+        return '<p>No screenshots available</p>', ''
+    
+    screenshot_dirs.sort()
+    print(f"📁 Processing {len(screenshot_dirs)} screenshot directories", file=sys.stderr)
+    
+    tabs_html = []
+    content_html = []
+    
+    for idx, dir_name in enumerate(screenshot_dirs):
+        platform_name = get_platform_display_name(dir_name)
+        platform_icon = get_platform_icon(dir_name)
+        tab_id = f"platform-{idx}"
+        active_class = 'active' if idx == 0 else ''
+        
+        tabs_html.append(f'''
+          <button class="platform-tab {active_class}" onclick="showPlatform('{tab_id}')">{platform_icon} {platform_name}</button>''')
+        
+        screenshots_html = generate_screenshot_html_for_platform(dir_name, platform_name)
+        content_html.append(f'''
+        <div id="{tab_id}" class="platform-content {active_class}">
+          <h3 style="margin-bottom: 20px; color: #555;">{platform_icon} {platform_name} Screenshots</h3>
+          <div class="screenshots-grid">{screenshots_html}</div>
+        </div>''')
+    
+    tabs_section = ''.join(tabs_html)
+    content_section = ''.join(content_html)
+    
+    return tabs_section, content_section
 
 def generate_chaos_videos_html(video_dir, repo):
     """Generate HTML for chaos test videos."""
     if not video_dir or video_dir == 'None':
         return '<p>No chaos testing videos available for this run.</p>'
     
-    # List of potential video files from chaos tests
     video_files = [
-        ('chaos-test-chromium-video.webm', '🌪️ Random Click Spam', 'chaos-test'),
-        ('recorded-actions-test-chromium-video.webm', '🎬 Recorded Actions Playback', 'recorded-actions')
+        ('chaos-test-chromium-video.webm', 'chaos-test-chromium-video.gif', '🌪️ Random Click Spam', 'chaos-test'),
+        ('recorded-actions-chromium-video.webm', 'recorded-actions-chromium-video.gif', '🎬 Recorded Actions Playback', 'recorded-actions')
     ]
     
     videos_html = []
-    for filename, title, test_id in video_files:
-        video_url = f'https://github.com/{repo}/raw/chaos-videos/{video_dir}/{filename}'
-        download_url = f'https://github.com/{repo}/blob/chaos-videos/{video_dir}/{filename}?raw=true'
+    for webm_filename, gif_filename, title, test_id in video_files:
+        webm_url = f'https://github.com/{repo}/raw/chaos-videos/{video_dir}/{webm_filename}'
+        gif_url = f'https://github.com/{repo}/raw/chaos-videos/{video_dir}/{gif_filename}'
+        download_url = f'https://github.com/{repo}/blob/chaos-videos/{video_dir}/{webm_filename}?raw=true'
         
         videos_html.append(f'''
                 <div class="video-card">
                   <h3>{title}</h3>
-                  <div class="video-wrapper">
-                    <video controls preload="metadata">
-                      <source src="{video_url}" type="video/webm">
-                      Your browser doesn't support video playback.
-                    </video>
+                  <div class="gif-wrapper">
+                    <img src="{gif_url}" alt="{title}" style="width: 100%; border-radius: 8px;">
                   </div>
                   <div class="video-actions">
-                    <a href="{download_url}" class="download-btn" download>⬇️ Download Video</a>
+                    <a href="{download_url}" class="download-btn" download>⬇️ Download Video (WebM)</a>
                     <a href="https://github.com/{repo}/tree/chaos-videos/{video_dir}" class="browse-btn" target="_blank">📁 Browse All Files</a>
                   </div>
                 </div>''')
@@ -75,11 +167,9 @@ def generate_chaos_videos_html(video_dir, repo):
 
 def generate_dashboard(output_dir):
     """Generate the HTML dashboard."""
-    # Get commit SHA
     commit_sha = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD'], text=True).strip()
     date = subprocess.check_output(['date', '-u', '+%Y-%m-%d %H:%M:%S UTC'], text=True).strip()
     
-    # Get metadata from environment variables
     build_status_raw = os.environ.get('BUILD_STATUS', '')
     if build_status_raw == "success":
         build_status = "✅ Passed"
@@ -90,7 +180,6 @@ def generate_dashboard(output_dir):
         build_status_class = "error"
         build_icon = "❌"
     
-    # Lint status
     lint_status_raw = os.environ.get('LINT_STATUS', '')
     if lint_status_raw == "passed":
         lint_status = "✅ Passed"
@@ -103,7 +192,6 @@ def generate_dashboard(output_dir):
         lint_icon = "❌"
         lint_result = "Failed"
     
-    # Unit test status
     unit_status_raw = os.environ.get('UNIT_STATUS', '')
     if unit_status_raw == "passed":
         unit_status = "✅ Passed"
@@ -114,7 +202,6 @@ def generate_dashboard(output_dir):
         unit_status_class = "error"
         unit_icon = "❌"
     
-    # Integration test status
     integration_status_raw = os.environ.get('INTEGRATION_STATUS', '')
     if integration_status_raw == "passed":
         integration_status = "✅ Passed"
@@ -125,7 +212,6 @@ def generate_dashboard(output_dir):
         integration_status_class = "error"
         integration_icon = "❌"
     
-    # Screenshot status
     screenshot_status_raw = os.environ.get('SCREENSHOT_STATUS', '')
     if screenshot_status_raw == "success":
         screenshot_status = "✅ Done"
@@ -136,7 +222,6 @@ def generate_dashboard(output_dir):
         screenshot_status_class = "warning"
         screenshot_icon = "⚠️"
     
-    # Chaos testing status
     chaos_status_raw = os.environ.get('CHAOS_STATUS', '')
     chaos_errors = os.environ.get('CHAOS_ERRORS_FOUND', 'false')
     if chaos_status_raw == "passed":
@@ -152,7 +237,6 @@ def generate_dashboard(output_dir):
         chaos_status_class = "warning"
         chaos_icon = "⚠️"
     
-    # Read log files
     install_log = read_file_safe('install-output.txt')
     build_log = read_file_safe('build-output.txt')
     lint_log = read_file_safe('lint-output.txt')
@@ -162,15 +246,12 @@ def generate_dashboard(output_dir):
     chaos_log = read_file_safe('chaos-test-output.txt')
     recorded_log = read_file_safe('recorded-actions-output.txt')
     
-    # Generate screenshot HTML
-    screenshots_html = generate_screenshot_html('screenshots')
+    screenshot_tabs, screenshot_content = generate_all_screenshots_html(output_dir)
     
-    # Generate chaos videos HTML
     repo = os.environ.get('REPO', 'Unknown')
     video_dir = os.environ.get('VIDEO_DIR', None)
     chaos_videos_html = generate_chaos_videos_html(video_dir, repo)
     
-    # Chaos section visibility
     chaos_section = ''
     if video_dir and video_dir != 'None':
         chaos_section = f'''
@@ -182,7 +263,6 @@ def generate_dashboard(output_dir):
         <div class="videos-grid">{chaos_videos_html}</div>
       </section>'''
     
-    # Chaos logs tab
     chaos_logs_tabs = ''
     chaos_logs_content = ''
     if chaos_status_raw:
@@ -193,7 +273,6 @@ def generate_dashboard(output_dir):
         <div id="chaos-tab" class="tab-content"><div class="log-viewer"><pre>{html.escape(chaos_log)}</pre></div></div>
         <div id="recorded-tab" class="tab-content"><div class="log-viewer"><pre>{html.escape(recorded_log)}</pre></div></div>'''
     
-    # HTML template - NOTE: CSS/JS curly braces are escaped with {{ and }}
     html_template = '''<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -226,6 +305,12 @@ def generate_dashboard(output_dir):
     .test-stat {{ flex: 1; min-width: 150px; padding: 15px; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }}
     .test-stat .label {{ font-size: 0.85em; color: #666; margin-bottom: 5px; }}
     .test-stat .value {{ font-size: 1.8em; font-weight: bold; color: #333; }}
+    .platform-tabs {{ display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #e0e0e0; flex-wrap: wrap; }}
+    .platform-tab {{ padding: 15px 30px; cursor: pointer; border: none; background: #f8f9fa; font-size: 1.1em; color: #666; border-radius: 10px 10px 0 0; transition: all 0.3s ease; font-weight: 500; }}
+    .platform-tab:hover {{ background: #e9ecef; color: #667eea; }}
+    .platform-tab.active {{ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-weight: bold; }}
+    .platform-content {{ display: none; }}
+    .platform-content.active {{ display: block; }}
     .screenshots-grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 30px; }}
     .screenshot-card {{ background: #f8f9fa; border-radius: 10px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }}
     .screenshot-card h3 {{ margin-bottom: 15px; color: #555; }}
@@ -235,8 +320,8 @@ def generate_dashboard(output_dir):
     .videos-grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); gap: 30px; }}
     .video-card {{ background: #f8f9fa; border-radius: 10px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }}
     .video-card h3 {{ margin-bottom: 15px; color: #555; font-size: 1.3em; }}
-    .video-wrapper {{ position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; background: #000; border-radius: 8px; margin-bottom: 15px; }}
-    .video-wrapper video {{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; }}
+    .gif-wrapper {{ position: relative; background: #000; border-radius: 8px; margin-bottom: 15px; overflow: hidden; }}
+    .gif-wrapper img {{ display: block; width: 100%; height: auto; }}
     .video-actions {{ display: flex; gap: 10px; }}
     .download-btn, .browse-btn {{ flex: 1; padding: 12px; text-align: center; border-radius: 8px; text-decoration: none; font-weight: bold; transition: all 0.3s ease; }}
     .download-btn {{ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }}
@@ -333,8 +418,10 @@ def generate_dashboard(output_dir):
         </div>
       </section>
       <section>
-        <h2>📸 Screenshots</h2>
-        <div class="screenshots-grid">{screenshots_html}</div>
+        <h2>📸 Multi-Platform Screenshots</h2>
+        <p style="margin-bottom: 20px; color: #666;">Screenshots captured across Ubuntu, Windows, and macOS platforms with Chromium browser.</p>
+        <div class="platform-tabs">{screenshot_tabs}</div>
+        {screenshot_content}
       </section>{chaos_section}
       <section>
         <h2>📝 Logs</h2>
@@ -371,6 +458,14 @@ def generate_dashboard(output_dir):
       document.getElementById(tabName + '-tab').classList.add('active');
       event.target.classList.add('active');
     }}}}
+    
+    function showPlatform(platformId) {{{{
+      document.querySelectorAll('.platform-content').forEach(content => content.classList.remove('active'));
+      document.querySelectorAll('.platform-tab').forEach(tab => tab.classList.remove('active'));
+      document.getElementById(platformId).classList.add('active');
+      event.target.classList.add('active');
+    }}}}
+    
     document.querySelectorAll('.screenshot-card img').forEach(img => {{{{
       img.onclick = function() {{{{
         document.getElementById('imageModal').style.display = 'block';
@@ -381,7 +476,6 @@ def generate_dashboard(output_dir):
 </body>
 </html>'''
     
-    # Fill template with values
     filled_template = html_template.format(
         commit_sha=html.escape(commit_sha),
         date=html.escape(date),
@@ -415,7 +509,8 @@ def generate_dashboard(output_dir):
         chaos_status_class=chaos_status_class,
         chaos_icon=chaos_icon,
         chaos_status=chaos_status,
-        screenshots_html=screenshots_html,
+        screenshot_tabs=screenshot_tabs,
+        screenshot_content=screenshot_content,
         chaos_section=chaos_section,
         chaos_logs_tabs=chaos_logs_tabs,
         chaos_logs_content=chaos_logs_content,
@@ -429,13 +524,13 @@ def generate_dashboard(output_dir):
         run_id=os.environ.get('RUN_ID', 'Unknown')
     )
     
-    # Write the dashboard
     os.makedirs(output_dir, exist_ok=True)
     output_file = os.path.join(output_dir, 'index.html')
     with open(output_file, 'w', encoding='utf-8') as f:
         f.write(filled_template)
     
-    print(f"Dashboard generated successfully at {output_file}")
+    print(f"✅ Dashboard generated successfully at {output_file}")
+    print(f"📸 Screenshot directories found: {len([d for d in os.listdir(output_dir) if d.startswith('screenshots-')])}")
 
 if __name__ == '__main__':
     output_dir = sys.argv[1] if len(sys.argv) > 1 else 'dashboard'

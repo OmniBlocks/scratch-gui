@@ -3,8 +3,8 @@
   "results": [
     {
       "name": "editor-initial.png",
-      "diffPixels": 6605,
-      "diffPercentage": "0.72",
+      "diffPixels": 6584,
+      "diffPercentage": "0.71",
       "hasDiff": true,
       "skipped": false
     },
@@ -24,29 +24,29 @@
     },
     {
       "name": "code-tab.png",
-      "diffPixels": 6605,
-      "diffPercentage": "0.72",
+      "diffPixels": 6584,
+      "diffPercentage": "0.71",
       "hasDiff": true,
       "skipped": false
     },
     {
       "name": "costumes-tab.png",
-      "diffPixels": 6605,
-      "diffPercentage": "0.72",
+      "diffPixels": 6584,
+      "diffPercentage": "0.71",
       "hasDiff": true,
       "skipped": false
     },
     {
       "name": "sounds-tab.png",
-      "diffPixels": 6605,
-      "diffPercentage": "0.72",
+      "diffPixels": 6584,
+      "diffPercentage": "0.71",
       "hasDiff": true,
       "skipped": false
     },
     {
       "name": "songs-tab.png",
-      "diffPixels": 6605,
-      "diffPercentage": "0.72",
+      "diffPixels": 39539,
+      "diffPercentage": "4.29",
       "hasDiff": true,
       "skipped": false
     },
@@ -66,8 +66,8 @@
     },
     {
       "name": "advanced-settings.png",
-      "diffPixels": 6605,
-      "diffPercentage": "0.72",
+      "diffPixels": 6584,
+      "diffPercentage": "0.71",
       "hasDiff": true,
       "skipped": false
     }

@@ -14,12 +14,19 @@ jobs:
     # Trigger on EITHER slash command OR checkbox
     if: >-
       github.event_name == 'issue_comment' && 
-      github.event.issue.pull_request && 
-      github.event.sender.type == 'User' &&
+      github.event.issue.pull_request &&
       (
-        contains(github.event.comment.body, '/fix lint') ||
-        contains(github.event.comment.body, '[x] 🎨 Auto-fix ESLint issues') ||
-        contains(github.event.comment.body, '[X] 🎨 Auto-fix ESLint issues')
+        (
+          github.event.sender.type == 'User' &&
+          contains(github.event.comment.body, '/fix lint')
+        ) ||
+        (
+          github.event.comment.user.login == 'github-actions[bot]' &&
+          (
+            contains(github.event.comment.body, '[x] 🎨 Auto-fix ESLint issues') ||
+            contains(github.event.comment.body, '[X] 🎨 Auto-fix ESLint issues')
+          )
+        )
       )
     runs-on: ubuntu-latest
 
@@ -237,19 +244,15 @@ jobs:
           git config user.email 'github-actions[bot]@users.noreply.github.com'
           git add .
           
-          # Generate detailed commit message
-          cat > commit_message.txt << 'EOF'
-🎨 Auto-fix ESLint issues
-
-Fixed the following:
-${{ steps.autofix.outputs.fixed_rules }}
-
-Triggered by @${{ github.event.comment.user.login }}
-Co-authored-by: ${{ github.event.comment.user.login }} <${{ github.event.comment.user.id }}+${{ github.event.comment.user.login }}@users.noreply.github.com>
-EOF
+          # Using echo instead of heredoc
+          echo -e "🎨 Auto-fix ESLint issues\n\nFixed the following:\n${{ steps.autofix.outputs.fixed_rules }}\n\nTriggered by @${{ github.event.comment.user.login }}\nCo-authored-by: ${{ github.event.comment.user.login }} <${{ github.event.comment.user.id }}+${{ github.event.comment.user.login }}@users.noreply.github.com>" > commit_message.txt
           
           git commit -F commit_message.txt
           git push
+
+          
+          
+
 
 
       - name: Create patch for fork PRs

@@ -16,7 +16,7 @@ Contributions are welcome!
 
 To contribute to OmniBlocks, you must know JavaScript, and prefferably, React too. If you don't know what these are, well, go ahead and learn it! There are many resources online for you to learn any languages. If you feel stuck, feel free to reach out in the Discussions tab and we might help you a little.
 
-For other packages, such as scratch-vm or scratch-blocks, you might need to know some other languages, such as Python, but it isn't strictly necessary.
+For other packages, such as scratch-vm or scratch-blocks, you might need to install some other runtimes, such as Python, but it isn't strictly necessary to know them.
 
 ## Development Environment
 
@@ -40,7 +40,9 @@ While we are quite laid back, as I said earlier, this does not exempt anyone fro
 ## Joke features
 
 Haha! Funny! yes..............
-Joke features for April Fools are allowed, just don't spam PRs for joke features, although that applies for any kind of PR.
+Joke features for April Fools are allowed, just don't spam PRs for joke features, although that applies for any kind of PR.</br>
+No, really don't. Or else this is what we have to deal with:</br>
+<img width="300" height="64" alt="A pull request counter, showing 98 PR's open." src="https://github.com/user-attachments/assets/3f8e9d66-2a67-40df-bb31-dfbea5e61ed8" />
 
 ## Code Review
 

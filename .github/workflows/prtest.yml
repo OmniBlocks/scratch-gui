@@ -1216,14 +1216,13 @@ jobs:
             const spellStatus = '${{ needs.spell-check.outputs.has_errors }}' === 'true' ? '❌' : '✅';
             const typoCount = '${{ needs.spell-check.outputs.typo_count }}' || '0';
             
-            commentBody += `\n**Spell Check:** ${spellStatus}\n`;
+            testSection += `\n**Spell Check:** ${spellStatus}\n`;
             if ('${{ needs.spell-check.outputs.has_errors }}' === 'true') {
-              commentBody += `- Found ${typoCount} spelling issue(s)\n`;
-              commentBody += `\nTo fix, click the checkbox below or type \`/fix spelling\`:\n- [ ] 📝 Auto-fix spelling issues\n`;
+              testSection += `- Found ${typoCount} spelling issue(s)\n`;
+              testSection += `\nTo fix, click the checkbox below or type \`/fix spelling\`:\n- [ ] 📝 Auto-fix spelling issues\n`;
             } else {
-              commentBody += `- No spelling issues found! 📝✨\n`;
+              testSection += `- No spelling issues found! 📝✨\n`;
             }
-            
             // Unit Test Results
             testSection += `\n**Unit Tests:** ${unitStatus === 'passed' ? '✅' : '❌'}\n`;
             testSection += `- Total: ${unitTotal} tests\n`;

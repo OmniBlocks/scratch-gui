@@ -112,7 +112,7 @@ jobs:
       - name: Checkout PR branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ fromJSON(steps.pr.outputs.result).headRef }}
+          ref: ${{ fromJSON(steps.pr.outputs.result).headSha }}
           repository: ${{ fromJSON(steps.pr.outputs.result).headRepo }}
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0

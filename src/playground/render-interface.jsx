@@ -42,10 +42,12 @@ import {loadServiceWorker} from './load-service-worker';
 import runAddons from '../addons/entry';
 import InvalidEmbed from '../components/tw-invalid-embed/invalid-embed.jsx';
 import {APP_NAME, APP_VERSION} from '../lib/brand.js';
+import {loadFileHandler} from './load-file-handler';
+import {setProjectTitle} from '../reducers/project-title';
 
 import styles from './interface.css';
 
-const isInvalidEmbed = window.parent !== window;
+const isInvalidEmbed = process.env.NODE_ENV === 'production' && window.parent !== window;
 
 const handleClickAddonSettings = addonId => {
     // addonId might be a string of the addon to focus on, undefined, or an event (treat like undefined)
@@ -206,6 +208,13 @@ const Footer = () => (
                             id="tw.footer.wiki"
                         />
                     </a>
+                    <a href="https://omniblocks.github.io/NotebookWriter">
+                        <FormattedMessage
+                            defaultMessage="OmniBlocks Writer"
+                            description="Link in footer to OmniBlocks Writer, our word processor"
+                            id="tw.footer.writer"
+                        />
+                    </a>
                 </div>
                 <div className={styles.footerSection}>
                     <a href="https://scratch.mit.edu/users/scratchcode1_2_3/#comments">
@@ -243,6 +252,7 @@ class Interface extends React.Component {
     componentDidUpdate (prevProps) {
         if (prevProps.isLoading && !this.props.isLoading) {
             loadServiceWorker();
+            loadFileHandler(this.props.vm, this.props.onSetProjectTitle, this.context.store); // register PWA file handler once project is loaded and pass Redux store
         }
     }
     handleUpdateProjectTitle (title, isDefault) {
@@ -418,7 +428,12 @@ Interface.propTypes = {
     isLoading: PropTypes.bool,
     isPlayerOnly: PropTypes.bool,
     isRtl: PropTypes.bool,
-    projectId: PropTypes.string
+    projectId: PropTypes.string,
+    onSetProjectTitle: PropTypes.func
+};
+
+Interface.contextTypes = {
+    store: PropTypes.object
 };
 
 const mapStateToProps = state => ({
@@ -432,7 +447,9 @@ const mapStateToProps = state => ({
     projectId: state.scratchGui.projectState.projectId
 });
 
-const mapDispatchToProps = () => ({});
+const mapDispatchToProps = dispatch => ({
+    onSetProjectTitle: title => dispatch(setProjectTitle(title))
+});
 
 const ConnectedInterface = injectIntl(connect(
     mapStateToProps,

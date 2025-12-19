@@ -116,8 +116,42 @@ jobs:
                       `_To force the Mega PR test to run, comment \`/test pr\` on this PR._`
               });
 
-  mega-test:
+  spell-check:
     needs: check-files
+    if: >-
+      (github.actor != 'dependabot[bot]' && needs.check-files.outputs.should_skip == 'false')
+    runs-on: ubuntu-latest
+    outputs:
+      typo_count: ${{ steps.parse.outputs.typo_count }}
+      has_errors: ${{ steps.parse.outputs.has_errors }}
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Run spell check
+        id: spellcheck
+        uses: matheus23/md-spellcheck-action@v1
+        with:
+          files: '**/*.md'
+          dictionary: words-to-ignore.txt
+        continue-on-error: true
+          
+      - name: Parse spell check results
+        id: parse
+        run: |
+          # Check if spell check found errors
+          if [ "${{ steps.spellcheck.outcome }}" == "failure" ]; then
+            echo "has_errors=true" >> $GITHUB_OUTPUT
+            echo "typo_count=1" >> $GITHUB_OUTPUT
+          else
+            echo "has_errors=false" >> $GITHUB_OUTPUT
+            echo "typo_count=0" >> $GITHUB_OUTPUT
+          fi
+
+
+  mega-test:
+    needs: [check-files, spell-check]
     if: >-
       (github.actor != 'dependabot[bot]' && needs.check-files.outputs.should_skip == 'false')
     runs-on: ubuntu-latest
@@ -1176,6 +1210,18 @@ jobs:
 
               
               testSection += `\nTo fix, click the checkbox below or type \`/fix lint\`:\n- [ ] 🎨 Auto-fix ESLint issues\n`;
+            }
+            
+            // Spell Check Results
+            const spellStatus = '${{ needs.spell-check.outputs.has_errors }}' === 'true' ? '❌' : '✅';
+            const typoCount = '${{ needs.spell-check.outputs.typo_count }}' || '0';
+            
+            commentBody += `\n**Spell Check:** ${spellStatus}\n`;
+            if ('${{ needs.spell-check.outputs.has_errors }}' === 'true') {
+              commentBody += `- Found ${typoCount} spelling issue(s)\n`;
+              commentBody += `\nTo fix, click the checkbox below or type \`/fix spelling\`:\n- [ ] 📝 Auto-fix spelling issues\n`;
+            } else {
+              commentBody += `- No spelling issues found! 📝✨\n`;
             }
             
             // Unit Test Results

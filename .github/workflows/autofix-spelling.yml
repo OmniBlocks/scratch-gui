@@ -1,0 +1,290 @@
+name: Spelling Autofix
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+permissions:
+  contents: write
+  pull-requests: write
+  checks: read
+
+jobs:
+  autofix-spelling:
+    if: >-
+      github.event_name == 'issue_comment' && 
+      github.event.issue.pull_request &&
+      (
+        (github.event.sender.type == 'User' && contains(github.event.comment.body, '/fix spelling')) ||
+        (github.event.comment.user.login == 'github-actions[bot]' && (contains(github.event.comment.body, '[x] 📝 Auto-fix spelling issues') || contains(github.event.comment.body, '[X] 📝 Auto-fix spelling issues')))
+      )
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Detect trigger method
+        id: trigger
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const isCheckbox = context.payload.comment.user.login === 'github-actions[bot]';
+            console.log(`Triggered by: ${isCheckbox ? 'checkbox (bot)' : 'slash command (user)'}`);
+            core.setOutput('method', isCheckbox ? 'checkbox' : 'command');
+
+      - name: Check user permissions (only for slash commands)
+        if: steps.trigger.outputs.method == 'command'
+        id: permission_check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const permission = await github.rest.repos.getCollaboratorPermissionLevel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              username: context.payload.comment.user.login
+            });
+            
+            const allowedRoles = ['admin', 'maintain', 'write'];
+            const hasPermission = allowedRoles.includes(permission.data.permission);
+            
+            console.log(`User: ${context.payload.comment.user.login}`);
+            console.log(`Permission: ${permission.data.permission}`);
+            console.log(`Has permission: ${hasPermission}`);
+            
+            if (!hasPermission) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: `❌ Sorry @${context.payload.comment.user.login}, only collaborators can trigger autofixes for security reasons! 🔒\n\n` +
+                      `You need write access to this repository to use the \`/fix spelling\` command.`
+              });
+              core.setFailed('User does not have permission');
+            }
+            
+            return hasPermission;
+
+      - name: Get PR details
+        id: pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+            
+            const isFork = pr.data.head.repo.full_name !== pr.data.base.repo.full_name;
+            
+            console.log(`PR #${pr.data.number}`);
+            console.log(`Head: ${pr.data.head.ref} (${pr.data.head.repo.full_name})`);
+            console.log(`Base: ${pr.data.base.ref} (${pr.data.base.repo.full_name})`);
+            console.log(`Is fork: ${isFork}`);
+            
+            return {
+              number: pr.data.number,
+              isFork,
+              headRef: pr.data.head.ref,
+              headSha: pr.data.head.sha,
+              headRepo: pr.data.head.repo.full_name
+            };
+
+      - name: Post starting comment
+        id: status_comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const triggerMethod = '${{ steps.trigger.outputs.method }}';
+            const triggerText = triggerMethod === 'checkbox' 
+              ? 'checkbox selection' 
+              : '`/fix spelling` command';
+            
+            const comment = await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `📝 **Spelling Autofix Started!**\n\n` +
+                    `Triggered via ${triggerText}\n\n` +
+                    `🔄 Running spell check with auto-fix on markdown files...`
+            });
+            
+            return comment.data.id;
+
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ fromJSON(steps.pr.outputs.result).headRef }}
+          repository: ${{ fromJSON(steps.pr.outputs.result).headRepo }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Get changed markdown files
+        id: changed_files
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              per_page: 100
+            });
+            
+            const mdFiles = files
+              .filter(f => f.status !== 'removed')
+              .filter(f => /\.md$/.test(f.filename))
+              .map(f => f.filename)
+              .join(' ');
+            
+            console.log(`Found ${mdFiles.split(' ').filter(Boolean).length} markdown files`);
+            console.log(`Files: ${mdFiles}`);
+            
+            return mdFiles;
+          result-encoding: string
+          
+      - name: Run spell check with autofix
+        id: autofix
+        uses: matheus23/md-spellcheck-action@v1
+        with:
+          files: ${{ steps.changed_files.outputs.result }}
+          dictionary: words-to-ignore.txt
+          fix: true
+        continue-on-error: true
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if [[ -z $(git status --porcelain) ]]; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            
+            # Count fixed words
+            FIXED_COUNT=$(git diff --unified=0 | grep -c "^[+-]" | awk '{print int($1/2)}' || echo "0")
+            echo "fixed_count=$FIXED_COUNT" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push fixes
+        if: steps.check_changes.outputs.has_changes == 'true' && fromJSON(steps.pr.outputs.result).isFork == false
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          
+          echo -e "📝 Auto-fix spelling issues\n\nFixed spelling in markdown files\n\nTriggered by @${{ github.event.comment.user.login }}\nCo-authored-by: ${{ github.event.comment.user.login }} <${{ github.event.comment.user.id }}+${{ github.event.comment.user.login }}@users.noreply.github.com>" > commit_message.txt
+          
+          git commit -F commit_message.txt
+          git push
+
+      - name: Create patch for fork PRs
+        if: >-
+          steps.check_changes.outputs.has_changes == 'true' && 
+          fromJSON(steps.pr.outputs.result).isFork == true
+        run: |
+          git diff > spelling-autofix.patch
+          echo "📦 Patch created for fork PR"
+
+      - name: Upload patch artifact (fork PRs)
+        if: >-
+          steps.check_changes.outputs.has_changes == 'true' && 
+          fromJSON(steps.pr.outputs.result).isFork == true
+        uses: actions/upload-artifact@v4
+        with:
+          name: spelling-autofix-patch-pr-${{ github.event.issue.number }}
+          path: spelling-autofix.patch
+      
+      - name: Update checkbox (if used)
+        if: steps.trigger.outputs.method == 'checkbox' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            try {
+              const comment = await github.rest.issues.getComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: context.payload.comment.id
+              });
+              
+              let body = comment.data.body;
+              const success = '${{ steps.check_changes.outputs.has_changes }}' === 'true';
+              
+              if (success) {
+                body = body.replace(/- \[x\] 📝 Auto-fix spelling issues/i, '- [x] ~~📝 Auto-fix spelling issues~~ ✅ **Complete!**');
+              } else {
+                body = body.replace(/- \[x\] 📝 Auto-fix spelling issues/i, '- [x] ~~📝 Auto-fix spelling issues~~ ⚠️ **No fixes needed**');
+              }
+              
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: context.payload.comment.id,
+                body: body
+              });
+            } catch (error) {
+              console.error('Failed to update checkbox:', error);
+            }
+
+      - name: Post success comment
+        if: steps.check_changes.outputs.has_changes == 'true' && fromJSON(steps.pr.outputs.result).isFork == false
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fixedCount = '${{ steps.check_changes.outputs.fixed_count }}' || 'several';
+            
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: ${{ steps.status_comment.outputs.result }},
+              body: `📝✨ **Spelling Autofix Complete!**\n\n` +
+                    `Fixed ${fixedCount} spelling issue(s) in markdown files.\n\n` +
+                    `✅ Changes committed to branch. Check the latest commit for details.`
+            });
+
+      - name: Post patch comment (fork PR)
+        if: >-
+          steps.check_changes.outputs.has_changes == 'true' && 
+          fromJSON(steps.pr.outputs.result).isFork == true
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: ${{ steps.status_comment.outputs.result }},
+              body: `📝 **Spelling Autofix Complete!**\n\n` +
+                    `Since this is a fork PR, I can't push directly to your branch. But I've generated a patch file! 📦\n\n` +
+                    `**To apply the fixes:**\n` +
+                    `1. Download the patch from [workflow artifacts](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})\n` +
+                    `2. In your local repo: \`git apply spelling-autofix.patch\`\n` +
+                    `3. Commit and push the changes\n\n` +
+                    `⚡ Autofix complete!`
+            });
+
+      - name: Post no-changes comment
+        if: steps.check_changes.outputs.has_changes == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: ${{ steps.status_comment.outputs.result }},
+              body: `✨ **No Fixes Needed!**\n\n` +
+                    `Spell check ran but no changes were made. Either:\n` +
+                    `- ✅ All spelling is already correct! 🎉\n` +
+                    `- ⚠️ The flagged words are in your custom dictionary\n\n` +
+                    `Check the spell check results in the PR for details!`
+            });
+
+      - name: Post failure comment
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: ${{ steps.status_comment.outputs.result }},
+              body: `❌ **Spelling Autofix Failed!**\n\n` +
+                    `Something went wrong during the autofix process.\n\n` +
+                    `Check the [workflow logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.`
+            });

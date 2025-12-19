@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import render from '../app-target.js';
 
-import { APP_NAMES } from '../../lib/brand';
+import {APP_NAMES} from '../../lib/brand';
 
 const APP_NAME = APP_NAMES.PROJECT;
 import {applyGuiColors} from '../../lib/themes/guiHelpers.js';
@@ -54,15 +54,21 @@ const Credits = () => (
                 <h2>Current IDEs</h2>
 
                 <div className={localStyles.grid}>
-                    {IDE_CARDS.map((ide) => (
-                        <article className={localStyles.card} key={ide.title}>
+                    {IDE_CARDS.map(ide => (
+                        <article
+                            className={localStyles.card}
+                            key={ide.title}
+                        >
                             <h3 className={localStyles.cardTitle}>
                                 {ide.title}
                                 {ide.coming ? <span className={localStyles.coming}> — Coming soon</span> : null}
                             </h3>
                             <p className={localStyles.cardDesc}>{ide.desc}</p>
                             {ide.href ? (
-                                <a className={localStyles.cardLink} href={ide.href}>Open</a>
+                                <a
+                                    className={localStyles.cardLink}
+                                    href={ide.href}
+                                >Open</a>
                             ) : null}
                         </article>
                     ))}

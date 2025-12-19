@@ -4,7 +4,7 @@ import render from '../app-target';
 import styles from '../info.css';
 import Header from '../ws-components/header/header.jsx';
 
-import { APP_NAMES } from '../../lib/brand';
+import {APP_NAMES} from '../../lib/brand';
 
 const APP_NAME = APP_NAMES.PROJECT;
 import {applyGuiColors} from '../../lib/themes/guiHelpers';

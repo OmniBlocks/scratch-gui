@@ -48,7 +48,7 @@ const base = {
                 {from: /^\/addons\/?$/, to: '/addons.html'}
             ]
         },
-            hot: true
+        hot: true
     },
     output: {
         library: 'GUI',
@@ -138,7 +138,7 @@ const base = {
 
 if (!process.env.CI) {
     base.plugins.push(new webpack.ProgressPlugin());
-        base.plugins.push(new webpack.HotModuleReplacementPlugin());
+    base.plugins.push(new webpack.HotModuleReplacementPlugin());
 }
 
 module.exports = [
@@ -184,7 +184,7 @@ module.exports = [
                 'process.env.ENABLE_SERVICE_WORKER': JSON.stringify(process.env.ENABLE_SERVICE_WORKER || ''),
                 'process.env.ROOT': JSON.stringify(root),
                 'process.env.ROUTING_STYLE': JSON.stringify(process.env.ROUTING_STYLE || 'filehash'),
-                'process.env.APP_VERSION': JSON.stringify(version || '') 
+                'process.env.APP_VERSION': JSON.stringify(version || '')
             }),
             new HtmlWebpackPlugin({
                 chunks: ['editor'],

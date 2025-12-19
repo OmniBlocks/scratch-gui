@@ -407,48 +407,61 @@ const GUIComponent = props => {
                                     </Tab>
                                 </TabList>
                                 <TabPanel className={tabClassNames.tabPanel}>
-                                    {isNano ? blocksTabVisible && <NanoscriptEditor theme={theme} vm={vm} /> : <><Box className={styles.blocksWrapper}>
-                                            <Blocks
-                                                key={`${blocksId}/${theme.id}`}
-                                                canUseCloud={canUseCloud}
-                                                grow={1}
-                                                isVisible={blocksTabVisible}
-                                                options={{
-                                                    media: `${basePath}static/${theme.getBlocksMediaFolder()}/`
-                                                }}
-                                                stageSize={stageSize}
-                                                onOpenCustomExtensionModal={onOpenCustomExtensionModal}
-                                                theme={theme}
-                                                vm={vm} />
-                                                <Box className={styles.extensionButtonContainer}>
-                                                <button
-                                                    className={styles.extensionButton}
-                                                    title={intl.formatMessage(messages.addExtension)}
-                                                    onClick={isNano ? () => { alert('Adding extensions in NanoScript is not available yet') } : onExtensionButtonClick}
-                                                >
-                                                    <img
-                                                        className={styles.extensionButtonIcon}
-                                                        draggable={false}
-                                                        src={addExtensionIcon} />{isNano && intl.formatMessage(messages.addExtension)}
-                                                </button>
-                                            </Box>
-                                        </Box></>}
+                                    {isNano ? blocksTabVisible && <NanoscriptEditor
+                                        theme={theme}
+                                        vm={vm}
+                                    /> : <><Box className={styles.blocksWrapper}>
+                                        <Blocks
+                                            key={`${blocksId}/${theme.id}`}
+                                            canUseCloud={canUseCloud}
+                                            grow={1}
+                                            isVisible={blocksTabVisible}
+                                            options={{
+                                                media: `${basePath}static/${theme.getBlocksMediaFolder()}/`
+                                            }}
+                                            stageSize={stageSize}
+                                            onOpenCustomExtensionModal={onOpenCustomExtensionModal}
+                                            theme={theme}
+                                            vm={vm}
+                                        />
+                                        <Box className={styles.extensionButtonContainer}>
+                                            <button
+                                                className={styles.extensionButton}
+                                                title={intl.formatMessage(messages.addExtension)}
+                                                onClick={isNano ? () => {
+                                                    alert('Adding extensions in NanoScript is not available yet');
+                                                } : onExtensionButtonClick}
+                                            >
+                                                <img
+                                                    className={styles.extensionButtonIcon}
+                                                    draggable={false}
+                                                    src={addExtensionIcon}
+                                                />{isNano && intl.formatMessage(messages.addExtension)}
+                                            </button>
+                                        </Box>
+                                    </Box></>}
                                     <div className={classNames(styles.nanoscriptContainer, !isNano && styles.notNano)}>
                                         {!isNano && <ToggleButtons
                                             className={styles.buttonRow}
                                             buttons={[
                                                 {
-                                                    handleClick: () => {window.blocklyWorkspace.zoomCenter(1)},
+                                                    handleClick: () => {
+                                                        window.blocklyWorkspace.zoomCenter(1);
+                                                    },
                                                     isSelected: false,
                                                     children: '+'
                                                 },
                                                 {
-                                                    handleClick: () => {window.blocklyWorkspace.zoomCenter(-1)},
+                                                    handleClick: () => {
+                                                        window.blocklyWorkspace.zoomCenter(-1);
+                                                    },
                                                     isSelected: false,
                                                     children: '-'
                                                 },
                                                 {
-                                                    handleClick: () => {window.blocklyWorkspace.setScale(0.675)},
+                                                    handleClick: () => {
+                                                        window.blocklyWorkspace.setScale(0.675);
+                                                    },
                                                     isSelected: false,
                                                     children: '='
                                                 }

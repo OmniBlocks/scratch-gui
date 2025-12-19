@@ -6,7 +6,7 @@ import AddonHooks from '../../addons/hooks.js';
 import {Theme} from '../../lib/themes';
 import styles from './nanoscript-editor.css';
 
-function NanoscriptEditor({ theme, vm }) {
+function NanoscriptEditor ({theme, vm}) {
     const el = React.useRef(null);
     const editorRef = React.useRef(null);
     const variableRef = React.useRef([]);
@@ -18,7 +18,7 @@ function NanoscriptEditor({ theme, vm }) {
     React.useEffect(() => {
         let disposed = false;
 
-        async function loadEditor() {
+        async function loadEditor () {
             const {
                 EditorView,
                 basicSetup,
@@ -27,145 +27,146 @@ function NanoscriptEditor({ theme, vm }) {
                 tags,
                 autocompletion,
                 completeFromList
-            } = await import(/*webpackChunkName: "nanoscript-editor"*/ "./ob-codemirror-imports.js");
+            } = await import(/* webpackChunkName: "nanoscript-editor"*/ './ob-codemirror-imports.js');
 
             // Define hghlight rules using CSS vars
             const scratchHighlight = HighlightStyle.define([
-                { tag: tags.variableName, color: "var(--data-primary)" },
-                { tag: tags.keyword, color: "var(--pen-primary)" },
-                { tag: tags.string, color: "var(--cm-string)" },
-                { tag: tags.number, color: "var(--cm-number)" },
-                { tag: tags.function, color: "var(--cm-function)" },
-                { tag: tags.operator, color: "var(--cm-operator)" }
+                {tag: tags.variableName, color: 'var(--data-primary)'},
+                {tag: tags.keyword, color: 'var(--pen-primary)'},
+                {tag: tags.string, color: 'var(--cm-string)'},
+                {tag: tags.number, color: 'var(--cm-number)'},
+                {tag: tags.function, color: 'var(--cm-function)'},
+                {tag: tags.operator, color: 'var(--cm-operator)'}
             ]);
 
-            const { StreamLanguage } = await import("@codemirror/language");
+            const {StreamLanguage} = await import('@codemirror/language');
             // helper to escape regex
-            const escapeRegExp = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            const escapeRegExp = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             const scratchSyntax = StreamLanguage.define({
-                token(stream) {
+                token (stream) {
                     // Keywords
-                    if (stream.match(/\b(when .*|say|repeat|if|else|forever|stop|broadcast|end)\b/)) return "keyword";
+                    if (stream.match(/\b(when .*|say|repeat|if|else|forever|stop|broadcast|end)\b/)) return 'keyword';
                     // Operators
-                    if (stream.match(/\b(and|or|not|join|\+|\-|\*|\/|(abs|sin|cos) of .*)\b/)) return "operator";
+                    if (stream.match(/\b(and|or|not|join|\+|\-|\*|\/|(abs|sin|cos) of .*)\b/)) return 'operator';
                     // Functions
-                    if (stream.match(/\b(join|pick random|length of)\b/)) return "function";
+                    if (stream.match(/\b(join|pick random|length of)\b/)) return 'function';
 
                     // Try to match variable or list names (take current refs)
                     const names = (variableRef.current || []).concat(listsRef.current || []);
                     if (names && names.length) {
                         // sort by length to match longest first
-                        const sorted = names.slice().sort((a, b) => b.length - a.length).map(escapeRegExp);
-                        const rx = new RegExp('^(' + sorted.join('|') + ')', 'i');
+                        const sorted = names.slice().sort((a, b) => b.length - a.length)
+                            .map(escapeRegExp);
+                        const rx = new RegExp(`^(${sorted.join('|')})`, 'i');
                         const m = stream.match(rx, true);
                         if (m) {
-                            return "variableName";
+                            return 'variableName';
                         }
                     }
                     stream.next();
-                    return "variable";
+                    return 'variable';
                 }
             });
 
             // NanoScript autocomplete suggestions (static)
             const staticCompletions = [
                 // Control flow keywords
-                { label: "when flag clicked", type: "keyword" },
-                { label: "when key pressed", type: "keyword" },
-                { label: "when this sprite clicked", type: "keyword" },
-                { label: "when I start as a clone", type: "keyword" },
-                { label: "forever", type: "keyword" },
-                { label: "repeat", type: "keyword" },
-                { label: "if", type: "keyword" },
-                { label: "else", type: "keyword" },
-                { label: "end", type: "keyword" },
-                { label: "wait", type: "keyword" },
-                { label: "stop", type: "keyword" },
+                {label: 'when flag clicked', type: 'keyword'},
+                {label: 'when key pressed', type: 'keyword'},
+                {label: 'when this sprite clicked', type: 'keyword'},
+                {label: 'when I start as a clone', type: 'keyword'},
+                {label: 'forever', type: 'keyword'},
+                {label: 'repeat', type: 'keyword'},
+                {label: 'if', type: 'keyword'},
+                {label: 'else', type: 'keyword'},
+                {label: 'end', type: 'keyword'},
+                {label: 'wait', type: 'keyword'},
+                {label: 'stop', type: 'keyword'},
                 
                 // Motion blocks
-                { label: "move", type: "function" },
-                { label: "turn right", type: "function" },
-                { label: "turn left", type: "function" },
-                { label: "go to", type: "function" },
-                { label: "glide to", type: "function" },
-                { label: "point in direction", type: "function" },
-                { label: "point towards", type: "function" },
-                { label: "change x by", type: "function" },
-                { label: "set x to", type: "function" },
-                { label: "change y by", type: "function" },
-                { label: "set y to", type: "function" },
+                {label: 'move', type: 'function'},
+                {label: 'turn right', type: 'function'},
+                {label: 'turn left', type: 'function'},
+                {label: 'go to', type: 'function'},
+                {label: 'glide to', type: 'function'},
+                {label: 'point in direction', type: 'function'},
+                {label: 'point towards', type: 'function'},
+                {label: 'change x by', type: 'function'},
+                {label: 'set x to', type: 'function'},
+                {label: 'change y by', type: 'function'},
+                {label: 'set y to', type: 'function'},
                 
                 // Looks blocks
-                { label: "say", type: "function" },
-                { label: "think", type: "function" },
-                { label: "show", type: "function" },
-                { label: "hide", type: "function" },
-                { label: "switch costume to", type: "function" },
-                { label: "next costume", type: "function" },
-                { label: "change size by", type: "function" },
-                { label: "set size to", type: "function" },
-                { label: "change color effect by", type: "function" },
-                { label: "set color effect to", type: "function" },
-                { label: "clear graphic effects", type: "function" },
+                {label: 'say', type: 'function'},
+                {label: 'think', type: 'function'},
+                {label: 'show', type: 'function'},
+                {label: 'hide', type: 'function'},
+                {label: 'switch costume to', type: 'function'},
+                {label: 'next costume', type: 'function'},
+                {label: 'change size by', type: 'function'},
+                {label: 'set size to', type: 'function'},
+                {label: 'change color effect by', type: 'function'},
+                {label: 'set color effect to', type: 'function'},
+                {label: 'clear graphic effects', type: 'function'},
                 
                 // Sound blocks
-                { label: "play sound", type: "function" },
-                { label: "stop all sounds", type: "function" },
-                { label: "change volume by", type: "function" },
-                { label: "set volume to", type: "function" },
+                {label: 'play sound', type: 'function'},
+                {label: 'stop all sounds', type: 'function'},
+                {label: 'change volume by', type: 'function'},
+                {label: 'set volume to', type: 'function'},
                 
                 // Events
-                { label: "broadcast", type: "function" },
-                { label: "broadcast and wait", type: "function" },
-                { label: "when I receive", type: "keyword" },
+                {label: 'broadcast', type: 'function'},
+                {label: 'broadcast and wait', type: 'function'},
+                {label: 'when I receive', type: 'keyword'},
                 
                 // Variables and lists
-                { label: "set variable to", type: "function" },
-                { label: "change variable by", type: "function" },
-                { label: "add to list", type: "function" },
-                { label: "delete from list", type: "function" },
-                { label: "insert into list", type: "function" },
-                { label: "replace list item", type: "function" },
+                {label: 'set variable to', type: 'function'},
+                {label: 'change variable by', type: 'function'},
+                {label: 'add to list', type: 'function'},
+                {label: 'delete from list', type: 'function'},
+                {label: 'insert into list', type: 'function'},
+                {label: 'replace list item', type: 'function'},
                 
                 // Operators
-                { label: "and", type: "operator" },
-                { label: "or", type: "operator" },
-                { label: "not", type: "operator" },
-                { label: "join", type: "function" },
-                { label: "letter of", type: "function" },
-                { label: "length of", type: "function" },
-                { label: "round", type: "function" },
-                { label: "abs of", type: "function" },
-                { label: "floor of", type: "function" },
-                { label: "ceiling of", type: "function" },
-                { label: "sqrt of", type: "function" },
-                { label: "sin of", type: "function" },
-                { label: "cos of", type: "function" },
-                { label: "tan of", type: "function" },
-                { label: "asin of", type: "function" },
-                { label: "acos of", type: "function" },
-                { label: "atan of", type: "function" },
-                { label: "pick random", type: "function" },
+                {label: 'and', type: 'operator'},
+                {label: 'or', type: 'operator'},
+                {label: 'not', type: 'operator'},
+                {label: 'join', type: 'function'},
+                {label: 'letter of', type: 'function'},
+                {label: 'length of', type: 'function'},
+                {label: 'round', type: 'function'},
+                {label: 'abs of', type: 'function'},
+                {label: 'floor of', type: 'function'},
+                {label: 'ceiling of', type: 'function'},
+                {label: 'sqrt of', type: 'function'},
+                {label: 'sin of', type: 'function'},
+                {label: 'cos of', type: 'function'},
+                {label: 'tan of', type: 'function'},
+                {label: 'asin of', type: 'function'},
+                {label: 'acos of', type: 'function'},
+                {label: 'atan of', type: 'function'},
+                {label: 'pick random', type: 'function'},
                 
                 // Sensing blocks
-                { label: "touching", type: "function" },
-                { label: "touching color", type: "function" },
-                { label: "color is touching", type: "function" },
-                { label: "ask", type: "function" },
-                { label: "key pressed", type: "function" },
-                { label: "mouse down", type: "function" },
-                { label: "distance to", type: "function" },
+                {label: 'touching', type: 'function'},
+                {label: 'touching color', type: 'function'},
+                {label: 'color is touching', type: 'function'},
+                {label: 'ask', type: 'function'},
+                {label: 'key pressed', type: 'function'},
+                {label: 'mouse down', type: 'function'},
+                {label: 'distance to', type: 'function'}
             ];
 
             // Function to get completions with prefix matching (dynamic includes variables & lists)
-            function scratchCompletions(context) {
+            function scratchCompletions (context) {
                 const word = context.matchBefore(/\w*/);
                 if (!word || (word.from === word.to && !context.explicit)) {
                     return null;
                 }
 
-                const dynamicVars = (variableRef.current || []).map(v => ({ label: v, type: 'variable', info: 'Variable' }));
-                const dynamicLists = (listsRef.current || []).map(l => ({ label: l, type: 'variable', info: 'List' }));
+                const dynamicVars = (variableRef.current || []).map(v => ({label: v, type: 'variable', info: 'Variable'}));
+                const dynamicLists = (listsRef.current || []).map(l => ({label: l, type: 'variable', info: 'List'}));
                 const allOptions = staticCompletions.concat(dynamicVars, dynamicLists);
 
                 return {
@@ -180,31 +181,31 @@ function NanoscriptEditor({ theme, vm }) {
             if (!el.current || disposed) return;
 
             const cmTheme = EditorView.theme({
-                "&": {
-                    backgroundColor: "var(--ui-white)",
-                    color: "var(--text-primary)",
-                    height: "100%",
-                    borderTopRightRadius: "var(--space)",
-                    borderBottomRightRadius: "var(--space)",
-                    border: "1px solid var(--ui-black-transparent)",
-                    height: "100%",
+                '&': {
+                    backgroundColor: 'var(--ui-white)',
+                    color: 'var(--text-primary)',
+                    height: '100%',
+                    borderTopRightRadius: 'var(--space)',
+                    borderBottomRightRadius: 'var(--space)',
+                    border: '1px solid var(--ui-black-transparent)',
+                    height: '100%'
                 },
-                ".cm-scroller": {
-                    maxHeight: "100%",
-                    overflow: "auto"
+                '.cm-scroller': {
+                    maxHeight: '100%',
+                    overflow: 'auto'
                 },
-                ".cm-content": { caretColor: "var(--looks-secondary)" },
-                ".cm-cursor": { borderLeft: "2px solid var(--looks-secondary)" },
-                ".cm-focused": { outline: "none" },
-                ".cm-selectionBackground, ::selection": { backgroundColor: "rgba(255, 140, 26, 0.3)" },
-                ".cm-gutters": {
-                    backgroundColor: "var(--ui-tertiary)",
-                    borderRight: "1px solid var(--ui-black-transparent)"
+                '.cm-content': {caretColor: 'var(--looks-secondary)'},
+                '.cm-cursor': {borderLeft: '2px solid var(--looks-secondary)'},
+                '.cm-focused': {outline: 'none'},
+                '.cm-selectionBackground, ::selection': {backgroundColor: 'rgba(255, 140, 26, 0.3)'},
+                '.cm-gutters': {
+                    backgroundColor: 'var(--ui-tertiary)',
+                    borderRight: '1px solid var(--ui-black-transparent)'
                 },
-                ".cm-completionLabel": {
-                    fontSize: "13px"
+                '.cm-completionLabel': {
+                    fontSize: '13px'
                 }
-            }, { dark: theme.isDark() ?? false });
+            }, {dark: theme.isDark() ?? false});
 
             editorRef.current = new EditorView({
                 doc: `when flag clicked
@@ -216,7 +217,7 @@ end`,
                     basicSetup,
                     scratchSyntax,
                     syntaxHighlighting(scratchHighlight),
-                    autocompletion({ override: [scratchCompletions] }),
+                    autocompletion({override: [scratchCompletions]}),
                     cmTheme
                 ],
                 parent: el.current
@@ -250,8 +251,8 @@ end`,
                 }
 
                 const isStage = editing.isStage;
-                let spriteVars = isStage ? [] : (editing.getAllVariableNamesInScopeByType('', true) || []);
-                let spriteLists = isStage ? [] : (editing.getAllVariableNamesInScopeByType('list', true) || []);
+                const spriteVars = isStage ? [] : (editing.getAllVariableNamesInScopeByType('', true) || []);
+                const spriteLists = isStage ? [] : (editing.getAllVariableNamesInScopeByType('list', true) || []);
                 let stageVars = [];
                 let stageLists = [];
                 
@@ -377,7 +378,7 @@ end`,
         }
     };
 
-    return <div style={{display: 'flex', height: '100%', width: '100%'}}>
+    return (<div style={{display: 'flex', height: '100%', width: '100%'}}>
         {promptProps ? (
             <Prompt
                 defaultValue={promptProps.defaultValue}
@@ -420,7 +421,10 @@ end`,
                 </>
             )}
             <div style={{marginTop: 8}}>
-                <button className={styles.button} onClick={() => makeVariable('')}>Make a Variable</button>
+                <button
+                    className={styles.button}
+                    onClick={() => makeVariable('')}
+                >Make a Variable</button>
             </div>
 
             <h2 style={{marginTop: 16}}>Lists</h2>
@@ -450,11 +454,18 @@ end`,
                 </>
             )}
             <div style={{marginTop: 8}}>
-                <button className={styles.button} onClick={() => makeVariable('list')}>Make a List</button>
+                <button
+                    className={styles.button}
+                    onClick={() => makeVariable('list')}
+                >Make a List</button>
             </div>
         </div>
-        <div ref={el} className={styles.codemirror} style={{height: '100%', flex: 1}} />
-    </div>;
+        <div
+            ref={el}
+            className={styles.codemirror}
+            style={{height: '100%', flex: 1}}
+        />
+    </div>);
 }
 
 NanoscriptEditor.propTypes = {

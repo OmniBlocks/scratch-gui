@@ -1,0 +1,75 @@
+{
+  "changesDetected": true,
+  "results": [
+    {
+      "name": "editor-initial.png",
+      "diffPixels": 432054,
+      "diffPercentage": "11.72",
+      "hasDiff": true,
+      "skipped": false
+    },
+    {
+      "name": "blocks-workspace.png",
+      "diffPixels": 107261,
+      "diffPercentage": "5.16",
+      "hasDiff": true,
+      "skipped": false
+    },
+    {
+      "name": "stage-sprites.png",
+      "diffPixels": 96535,
+      "diffPercentage": "7.10",
+      "hasDiff": true,
+      "skipped": false
+    },
+    {
+      "name": "code-tab.png",
+      "diffPixels": 206793,
+      "diffPercentage": "5.61",
+      "hasDiff": true,
+      "skipped": false
+    },
+    {
+      "name": "costumes-tab.png",
+      "diffPixels": 254468,
+      "diffPercentage": "6.90",
+      "hasDiff": true,
+      "skipped": false
+    },
+    {
+      "name": "sounds-tab.png",
+      "diffPixels": 124148,
+      "diffPercentage": "3.37",
+      "hasDiff": true,
+      "skipped": false
+    },
+    {
+      "name": "songs-tab.png",
+      "diffPixels": 121157,
+      "diffPercentage": "3.29",
+      "hasDiff": true,
+      "skipped": false
+    },
+    {
+      "name": "player-view.png",
+      "diffPixels": 12840,
+      "diffPercentage": "0.19",
+      "hasDiff": true,
+      "skipped": false
+    },
+    {
+      "name": "extension-library.png",
+      "diffPixels": 10520,
+      "diffPercentage": "0.29",
+      "hasDiff": true,
+      "skipped": false
+    },
+    {
+      "name": "advanced-settings.png",
+      "diffPixels": 324527,
+      "diffPercentage": "8.80",
+      "hasDiff": true,
+      "skipped": false
+    }
+  ]
+}

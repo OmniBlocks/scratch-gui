@@ -14,7 +14,11 @@ export default async function ({ addon, msg, console }) {
           text: msg("show-broadcast-tree"),
           separator: true,
           callback: () => {
-            broadcastTree.showBroadcastTree(block);
+            try {
+              broadcastTree.showBroadcastTree(block);
+            } catch (error) {
+              console.error("Error showing broadcast tree:", error);
+            }
           },
         });
       }

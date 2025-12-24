@@ -84,6 +84,7 @@ const addons = [
     'qcode'
 ];
 
+    'broadcast-tree',
 const newAddons = [
     'expanded-backpack',
     'qcode'

@@ -272,10 +272,15 @@ export default class BroadcastTree {
         blockText = "broadcast and wait";
       }
     }
-
-    blockItem.innerHTML = `
-      <span class="sa-broadcast-tree-block-icon ${type === "sender" ? "sa-broadcast-icon" : "sa-receive-icon"}"></span>
-      <span class="sa-broadcast-tree-block-text">${blockText}</span>
+    const blockIcon = document.createElement("span");
+    blockIcon.className = `sa-broadcast-tree-block-icon ${type === "sender" ? "sa-broadcast-icon" : "sa-receive-icon"}`;
+    
+    const blockTextSpan = document.createElement("span");
+    blockTextSpan.className = "sa-broadcast-tree-block-text";
+    blockTextSpan.textContent = blockText;
+    
+    blockItem.appendChild(blockIcon);
+    blockItem.appendChild(blockTextSpan);
     `;
 
     // Add click handler to navigate to block

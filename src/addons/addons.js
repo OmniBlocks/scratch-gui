@@ -82,10 +82,14 @@ const addons = [
     'tw-disable-compiler',
     'editor-stepping',
     'qcode'
+    'editor-stepping',
+    'qcode',
+    'broadcast-tree'
 ];
 
-    'broadcast-tree',
 const newAddons = [
+    'expanded-backpack',
+    'qcode'
     'expanded-backpack',
     'qcode'
 ];

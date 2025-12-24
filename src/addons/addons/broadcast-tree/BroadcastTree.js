@@ -281,7 +281,8 @@ export default class BroadcastTree {
     
     blockItem.appendChild(blockIcon);
     blockItem.appendChild(blockTextSpan);
-    `;
+
+     // Add click handler to navigate to block
 
     // Add click handler to navigate to block
     blockItem.addEventListener("click", () => {

@@ -4,7 +4,7 @@ const manifest = {
   "description": "Shows a tree view of all blocks that send and receive a broadcast message when right-clicking on broadcast blocks.",
   "credits": [
     {
-      "name": "griffpatch"
+      "name": "supervoidcoder"
     }
   ],
   "userscripts": [

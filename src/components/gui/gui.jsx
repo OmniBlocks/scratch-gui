@@ -182,8 +182,6 @@ const GUIComponent = props => {
         tabSelected: classNames(tabStyles.reactTabsTabSelected, styles.isSelected)
     };
 
-    const [isNano, setNano] = React.useState(false);
-
     const unconstrainedWidth = (
         UNCONSTRAINED_NON_STAGE_WIDTH +
         FIXED_WIDTH +

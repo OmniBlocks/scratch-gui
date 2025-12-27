@@ -4,6 +4,124 @@ This file is automatically updated by the Changelog Updater bot.
 
 <!-- UNRELEASED_COMMITS_START -->
 
+### Commit [`54b6eafb0`](https://github.com/OmniBlocks/scratch-gui/commit/54b6eafb05708a1fe2f6eddd1825ba80ec6b2308) - 2025-12-26 22:51:50 -0500
+
+**fix: show screenshots on dashboard html thign g (not tested)**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`803945ede`](https://github.com/OmniBlocks/scratch-gui/commit/803945ede8c7cfacf645750acb5e95684e40cf3d) - 2025-12-26 18:29:37 -0500
+
+**Merge pull request #574 from OmniBlocks/improve-search-block-addon**
+
+Improve block search addon
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`53d6deb39`](https://github.com/OmniBlocks/scratch-gui/commit/53d6deb398b21d1d91b2e6d62f0ebdc3fd5ebc92) - 2025-12-26 15:03:31 -0500
+
+**readd mailmap**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`f7ba37993`](https://github.com/OmniBlocks/scratch-gui/commit/f7ba3799365c3f6507af502f1c2ba281f48e0b50) - 2025-12-26 17:25:29 +0000
+
+**Delete pwa-file-icon-integration.md**
+
+*Author: 8to16*
+
+---
+
+
+### Commit [`581d3f9d0`](https://github.com/OmniBlocks/scratch-gui/commit/581d3f9d0aed901988a711646c66d141e4629786) - 2025-12-24 14:21:49 -0500
+
+**Merge pull request #570 from OmniBlocks/dependabot/npm_and_yarn/scratch-vm-19f73ae**
+
+build(deps): bump scratch-vm from `cc3e208` to `19f73ae`
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`f9f8463ad`](https://github.com/OmniBlocks/scratch-gui/commit/f9f8463aded505578871268e91d63ee8d211bcfa) - 2025-12-23 20:14:41 -0500
+
+**Merge pull request #563 from OmniBlocks/dependabot/npm_and_yarn/scratch-vm-cc3e208**
+
+build(deps): bump scratch-vm from `89175c7` to `cc3e208`
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`04a15c5b4`](https://github.com/OmniBlocks/scratch-gui/commit/04a15c5b4419d396c9d8f797566b9f76a4c06187) - 2025-12-23 21:49:31 +0000
+
+**Merge pull request #565 from OmniBlocks/christmas-addon-yay**
+
+New Christmas Addon!!!!! 🎉🎄🎅❄️
+
+*Author: 8to16*
+
+---
+
+
+### Commit [`268a47335`](https://github.com/OmniBlocks/scratch-gui/commit/268a473353c4dde3254a956a1f62252418e6b3a0) - 2025-12-23 21:21:54 +0000
+
+**old code**
+
+*Author: 8to16*
+
+---
+
+
+### Commit [`2cccc7c5f`](https://github.com/OmniBlocks/scratch-gui/commit/2cccc7c5f17c0b7f42b7f8ef5ac7a63099f8e433) - 2025-12-21 19:57:00 -0500
+
+**Update ulti.yaml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`0c7670cbd`](https://github.com/OmniBlocks/scratch-gui/commit/0c7670cbd0528ff65ba482615bea32c11e6c3296) - 2025-12-19 09:09:14 -0500
+
+**fix: (ci) make eslint autofix actually tell you what changed in commit messages**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`cd9c7a6a8`](https://github.com/OmniBlocks/scratch-gui/commit/cd9c7a6a8261d5be56d2689af1f4ed2faf581c21) - 2025-12-19 09:00:57 -0500
+
+**Update autofix-lint.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`6f57654d5`](https://github.com/OmniBlocks/scratch-gui/commit/6f57654d5565887cc8fb211f31fab1ea4dd52e4c) - 2025-12-19 08:49:34 -0500
+
+**Merge pull request #557 from OmniBlocks/fix-link-typo-eslint-autofix-yml**
+
+fix: link typo  eslint autofix
+
+*Author: supervoidcoder*
+
+---
+
+
 ### Commit [`9e84f2a0d`](https://github.com/OmniBlocks/scratch-gui/commit/9e84f2a0de9ecc5fbf3e459575a9674443185ddb) - 2025-12-19 00:44:33 -0500
 
 **Update autofix-lint.yml**

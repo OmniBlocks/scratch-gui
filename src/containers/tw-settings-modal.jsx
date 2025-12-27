@@ -30,7 +30,9 @@ class UsernameModal extends React.Component {
             'handleStageWidthChange',
             'handleStageHeightChange',
             'handleDisableCompilerChange',
-            'handleStoreProjectOptions'
+            'handleStoreProjectOptions',
+            'handleAutoOpenChange',
+            'handleOpenRecentFiles'
         ]);
     }
     handleFramerateChange (e) {

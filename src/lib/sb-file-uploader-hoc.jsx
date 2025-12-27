@@ -6,6 +6,7 @@ import {connect} from 'react-redux';
 import log from '../lib/log';
 import sharedMessages from './shared-messages';
 import {setFileHandle, setProjectError} from '../reducers/tw';
+import {addRecentFile} from '../lib/tw-recent-files';
 
 import {
     LoadingStates,
@@ -203,6 +204,11 @@ const SBFileUploaderHOC = function (WrappedComponent) {
                         }
                         this.props.vm.renderer.draw();
                         loadingSuccess = true;
+                        
+                        // Track the successfully opened file
+                        if (this.fileToUpload || this.inputElement?.handle) {
+                            addRecentFile(this.fileToUpload || this.inputElement.handle);
+                        }
                     })
                     .catch(error => {
                         log.error(error);

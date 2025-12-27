@@ -16,6 +16,10 @@
     
 }
 
+.recent-files-button {
+    margin-left: 0.5rem;
+}
+
 .body {
     background: $ui-modal-background;
     padding: 1.5rem 2.25rem;

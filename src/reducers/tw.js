@@ -17,6 +17,7 @@ const SET_HAS_CLOUD_VARIABLES = 'tw/SET_HAS_CLOUD_VARIABLES';
 const SET_CLOUD_HOST = 'tw/SET_CLOUD_HOST';
 const SET_PLATFORM_MISMATCH_DETAILS = 'tw/SET_PLATFORM_MISMATCH_DETAILS';
 const SET_PROJECT_ERROR = 'tw/SET_PROJECT_ERROR';
+const SET_AUTO_OPEN_ENABLED = 'tw/SET_AUTO_OPEN_ENABLED';
 
 export const initialState = {
     framerate: 30,
@@ -52,7 +53,8 @@ export const initialState = {
         platform: null,
         callback: null
     },
-    projectError: null
+    projectError: null,
+    autoOpenEnabled: false // Default to false for privacy
 };
 
 const reducer = function (state, action) {
@@ -139,6 +141,10 @@ const reducer = function (state, action) {
     case SET_PROJECT_ERROR:
         return Object.assign({}, state, {
             projectError: action.projectError
+        });
+    case SET_AUTO_OPEN_ENABLED:
+        return Object.assign({}, state, {
+            autoOpenEnabled: action.enabled
         });
     default:
         return state;
@@ -278,6 +284,13 @@ const setProjectError = function (projectError) {
     };
 };
 
+const setAutoOpenEnabled = function (enabled) {
+    return {
+        type: SET_AUTO_OPEN_ENABLED,
+        enabled
+    };
+};
+
 export {
     reducer as default,
     initialState as twInitialState,
@@ -299,5 +312,6 @@ export {
     setHasCloudVariables,
     setCloudHost,
     setPlatformMismatchDetails,
-    setProjectError
+    setProjectError,
+    setAutoOpenEnabled
 };

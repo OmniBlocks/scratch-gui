@@ -11,7 +11,7 @@ import BufferedInputHOC from '../forms/buffered-input-hoc.jsx';
 import DocumentationLink from '../tw-documentation-link/documentation-link.jsx';
 import styles from './settings-modal.css';
 import helpIcon from './help-icon.svg';
-import {APP_NAME} from '../../lib/brand.js';
+import {APP_NAME, APP_NAME as APP_NAME_VAR} from '../../lib/brand.js';
 
 /* eslint-disable react/no-multi-comp */
 
@@ -392,6 +392,57 @@ CustomStageSize.propTypes = {
     onStageWidthChange: PropTypes.func,
     stageHeight: PropTypes.number,
     onStageHeightChange: PropTypes.func
+};
+
+const AutoOpenSetting = ({value, onChange, onOpenRecentFiles}) => (
+    <Setting
+        active={value}
+        primary={
+            <React.Fragment>
+                <label className={styles.label}>
+                    <FancyCheckbox
+                        className={styles.checkbox}
+                        checked={value}
+                        onChange={onChange}
+                    />
+                    <FormattedMessage
+                        defaultMessage="Auto-open most recent file"
+                        description="Auto-open setting"
+                        id="tw.settingsModal.autoOpen"
+                    />
+                </label>
+                {value && (
+                    <button
+                        onClick={onOpenRecentFiles}
+                        className={classNames(styles.button, styles.recentFilesButton)}
+                    >
+                        <FormattedMessage
+                            defaultMessage="Open Recent File..."
+                            description="Button to open recent files dialog"
+                            id="tw.settingsModal.openRecentFiles"
+                        />
+                    </button>
+                )}
+            </React.Fragment>
+        }
+        help={
+            <React.Fragment>
+                <FormattedMessage
+                    // eslint-disable-next-line max-len
+                    defaultMessage="Automatically opens your most recently edited {APP_NAME_VAR} project when the editor starts. You can select from your 5 most recent files. Only .sb3 files opened using the File System Access API are supported."
+                    description="Help text for auto-open setting"
+                    id="tw.settingsModal.autoOpenHelp"
+                    values={{APP_NAME_VAR}}
+                />
+                <LearnMore slug="auto-open" />
+            </React.Fragment>
+        }
+    />
+);
+AutoOpenSetting.propTypes = {
+    value: PropTypes.bool,
+    onChange: PropTypes.func,
+    onOpenRecentFiles: PropTypes.func
 };
 
 const StoreProjectOptions = ({onStoreProjectOptions}) => (

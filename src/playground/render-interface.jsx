@@ -44,6 +44,7 @@ import InvalidEmbed from '../components/tw-invalid-embed/invalid-embed.jsx';
 import {APP_NAME, APP_VERSION} from '../lib/brand.js';
 import {loadFileHandler} from './load-file-handler';
 import {setProjectTitle} from '../reducers/project-title';
+import {autoOpenMostRecent} from '../lib/tw-recent-files';
 
 import styles from './interface.css';
 
@@ -67,9 +68,10 @@ const top = (window.screen.height / 2) - (height / 2);
 // also it doesn't work properly with multiple monitors but oh well
 // wait what about phonse i didn't even think of that
 window.open(
-  url,
-  '_blank',
-  `width=${width},height=${height},left=${left},top=${top},menubar=no,toolbar=no,location=no,resizable=yes,scrollbars=yes`
+    url,
+    '_blank',
+    `width=${width},height=${height},left=${left},top=${top},menubar=no,toolbar=no,` +
+    `location=no,resizable=yes,scrollbars=yes`
 );
 
 /* make it open as a popup, i always found it kinda jarring that it just opened as a new tab, especially
@@ -248,11 +250,37 @@ class Interface extends React.Component {
     constructor (props) {
         super(props);
         this.handleUpdateProjectTitle = this.handleUpdateProjectTitle.bind(this);
+        this.hasAutoOpened = false;
     }
     componentDidUpdate (prevProps) {
         if (prevProps.isLoading && !this.props.isLoading) {
             loadServiceWorker();
-            loadFileHandler(this.props.vm, this.props.onSetProjectTitle, this.context.store); // register PWA file handler once project is loaded and pass Redux store
+            loadFileHandler(
+                this.props.vm,
+                this.props.onSetProjectTitle,
+                this.context.store
+            ); // register PWA file handler once project is loaded and pass Redux store
+
+            // Try to auto-open most recent file on first load
+            if (!this.hasAutoOpened) {
+                this.hasAutoOpened = true;
+                autoOpenMostRecent(file => {
+                    // Load the file using the VM
+                    this.props.vm.quit();
+                    this.props.vm.loadProject(file.arrayBuffer())
+                        .then(() => {
+                            this.props.onSetProjectTitle(file.name.replace(/\.sb3$/i, '').substring(0, 100));
+                            this.props.vm.renderer.draw();
+                        })
+                        .catch(error => {
+                            console.error('Failed to auto-open recent file:', error);
+                        });
+                }).catch(result => {
+                    if (!result.success) {
+                        console.log('Auto-open skipped:', result.reason);
+                    }
+                });
+            }
         }
     }
     handleUpdateProjectTitle (title, isDefault) {
@@ -429,7 +457,14 @@ Interface.propTypes = {
     isPlayerOnly: PropTypes.bool,
     isRtl: PropTypes.bool,
     projectId: PropTypes.string,
-    onSetProjectTitle: PropTypes.func
+    onSetProjectTitle: PropTypes.func,
+    vm: PropTypes.shape({
+        loadProject: PropTypes.func,
+        quit: PropTypes.func,
+        renderer: PropTypes.shape({
+            draw: PropTypes.func
+        })
+    }
 };
 
 Interface.contextTypes = {

@@ -6,6 +6,8 @@ import {connect} from 'react-redux';
 import {closeSettingsModal} from '../reducers/modals';
 import SettingsModalComponent from '../components/tw-settings-modal/settings-modal.jsx';
 import {defaultStageSize} from '../reducers/custom-stage-size';
+import {showRecentFilesDialog} from '../lib/tw-recent-files';
+import {setAutoOpenEnabled} from '../reducers/tw';
 
 const messages = defineMessages({
     newFramerate: {
@@ -87,6 +89,15 @@ class UsernameModal extends React.Component {
     handleStoreProjectOptions () {
         this.props.vm.storeProjectOptions();
     }
+    handleAutoOpenChange (e) {
+        this.props.onSetAutoOpenEnabled(e.target.checked);
+    }
+    async handleOpenRecentFiles () {
+        await showRecentFilesDialog(_fileInfo => {
+            // TODO: Implement file opening from recent files list
+            // This would trigger the file uploader HOC to load the selected file
+        });
+    }
     render () {
         const {
             /* eslint-disable no-unused-vars */
@@ -109,6 +120,8 @@ class UsernameModal extends React.Component {
                 onStageWidthChange={this.handleStageWidthChange}
                 onStageHeightChange={this.handleStageHeightChange}
                 onDisableCompilerChange={this.handleDisableCompilerChange}
+                onAutoOpenChange={this.handleAutoOpenChange}
+                onOpenRecentFiles={this.handleOpenRecentFiles}
                 stageWidth={this.props.customStageSize.width}
                 stageHeight={this.props.customStageSize.height}
                 customStageSizeEnabled={
@@ -116,6 +129,7 @@ class UsernameModal extends React.Component {
                     this.props.customStageSize.height !== defaultStageSize.height
                 }
                 onStoreProjectOptions={this.handleStoreProjectOptions}
+                autoOpenEnabled={this.props.autoOpenEnabled}
                 {...props}
             />
         );
@@ -148,7 +162,9 @@ UsernameModal.propTypes = {
         width: PropTypes.number,
         height: PropTypes.number
     }),
-    disableCompiler: PropTypes.bool
+    disableCompiler: PropTypes.bool,
+    autoOpenEnabled: PropTypes.bool,
+    onSetAutoOpenEnabled: PropTypes.func
 };
 
 const mapStateToProps = state => ({
@@ -162,11 +178,13 @@ const mapStateToProps = state => ({
     removeLimits: !state.scratchGui.tw.runtimeOptions.miscLimits,
     warpTimer: state.scratchGui.tw.compilerOptions.warpTimer,
     customStageSize: state.scratchGui.customStageSize,
-    disableCompiler: !state.scratchGui.tw.compilerOptions.enabled
+    disableCompiler: !state.scratchGui.tw.compilerOptions.enabled,
+    autoOpenEnabled: state.scratchGui.tw.autoOpenEnabled
 });
 
 const mapDispatchToProps = dispatch => ({
-    onClose: () => dispatch(closeSettingsModal())
+    onClose: () => dispatch(closeSettingsModal()),
+    onSetAutoOpenEnabled: enabled => dispatch(setAutoOpenEnabled(enabled))
 });
 
 export default injectIntl(connect(

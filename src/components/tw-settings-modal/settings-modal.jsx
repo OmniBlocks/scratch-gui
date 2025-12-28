@@ -512,15 +512,20 @@ const SettingsModalComponent = props => (
                 onChange={props.onHighQualityPenChange}
             />
             <WarpTimer
-                value={props.warpTimer}
-                onChange={props.onWarpTimerChange}
+               value={props.warpTimer}
+               onChange={props.onWarpTimerChange}
+            />
+            <AutoOpenSetting
+               value={props.autoOpenEnabled}
+               onChange={props.onAutoOpenChange}
+               onOpenRecentFiles={props.onOpenRecentFiles}
             />
             <Header>
-                <FormattedMessage
-                    defaultMessage="Remove Limits"
-                    description="Settings modal section"
-                    id="tw.settingsModal.removeLimits"
-                />
+               <FormattedMessage
+                   defaultMessage="Remove Limits"
+                   description="Settings modal section"
+                   id="tw.settingsModal.removeLimits"
+               />
             </Header>
             <InfiniteClones
                 value={props.infiniteClones}
@@ -579,7 +584,10 @@ SettingsModalComponent.propTypes = {
     warpTimer: PropTypes.bool,
     onWarpTimerChange: PropTypes.func,
     disableCompiler: PropTypes.bool,
-    onDisableCompilerChange: PropTypes.func
+    onDisableCompilerChange: PropTypes.func,
+    autoOpenEnabled: PropTypes.bool,
+    onAutoOpenChange: PropTypes.func,
+    onOpenRecentFiles: PropTypes.func
 };
 
 export default injectIntl(SettingsModalComponent);

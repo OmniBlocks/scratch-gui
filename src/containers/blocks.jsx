@@ -10,7 +10,7 @@ import VM from 'scratch-vm';
 
 import log from '../lib/log.js';
 import Prompt from './prompt.jsx';
-import BlocksComponent from '../components/code-editor/code-editor.jsx';
+import CodeComponent from '../components/code-editor/code-editor.jsx';
 import ExtensionLibrary from './extension-library.jsx';
 import extensionData from '../lib/libraries/extensions/index.jsx';
 import CustomProcedures from './custom-procedures.jsx';
@@ -84,7 +84,7 @@ const addFunctionListener = (object, property, callback) => {
 
 const DroppableBlocks = DropAreaHOC([
     DragConstants.BACKPACK_CODE
-])(BlocksComponent);
+])(CodeComponent);
 
 class Blocks extends React.Component {
     constructor (props) {

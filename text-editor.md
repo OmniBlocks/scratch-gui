@@ -6,6 +6,7 @@ I want the editor to work  with 3 different file systems:
 - The local system. This is like a traditional IDE/Code editor, like VS Code. Nothing special.
 - The file system API if not installed as an app yet. VS Code already does this too with the website vscode.dev
 
+Commit 6dc626dd6a3d6f9cefc0725097a54ad098576be8
 
 Updates...
 
@@ -26,7 +27,7 @@ I then took a 2 hour nap, woke up, and copied the logic from gui.jsx, and it was
 theme={this.props.theme.isDark() ? 'dark' : 'light'},
 ```
 
-I was overjoyed that this instantly worked exactly how I want it. Now I just need to scrap the entire scratch vm and replace it with something more IDE-y, but I guess that can wait. This is a great milestone, I will commit now. I'll work on the file explorer, like the one that shows up in the left to VS Code with the folders and whatnot.
+I was overjoyed that this instantly worked exactly how I want it. Now I just need to scrap the entire scratch vm and replace it with something more IDE-y, but I guess that can wait. This is a great milestone, I will commit now (Commit 6e329bc8fbe546b7a9abb69d4fa90df37b622f37). I'll work on the file explorer, like the one that shows up in the left to VS Code with the folders and whatnot.
 
 
 Honestly, I feel much better now that I took that nap. The reason I used AI in the first place was because I had a strong headache, and thinking hurt more, so I couldn't look and read the code properly or try to understand it. 

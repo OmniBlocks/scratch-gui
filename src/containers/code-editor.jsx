@@ -39,25 +39,25 @@ class MonacoBlocks extends React.Component {
         this.editor = editor;
         this.monaco = monaco;
 
-        // Configure for general purpose coding
+
         monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
             noSemanticValidation: false,
             noSyntaxValidation: false
         });
         
-        // Ensure editor layout is correct on mount
+
         setTimeout(() => {
             editor.layout();
         }, 0);
     }
 
     handleEditorChange (value) {
-        // Direct callback for parent components to handle code state
+
         if (this.props.onCodeChange) {
             this.props.onCodeChange(value);
         }
         
-        // Logic for auto-saving or dispatching to a general 'project' reducer
+
         log.info('Code updated in general editor');
     }
 
@@ -160,18 +160,18 @@ MonacoBlocks.defaultProps = {
 const mapStateToProps = state => ({
     anyModalVisible: Object.keys(state.scratchGui.modals).some(key => state.scratchGui.modals[key]),
     extensionLibraryVisible: state.scratchGui.modals.extensionLibrary,
-    // Assuming you have a custom reducer for code content
+
     code: state.scratchGui.codeContent || '', 
     language: state.scratchGui.editorLanguage || 'javascript'
 });
 
 const mapDispatchToProps = dispatch => ({
     onOpenConnectionModal: id => {
-        // Keep standard modal dispatch but remove VM-specific ID setting if not needed
+
         dispatch(openConnectionModal(id));
     },
     onRequestCloseExtensionLibrary: () => dispatch(closeExtensionLibrary()),
-    // Example of a custom action for code changes
+
     onCodeChange: (value) => dispatch({type: 'UPDATE_CODE_CONTENT', content: value})
 });
 

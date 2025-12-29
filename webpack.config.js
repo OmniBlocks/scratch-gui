@@ -83,10 +83,8 @@ const base = {
                     /node_modules[\\/]scratch-[^\\/]+[\\/]src/,
                     /node_modules[\\/]pify/,
                     /node_modules[\\/]@vernier[\\/]godirect/,
-                    // --- ADD THESE TWO LINES ---
                     /node_modules[\\/]@monaco-editor[\\/]react/,
                     /node_modules[\\/]@monaco-editor[\\/]loader/
-                    // ---------------------------
                 ],
                 options: {
                     babelrc: false,

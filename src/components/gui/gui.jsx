@@ -9,6 +9,7 @@ import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
 import tabStyles from 'react-tabs/style/react-tabs.css';
 import VM from 'scratch-vm';
 
+import BlockComponent from '../../containers/blocks.jsx';
 import CodeEditor from '../../containers/code-editor.jsx';
 import CostumeTab from '../../containers/costume-tab.jsx';
 import TargetPane from '../../containers/target-pane.jsx';
@@ -86,6 +87,7 @@ const GUIComponent = props => {
         blocksId,
         blocksTabVisible,
         cardsVisible,
+        codingStyle = "blocks",
         canChangeLanguage,
         canChangeTheme,
         canCreateNew,
@@ -163,6 +165,7 @@ const GUIComponent = props => {
         vm,
         ...componentProps
     } = omit(props, 'dispatch');
+    const Code_component = codingStyle === "blocks" ? BlockComponent : CodeEditor;
     if (children) {
         return <Box {...componentProps}>{children}</Box>;
     }
@@ -400,7 +403,7 @@ const GUIComponent = props => {
                                 </TabList>
                                 <TabPanel className={tabClassNames.tabPanel}>
                                     <Box className={styles.blocksWrapper}>
-                                        <CodeEditor
+                                        <Code_component
                                             key={`${blocksId}/${theme.id}`}
                                             canUseCloud={canUseCloud}
                                             grow={1}

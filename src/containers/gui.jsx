@@ -97,6 +97,7 @@ class GUI extends React.Component {
             fetchingProject,
             isLoading,
             loadingStateVisible,
+            codingStyle = "blocks",
             ...componentProps
         } = this.props;
         return (

@@ -74,10 +74,10 @@
     border-left: 1px solid $ui-black-transparent;
 }
 
+
 .blocks :global(.blocklyBlockDragSurface) {
     /*
-        Fix an issue where the drag surface was preventing hover events for
-        sharing blocks.
+        Fix an issue where the drag surface was preventing hover events for sharing blocks.
         This does not prevent user interaction on the blocks themselves.
     */
     pointer-events: none;

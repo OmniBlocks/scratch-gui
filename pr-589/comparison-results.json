@@ -3,15 +3,15 @@
   "results": [
     {
       "name": "editor-initial.png",
-      "diffPixels": 60344,
-      "diffPercentage": "6.55",
+      "diffPixels": 71,
+      "diffPercentage": "0.01",
       "hasDiff": true,
       "skipped": false
     },
     {
       "name": "blocks-workspace.png",
-      "diffPixels": 60344,
-      "diffPercentage": "11.60",
+      "diffPixels": 71,
+      "diffPercentage": "0.01",
       "hasDiff": true,
       "skipped": false
     },
@@ -24,29 +24,29 @@
     },
     {
       "name": "code-tab.png",
-      "diffPixels": 60344,
-      "diffPercentage": "6.55",
+      "diffPixels": 71,
+      "diffPercentage": "0.01",
       "hasDiff": true,
       "skipped": false
     },
     {
       "name": "costumes-tab.png",
-      "diffPixels": 308,
-      "diffPercentage": "0.03",
+      "diffPixels": 71,
+      "diffPercentage": "0.01",
       "hasDiff": true,
       "skipped": false
     },
     {
       "name": "sounds-tab.png",
-      "diffPixels": 308,
-      "diffPercentage": "0.03",
+      "diffPixels": 71,
+      "diffPercentage": "0.01",
       "hasDiff": true,
       "skipped": false
     },
     {
       "name": "songs-tab.png",
-      "diffPixels": 56819,
-      "diffPercentage": "6.17",
+      "diffPixels": 53863,
+      "diffPercentage": "5.84",
       "hasDiff": true,
       "skipped": false
     },
@@ -66,9 +66,9 @@
     },
     {
       "name": "advanced-settings.png",
-      "diffPixels": 56698,
-      "diffPercentage": "6.15",
-      "hasDiff": true,
+      "diffPixels": 0,
+      "diffPercentage": "0.00",
+      "hasDiff": false,
       "skipped": false
     }
   ]

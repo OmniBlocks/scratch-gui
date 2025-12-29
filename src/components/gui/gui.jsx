@@ -8,7 +8,8 @@ import MediaQuery from 'react-responsive';
 import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
 import tabStyles from 'react-tabs/style/react-tabs.css';
 import VM from 'scratch-vm';
-
+// nanoscript will ebe added tomorrow trust me  
+//67
 import BlockComponent from '../../containers/blocks.jsx';
 import CodeEditor from '../../containers/code-editor.jsx';
 import CostumeTab from '../../containers/costume-tab.jsx';
@@ -165,7 +166,8 @@ const GUIComponent = props => {
         vm,
         ...componentProps
     } = omit(props, 'dispatch');
-    const Code_component = codingStyle === "blocks" ? BlockComponent : CodeEditor;
+    const Blocks = codingStyle === "blocks" ? BlockComponent : CodeEditor;
+    console.log(codingStyle);
     if (children) {
         return <Box {...componentProps}>{children}</Box>;
     }
@@ -403,7 +405,7 @@ const GUIComponent = props => {
                                 </TabList>
                                 <TabPanel className={tabClassNames.tabPanel}>
                                     <Box className={styles.blocksWrapper}>
-                                        <Code_component
+                                        <Blocks
                                             key={`${blocksId}/${theme.id}`}
                                             canUseCloud={canUseCloud}
                                             grow={1}
@@ -573,6 +575,7 @@ GUIComponent.defaultProps = {
     canManageFiles: true,
     canRemix: false,
     canSave: false,
+    codingStyle: 'blocks',
     canCreateCopy: false,
     canShare: false,
     canUseCloud: false,

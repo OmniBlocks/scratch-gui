@@ -71,20 +71,11 @@ const base = {
     module: {
         rules: [
             {
-                test: /\.mjs$/,
-                include: /node_modules/,
-                type: 'javascript/auto'
-            },
-            {
-                test: /\.jsx?$/,
+                test: /\.m?jsx?$/,
                 loader: 'babel-loader',
                 include: [
                     path.resolve(__dirname, 'src'),
-                    /node_modules[\\/]scratch-[^\\/]+[\\/]src/,
-                    /node_modules[\\/]pify/,
-                    /node_modules[\\/]@vernier[\\/]godirect/,
-                    /node_modules[\\/]@monaco-editor[\\/]react/,
-                    /node_modules[\\/]@monaco-editor[\\/]loader/
+                    /node_modules[\\/]scratch-[^\\/]+[\\/]src/
                 ],
                 options: {
                     babelrc: false,
@@ -123,7 +114,7 @@ const base = {
             }]
         },
         {
-            test: /pyodide\.js$/,
+            resourceQuery: /pyodide/,
             loader: "file-loader",
             options: {
                 name: "static/pyodide/[name].[ext]"

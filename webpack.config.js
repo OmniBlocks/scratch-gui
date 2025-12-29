@@ -62,31 +62,41 @@ const base = {
     },
     resolve: {
         symlinks: false,
+        extensions: ['.mjs', '.js', '.jsx', '.json'],
         alias: {
             'text-encoding$': path.resolve(__dirname, 'src/lib/tw-text-encoder'),
             'scratch-render-fonts$': path.resolve(__dirname, 'src/lib/tw-scratch-render-fonts')
         }
     },
     module: {
-        rules: [{
-            test: /\.jsx?$/,
-            loader: 'babel-loader',
-            include: [
-                path.resolve(__dirname, 'src'),
-                /node_modules[\\/]scratch-[^\\/]+[\\/]src/,
-                /node_modules[\\/]pify/,
-                /node_modules[\\/]@vernier[\\/]godirect/
-            ],
-            options: {
-                // Explicitly disable babelrc so we don't catch various config
-                // in much lower dependencies.
-                babelrc: false,
-                plugins: [
-                    ['react-intl', {
-                        messagesDir: './translations/messages/'
-                    }]],
-                presets: ['@babel/preset-env', '@babel/preset-react']
-            }
+        rules: [
+            {
+                test: /\.mjs$/,
+                include: /node_modules/,
+                type: 'javascript/auto'
+            },
+            {
+                test: /\.jsx?$/,
+                loader: 'babel-loader',
+                include: [
+                    path.resolve(__dirname, 'src'),
+                    /node_modules[\\/]scratch-[^\\/]+[\\/]src/,
+                    /node_modules[\\/]pify/,
+                    /node_modules[\\/]@vernier[\\/]godirect/,
+                    // --- ADD THESE TWO LINES ---
+                    /node_modules[\\/]@monaco-editor[\\/]react/,
+                    /node_modules[\\/]@monaco-editor[\\/]loader/
+                    // ---------------------------
+                ],
+                options: {
+                    babelrc: false,
+                    plugins: [
+                        ['react-intl', {
+                            messagesDir: './translations/messages/'
+                        }]
+                    ],
+                    presets: ['@babel/preset-env', '@babel/preset-react']
+                }
         },
         {
             test: /\.css$/,

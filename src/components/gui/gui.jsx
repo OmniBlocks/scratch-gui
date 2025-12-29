@@ -9,7 +9,7 @@ import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
 import tabStyles from 'react-tabs/style/react-tabs.css';
 import VM from 'scratch-vm';
 
-import Blocks from '../../containers/blocks.jsx';
+import CodeEditor from '../../containers/code-editor.jsx';
 import CostumeTab from '../../containers/costume-tab.jsx';
 import TargetPane from '../../containers/target-pane.jsx';
 import SoundTab from '../../containers/sound-tab.jsx';
@@ -19,7 +19,7 @@ import Box from '../box/box.jsx';
 import MenuBar from '../menu-bar/menu-bar.jsx';
 import CostumeLibrary from '../../containers/costume-library.jsx';
 import BackdropLibrary from '../../containers/backdrop-library.jsx';
-import Watermark from '../../containers/watermark.jsx';
+import Watermark from '../../containers/watermark.jsx'; 
 import SongsTab from '../../containers/songs-tab.jsx';
 import Backpack from '../../containers/backpack.jsx';
 import BrowserModal from '../browser-modal/browser-modal.jsx';
@@ -400,7 +400,7 @@ const GUIComponent = props => {
                                 </TabList>
                                 <TabPanel className={tabClassNames.tabPanel}>
                                     <Box className={styles.blocksWrapper}>
-                                        <Blocks
+                                        <CodeEditor
                                             key={`${blocksId}/${theme.id}`}
                                             canUseCloud={canUseCloud}
                                             grow={1}

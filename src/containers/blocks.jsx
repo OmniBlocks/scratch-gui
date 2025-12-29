@@ -10,7 +10,7 @@ import VM from 'scratch-vm';
 
 import log from '../lib/log.js';
 import Prompt from './prompt.jsx';
-import BlocksComponent from '../components/blocks/blocks.jsx';
+import BlocksComponent from '../components/code-editor/code-editor.jsx';
 import ExtensionLibrary from './extension-library.jsx';
 import extensionData from '../lib/libraries/extensions/index.jsx';
 import CustomProcedures from './custom-procedures.jsx';

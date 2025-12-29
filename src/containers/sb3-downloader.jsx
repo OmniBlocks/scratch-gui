@@ -142,6 +142,18 @@ class SB3Downloader extends React.Component {
         await new Promise((resolve, reject) => {
             // Projects can be very large, so we'll utilize JSZip's stream API to avoid having the
             // entire sb3 in memory at the same time.
+
+            // ^^^ While this code is pretty good, this doesn't entirely prevent the GUI from freezing when a really large sb3 is downloading.
+            // In fact, this is a massive issue with scratch-gui in general, as everything is on the main thread and something as simple as  a nifty
+            // scratch-vm trick like that one clone script that creates thousands of clones before a single frame render, consequently crashing the GUI
+            // and even taking up all the RAM if you have the "Infinite Clones" option in TurboWarp/OmniBlocks.
+            // This means it will freeze everything permanently and lose progress.
+            // The solution is quite simple (in theory, easier said than done): Move a bunch of stuff to web workers. Including this script right here, which I will work on eventually.
+            // While I gotta cut the Scratch Team some slack for, y'know, being an underfunded non-profit, and also probably didn't expect people to make projects that were 1GB+ big
+            // (which is quite common now, lol), but web workers were were established by the time Scratch 3 was rushed out back in 2019.
+            
+            // Enough ranting, though.
+            // TODO: Move this downloading logic to a web worker.
             const jszipStream = this.props.saveProjectSb3Stream();
 
             const abortController = new AbortController();

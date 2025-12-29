@@ -22,6 +22,6 @@ const BlocksComponent = props => {
 };
 BlocksComponent.propTypes = {
     containerRef: PropTypes.func,
-    dragOver: PropTypes.bool
+    dragOver: PropTypes.bool 
 };
 export default BlocksComponent;

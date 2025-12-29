@@ -15,7 +15,7 @@ import {
     closeExtensionLibrary,
     openConnectionModal
 } from '../reducers/modals.js';
-
+ 
 class MonacoBlocks extends React.Component {
     constructor (props) {
         super(props);

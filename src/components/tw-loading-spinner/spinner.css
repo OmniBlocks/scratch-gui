@@ -7,19 +7,137 @@
     align-items: center;
     justify-content: center;
 }
-.spinner {
+
+.spinnerWrapper {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.spinnerOuter {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 64px;
     height: 64px;
     border-radius: 50%;
-    border: 6px solid;
-    border-color: $looks-secondary transparent $looks-secondary transparent;
-    animation: spinner 1.2s linear infinite;
+    border: 3px solid transparent;
+    border-top: 3px solid $motion-primary;
+    border-right: 3px solid $looks-secondary;
+    animation: spinClockwise 1.5s linear infinite;
+    filter: drop-shadow(0 0 8px rgba(74, 151, 255, 0.3));
 }
-@keyframes spinner {
+
+.spinnerMiddle {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top: 3px solid $sound-primary;
+    border-left: 3px solid $pen-primary;
+    animation: spinCounterClockwise 1.2s linear infinite;
+    filter: drop-shadow(0 0 6px rgba(255, 171, 25, 0.3));
+}
+
+.spinnerInner {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-top: 2px solid $control-primary;
+    border-bottom: 2px solid $data-primary;
+    animation: spinClockwise 0.8s linear infinite;
+    filter: drop-shadow(0 0 4px rgba(255, 171, 25, 0.4));
+}
+
+.spinnerCore {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, $motion-primary, $looks-secondary, $sound-primary);
+    animation: coreRotate 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px rgba(74, 151, 255, 0.5));
+}
+
+@keyframes spinClockwise {
     0% {
         transform: rotate(0deg);
     }
     100% {
         transform: rotate(360deg);
     }
+}
+
+@keyframes spinCounterClockwise {
+    0% {
+        transform: rotate(360deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.9;
+    }
+}
+
+@keyframes coreRotate {
+    0% {
+        transform: rotate(0deg) scale(1);
+        opacity: 0.8;
+    }
+    25% {
+        transform: rotate(90deg) scale(1.1);
+        opacity: 1;
+    }
+    50% {
+        transform: rotate(180deg) scale(1);
+        opacity: 0.9;
+    }
+    75% {
+        transform: rotate(270deg) scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: rotate(360deg) scale(1);
+        opacity: 0.8;
+    }
+}
+
+/* Add some visual interest with hover effects */
+.container:hover .spinnerWrapper {
+    animation-duration: 1.5s;
+}
+
+.container:hover .spinnerOuter {
+    animation-duration: 1s;
+}
+
+.container:hover .spinnerMiddle {
+    animation-duration: 0.8s;
+}
+
+.container:hover .spinnerInner {
+    animation-duration: 0.6s;
+}
+
+.container:hover .spinnerCore {
+    animation-duration: 1.2s;
 }

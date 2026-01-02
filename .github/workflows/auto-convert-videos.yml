@@ -1,0 +1,140 @@
+name: Auto-Convert Videos to GIFs
+
+on:
+  issues:
+    types: [opened, edited]
+  issue_comment:
+    types: [created, edited]
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  convert-videos:
+    runs-on: ubuntu-latest
+    if: >
+      (github.event_name == 'issues' && (github.event.action == 'opened' || github.event.action == 'edited')) ||
+      (github.event_name == 'issue_comment' && (github.event.action == 'created' || github.event.action == 'edited'))
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Extract and convert videos
+        id: convert
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const { execSync } = require('child_process');
+            
+            // Get the text content to analyze
+            let textContent = '';
+            let issueNumber = 0;
+            
+            if (context.eventName === 'issues') {
+              textContent = context.payload.issue.body || '';
+              issueNumber = context.payload.issue.number;
+            } else if (context.eventName === 'issue_comment') {
+              textContent = context.payload.comment.body || '';
+              issueNumber = context.payload.issue.number;
+            }
+            
+            console.log('Analyzing text for video links...');
+            
+            // Look for video file links (webm, mp4, mov, avi)
+            const videoRegex = /https:\/\/[^\s]+\.(webm|mp4|mov|avi)(\?[^\s]*)?/gi;
+            const videoLinks = textContent.match(videoRegex) || [];
+            
+            if (videoLinks.length === 0) {
+              console.log('No video links found');
+              return;
+            }
+            
+            console.log(`Found ${videoLinks.length} video link(s):`, videoLinks);
+            
+            let conversions = [];
+            let hasConversions = false;
+            
+            for (let i = 0; i < videoLinks.length; i++) {
+              const videoUrl = videoLinks[i];
+              const filename = `video_${i + 1}`;
+              const videoFile = `${filename}.webm`;
+              const gifFile = `${filename}.gif`;
+              
+              try {
+                console.log(`Downloading video ${i + 1}: ${videoUrl}`);
+                
+                // Download the video
+                execSync(`curl -L -o "${videoFile}" "${videoUrl}"`, { stdio: 'inherit' });
+                
+                // Check if file was downloaded successfully
+                if (!fs.existsSync(videoFile)) {
+                  console.log(`Failed to download ${videoUrl}`);
+                  continue;
+                }
+                
+                console.log(`Converting ${videoFile} to ${gifFile}...`);
+                
+                // Convert to GIF using our script
+                execSync(`bash .github/scripts/video-to-gif.sh "${videoFile}" "${gifFile}" --fps 10 --width 600`, { stdio: 'inherit' });
+                
+                if (fs.existsSync(gifFile)) {
+                  // Upload GIF as artifact or to a temporary location
+                  // For now, we'll create a comment with instructions
+                  conversions.push({
+                    original: videoUrl,
+                    converted: gifFile,
+                    size: fs.statSync(gifFile).size
+                  });
+                  hasConversions = true;
+                  console.log(`Successfully converted ${videoFile} to ${gifFile}`);
+                } else {
+                  console.log(`Failed to convert ${videoFile}`);
+                }
+                
+              } catch (error) {
+                console.log(`Error processing ${videoUrl}:`, error.message);
+              }
+            }
+            
+            // Post a comment with conversion results
+            if (hasConversions) {
+              let commentBody = `## 🎬 Video Conversion Results\n\n`;
+              commentBody += `I found ${videoLinks.length} video(s) in this issue and attempted to convert them to GIF format for better display:\n\n`;
+              
+              for (const conversion of conversions) {
+                const sizeKB = Math.round(conversion.size / 1024);
+                commentBody += `- ✅ Converted video to GIF (${sizeKB} KB)\n`;
+                commentBody += `  - Original: ${conversion.original}\n`;
+                commentBody += `  - **Note:** The converted GIF has been processed but needs to be manually uploaded due to GitHub API limitations.\n\n`;
+              }
+              
+              commentBody += `### 💡 For future reference:\n`;
+              commentBody += `- Use our conversion script: \`.github/scripts/video-to-gif.sh your-video.webm your-video.gif\`\n`;
+              commentBody += `- Ensure blank lines before and after media links for proper display\n`;
+              commentBody += `- Consider using GIF format directly for better GitHub integration\n\n`;
+              commentBody += `*This comment was automatically generated by the video conversion workflow.*`;
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                body: commentBody
+              });
+            }
+
+      - name: Upload converted GIFs
+        if: steps.convert.conclusion == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: converted-gifs-issue-${{ github.event.issue.number || github.event.comment.id }}
+          path: "*.gif"
+          retention-days: 7
+        continue-on-error: true

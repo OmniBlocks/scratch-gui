@@ -1,0 +1,116 @@
+name: 🐛 Bug Report
+description: Report a bug or issue with OmniBlocks
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+assignees: ["supervoidcoder"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out this form as completely as possible.
+        
+        **📹 Video/GIF Guidelines:**
+        - For videos, please convert to GIF format for inline display
+        - Use our conversion tool: `.github/scripts/video-to-gif.sh your-video.webm your-video.gif`
+        - Or upload to the issue and we'll convert it for you
+        - Ensure there's a blank line before and after any media links
+
+  - type: input
+    id: summary
+    attributes:
+      label: Bug Summary
+      description: A brief, clear description of the bug
+      placeholder: "The editor crashes when..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Detailed steps to reproduce the bug
+      placeholder: |
+        1. Go to the editor
+        2. Click on '...'
+        3. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should happen instead?
+      placeholder: "The editor should..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happens?
+      placeholder: "Instead, the editor..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: media
+    attributes:
+      label: Screenshots/Videos
+      description: |
+        Add screenshots or videos to help explain the problem.
+        
+        **For videos:** Please convert to GIF format or upload the video file and we'll convert it.
+        **Important:** Leave blank lines before and after media links for proper display.
+      placeholder: |
+        
+        ![Screenshot description](link-to-image.png)
+        
+        ![Video description](link-to-video.gif)
+        
+    validations:
+      required: false
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser & Version
+      description: Which browser and version are you using?
+      placeholder: "Chrome 120, Firefox 121, Safari 17, etc."
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating System
+      description: Which OS are you using?
+      placeholder: "Windows 11, macOS 14, Ubuntu 22.04, etc."
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other information that might be helpful
+      placeholder: "This started happening after..."
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      description: Please confirm the following
+      options:
+        - label: I have searched existing issues to make sure this isn't a duplicate
+          required: true
+        - label: I have provided clear steps to reproduce the issue
+          required: true
+        - label: I have included relevant screenshots/videos (if applicable)
+          required: false
+        - label: I have converted videos to GIF format for better display
+          required: false

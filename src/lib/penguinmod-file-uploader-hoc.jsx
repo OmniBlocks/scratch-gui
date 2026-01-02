@@ -26,23 +26,23 @@ import {
 } from '../reducers/menus';
 
 /**
- * Higher Order Component to provide behavior for loading local project files into editor.
- * @param {React.Component} WrappedComponent the component to add project file loading functionality to
- * @returns {React.Component} WrappedComponent with project file loading functionality added
+ * Higher Order Component to provide behavior for loading PenguinMod project files into editor.
+ * @param {React.Component} WrappedComponent the component to add PenguinMod file loading functionality to
+ * @returns {React.Component} WrappedComponent with PenguinMod file loading functionality added
  *
- * <SBFileUploaderHOC>
+ * <PenguinModFileUploaderHOC>
  *     <WrappedComponent />
- * </SBFileUploaderHOC>
+ * </PenguinModFileUploaderHOC>
  */
-const SBFileUploaderHOC = function (WrappedComponent) {
-    class SBFileUploaderComponent extends React.Component {
+const PenguinModFileUploaderHOC = function (WrappedComponent) {
+    class PenguinModFileUploaderComponent extends React.Component {
         constructor (props) {
             super(props);
             bindAll(this, [
                 'createFileObjects',
                 'getProjectTitleFromFilename',
                 'handleFinishedLoadingUpload',
-                'handleStartSelectingFileUpload',
+                'handleStartSelectingPenguinModFileUpload',
                 'handleChange',
                 'onload',
                 'removeFileObjects'
@@ -59,7 +59,7 @@ const SBFileUploaderHOC = function (WrappedComponent) {
             this.removeFileObjects();
         }
         // step 1: this is where the upload process begins
-        handleStartSelectingFileUpload () {
+        handleStartSelectingPenguinModFileUpload () {
             this.expectingFileUploadFinish = true;
             this.createFileObjects(); // go to step 2
         }
@@ -80,11 +80,9 @@ const SBFileUploaderHOC = function (WrappedComponent) {
                             multiple: false,
                             types: [
                                 {
-                                    description: 'Scratch Project',
+                                    description: 'PenguinMod Project',
                                     accept: {
-                                        // Using application/x.scratch.sb3 as done in scratch-vm causes file pickers
-                                        // to disallow picking any items in Chrome 133 on Android.
-                                        'application/octet-stream': ['.sb', '.sb2', '.sb3', '.pmp']
+                                        'application/octet-stream': ['.pmp']
                                     }
                                 }
                             ]
@@ -108,7 +106,7 @@ const SBFileUploaderHOC = function (WrappedComponent) {
             } else {
                 // create <input> element and add it to DOM
                 this.inputElement = document.createElement('input');
-                this.inputElement.accept = '.sb,.sb2,.sb3,.pmp';
+                this.inputElement.accept = '.pmp';
                 this.inputElement.style = 'display: none;';
                 this.inputElement.type = 'file';
                 this.inputElement.onchange = this.handleChange; // connects to step 3
@@ -145,7 +143,7 @@ const SBFileUploaderHOC = function (WrappedComponent) {
                     // Don't update file handle until after confirming replace.
                     const handle = thisFileInput.handle;
                     if (handle) {
-                        if (this.fileToUpload.name.endsWith('.sb3') || this.fileToUpload.name.endsWith('.pmp')) {
+                        if (this.fileToUpload.name.endsWith('.pmp')) {
                             this.props.onSetFileHandle(handle);
                         } else {
                             this.props.onSetFileHandle(null);
@@ -180,9 +178,8 @@ const SBFileUploaderHOC = function (WrappedComponent) {
         // used in step 6 below
         getProjectTitleFromFilename (fileInputFilename) {
             if (!fileInputFilename) return '';
-            // only parse title with valid scratch project extensions
-            // (.sb, .sb2, and .sb3)
-            const matches = fileInputFilename.match(/^(.*)\.(?:sb[23]?|pmp)$/);
+            // only parse title with valid PenguinMod project extensions (.pmp)
+            const matches = fileInputFilename.match(/^(.*)\.pmp$/);
             if (!matches) return '';
             return matches[1].substring(0, 100); // truncate project title to max 100 chars
         }
@@ -249,7 +246,7 @@ const SBFileUploaderHOC = function (WrappedComponent) {
             return (
                 <React.Fragment>
                     <WrappedComponent
-                        onStartSelectingFileUpload={this.handleStartSelectingFileUpload}
+                        onStartSelectingPenguinModFileUpload={this.handleStartSelectingPenguinModFileUpload}
                         {...componentProps}
                     />
                 </React.Fragment>
@@ -257,7 +254,7 @@ const SBFileUploaderHOC = function (WrappedComponent) {
         }
     }
 
-    SBFileUploaderComponent.propTypes = {
+    PenguinModFileUploaderComponent.propTypes = {
         canSave: PropTypes.bool,
         cancelFileUpload: PropTypes.func,
         closeFileMenu: PropTypes.func,
@@ -283,7 +280,7 @@ const SBFileUploaderHOC = function (WrappedComponent) {
         }),
         onSetFileHandle: PropTypes.func
     };
-    SBFileUploaderComponent.defaultProps = {
+    PenguinModFileUploaderComponent.defaultProps = {
         showOpenFilePicker: typeof showOpenFilePicker === 'function' ? window.showOpenFilePicker.bind(window) : null
     };
     const mapStateToProps = (state, ownProps) => {
@@ -331,9 +328,10 @@ const SBFileUploaderHOC = function (WrappedComponent) {
         mapStateToProps,
         mapDispatchToProps,
         mergeProps
-    )(SBFileUploaderComponent));
+    )(PenguinModFileUploaderComponent));
 };
 
 export {
-    SBFileUploaderHOC as default
+    PenguinModFileUploaderHOC as default
 };
+

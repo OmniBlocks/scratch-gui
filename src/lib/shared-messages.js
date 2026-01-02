@@ -30,5 +30,10 @@ export default defineMessages({
         id: 'gui.sharedMessages.loadFromComputerTitle',
         defaultMessage: 'Load from your computer',
         description: 'Title for uploading a project from your computer'
+    },
+    loadFromPenguinMod: {
+        id: 'gui.sharedMessages.loadFromPenguinMod',
+        defaultMessage: 'Import from PenguinMod',
+        description: 'Title for importing a project from PenguinMod'
     }
 });

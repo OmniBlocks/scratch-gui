@@ -26,6 +26,7 @@ import SB3Downloader from '../../containers/sb3-downloader.jsx';
 import DeletionRestorer from '../../containers/deletion-restorer.jsx';
 import TurboMode from '../../containers/turbo-mode.jsx';
 import MenuBarHOC from '../../containers/menu-bar-hoc.jsx';
+import PenguinModFileUploaderHOC from '../../lib/penguinmod-file-uploader-hoc.jsx';
 import SettingsMenu from './settings-menu.jsx';
 
 import FramerateChanger from '../../containers/tw-framerate-changer.jsx';
@@ -632,6 +633,11 @@ class MenuBar extends React.Component {
                                         >
                                             {this.props.intl.formatMessage(sharedMessages.loadFromComputerTitle)}
                                         </MenuItem>
+                                        <MenuItem
+                                            onClick={this.props.onStartSelectingPenguinModFileUpload}
+                                        >
+                                            {this.props.intl.formatMessage(sharedMessages.loadFromPenguinMod)}
+                                        </MenuItem>
                                         <SB3Downloader
                                             showSaveFilePicker={this.props.showSaveFilePicker}
                                         >
@@ -1132,6 +1138,7 @@ MenuBar.propTypes = {
     onSetTimeTravelMode: PropTypes.func,
     onShare: PropTypes.func,
     onStartSelectingFileUpload: PropTypes.func,
+    onStartSelectingPenguinModFileUpload: PropTypes.func,
     onToggleLoginOpen: PropTypes.func,
     projectId: PropTypes.string,
     projectTitle: PropTypes.string,
@@ -1225,8 +1232,8 @@ const mapDispatchToProps = dispatch => ({
 export default compose(
     injectIntl,
     MenuBarHOC,
+    PenguinModFileUploaderHOC,
     connect(
         mapStateToProps,
         mapDispatchToProps
     )
-)(MenuBar);

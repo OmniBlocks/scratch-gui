@@ -1,0 +1,22 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="48" height="48" viewBox="0,0,48,48">
+  <defs>
+    <linearGradient id="boxGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4FC3F7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#29B6F6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <g>
+    <!-- Main body (box shape) -->
+    <rect x="4" y="8" width="40" height="32" rx="4" ry="4" fill="url(#boxGradient)" stroke="#0277BD" stroke-width="1"/>
+    
+    <!-- Face -->
+    <!-- Eyes -->
+    <circle cx="16" cy="20" r="3" fill="#FFFFFF"/>
+    <circle cx="32" cy="20" r="3" fill="#FFFFFF"/>
+    <circle cx="16" cy="20" r="1.5" fill="#000000"/>
+    <circle cx="32" cy="20" r="1.5" fill="#000000"/>
+    
+    <!-- Mouth (happy) -->
+    <path d="M 19 28 Q 24 32 29 28" stroke="#000000" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </g>
+</svg>

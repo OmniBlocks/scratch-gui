@@ -1,70 +1,81 @@
-@import "../../css/units.css";
-@import "../../css/colors.css";
-
-.library-scroll-grid {
+.modalContent {
     display: flex;
-    justify-content: flex-start;
-    align-content: flex-start;
-    align-items: flex-start;
-    background: $ui-secondary;
-    flex-grow: 1;
-    flex-wrap: wrap;
-    overflow-y: auto;
-    height: auto;
-    padding: 0.5rem;
-    height: calc(100% - $library-header-height);
-}
-
-.library-scroll-grid.withFilterBar {
-    height: calc(100% - $library-header-height - $library-filter-bar-height - 2rem);
-}
-
-.filter-bar {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    height: calc($library-filter-bar-height + 2rem); /* padding */
-    background-color: $looks-transparent;
-    padding: 0 1rem;
-    font-size: .875rem;
-}
-
-.filter-bar-item {
-    margin-right: .75rem;
-}
-
-.filter {
-    flex-grow: 0;
-}
-
-.filter-input {
-    width: 11.5rem;
-    transition: .2s;
-}
-
-.filter-input:focus,
-.filter-input:not([value=""]) {
-    width: 18.75rem;
-}
-
-.divider {
-    transform: scaleY(1.39);
-    height: $library-filter-bar-height;
-}
-
-.tag-wrapper {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    height: $library-filter-bar-height;
-    overflow: hidden;
-}
-
-.spinner-wrapper {
-    width: 100%;
+    flex-direction: column;
     height: 100%;
+    background: #ffffff;
+}
+
+.modalHeader {
+    flex-shrink: 0;
+    padding: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+    background: #f5f5f5;
+}
+
+.headerContent {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.libraryTitle {
+    margin: 0 0 1rem 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.filterBar {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.filterInput {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    width: 300px;
+}
+
+.tagButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tagButton {
+    padding: 0.25rem 0.75rem;
+    border: 1px solid #4FC3F7;
+    border-radius: 20px;
+    background: transparent;
+    color: #4FC3F7;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.tagButton:hover {
+    background: #4FC3F7;
+    color: white;
+}
+
+.tagButtonSelected {
+    background: #4FC3F7;
+    color: white;
+}
+
+.libraryScrollGrid {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.libraryScrollGrid:first-child {
+    display: block;
 }

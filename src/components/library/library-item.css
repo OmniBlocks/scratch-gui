@@ -1,0 +1,93 @@
+.libraryItem {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.libraryItem:hover {
+    border-color: #4FC3F7;
+    box-shadow: 0 2px 8px rgba(79, 195, 247, 0.2);
+    transform: translateY(-2px);
+}
+
+.libraryItem.featured {
+    border-color: #FF9800;
+}
+
+.libraryItem.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.libraryItem.disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.libraryItemImageContainer {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80px;
+    margin-bottom: 0.5rem;
+}
+
+.libraryItemImage {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.libraryItemImagePlaceholder {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #4FC3F7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.featuredBanner {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #FF9800;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.libraryItemDetails {
+    text-align: center;
+}
+
+.libraryItemName {
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+    color: #333;
+}
+
+.libraryItemDescription {
+    font-size: 0.875rem;
+    color: #666;
+    margin-bottom: 0.25rem;
+}
+
+.libraryItemCollaborator {
+    font-size: 0.75rem;
+    color: #999;
+    font-style: italic;
+}

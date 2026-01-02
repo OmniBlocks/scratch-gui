@@ -1,14 +1,10 @@
-import bindAll from 'lodash.bindall';
-import PropTypes from 'prop-types';
 import React from 'react';
-import {injectIntl, intlShape, defineMessages} from 'react-intl';
-import VM from 'scratch-vm';
-
-import {getSpriteLibrary} from '../lib/libraries/tw-async-libraries';
-import randomizeSpritePosition from '../lib/randomize-sprite-position';
-import spriteTags from '../lib/libraries/sprite-tags';
+import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
+import {defineMessages, injectIntl, intlShape} from 'react-intl';
 
 import LibraryComponent from '../components/library/library.jsx';
+import spriteLibrary from '../lib/libraries/sprites/index.js';
 
 const messages = defineMessages({
     libraryTitle: {
@@ -18,39 +14,33 @@ const messages = defineMessages({
     }
 });
 
-class SpriteLibrary extends React.PureComponent {
-    constructor (props) {
+class SpriteLibrary extends React.Component {
+    constructor(props) {
         super(props);
-        bindAll(this, [
-            'handleItemSelect'
-        ]);
-        this.state = {
-            data: getSpriteLibrary()
-        };
+        this.handleItemSelect = this.handleItemSelect.bind(this);
     }
-    componentDidMount () {
-        if (this.state.data.then) {
-            this.state.data.then(data => this.setState({
-                data
-            }));
+
+    handleItemSelect(item) {
+        // Handle sprite selection
+        if (this.props.onRequestClose) {
+            this.props.onRequestClose();
+        }
+        
+        // Add the sprite to the project
+        if (this.props.vm && item.json) {
+            this.props.vm.addSprite(JSON.stringify(item.json));
         }
     }
-    handleItemSelect (item) {
-        // Randomize position of library sprite
-        randomizeSpritePosition(item);
-        this.props.vm.addSprite(JSON.stringify(item)).then(() => {
-            this.props.onActivateBlocksTab();
-        });
-    }
-    render () {
+
+    render() {
         return (
             <LibraryComponent
-                data={this.state.data.then ? null : this.state.data}
+                data={spriteLibrary}
+                filterable={true}
                 id="spriteLibrary"
-                tags={spriteTags}
                 title={this.props.intl.formatMessage(messages.libraryTitle)}
-                removedTrademarks
-                onItemSelected={this.handleItemSelect}
+                visible={this.props.visible}
+                onItemSelect={this.handleItemSelect}
                 onRequestClose={this.props.onRequestClose}
             />
         );
@@ -59,9 +49,27 @@ class SpriteLibrary extends React.PureComponent {
 
 SpriteLibrary.propTypes = {
     intl: intlShape.isRequired,
-    onActivateBlocksTab: PropTypes.func.isRequired,
     onRequestClose: PropTypes.func,
-    vm: PropTypes.instanceOf(VM).isRequired
+    visible: PropTypes.bool,
+    vm: PropTypes.shape({
+        addSprite: PropTypes.func
+    })
 };
 
-export default injectIntl(SpriteLibrary);
+SpriteLibrary.defaultProps = {
+    visible: true
+};
+
+const mapStateToProps = state => ({
+    // Map any needed state here
+    vm: state.scratchGui.vm
+});
+
+const mapDispatchToProps = dispatch => ({
+    // Map any needed dispatch actions here
+});
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(injectIntl(SpriteLibrary));

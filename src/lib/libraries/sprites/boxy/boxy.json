@@ -1,0 +1,94 @@
+{
+  "objName": "Boxy",
+  "sounds": [
+    {
+      "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+      "name": "pop",
+      "dataFormat": "wav",
+      "format": "",
+      "rate": 48000,
+      "sampleCount": 1123,
+      "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+    }
+  ],
+  "costumes": [
+    {
+      "assetId": "boxy-a",
+      "name": "boxy-a",
+      "bitmapResolution": 1,
+      "md5ext": "boxy-a.svg",
+      "dataFormat": "svg",
+      "rotationCenterX": 48,
+      "rotationCenterY": 50
+    },
+    {
+      "assetId": "boxy-b",
+      "name": "boxy-b", 
+      "bitmapResolution": 1,
+      "md5ext": "boxy-b.svg",
+      "dataFormat": "svg",
+      "rotationCenterX": 48,
+      "rotationCenterY": 50
+    }
+  ],
+  "currentCostume": 0,
+  "scratchX": 0,
+  "scratchY": 0,
+  "scale": 100,
+  "direction": 90,
+  "draggable": false,
+  "indexInLibrary": 0,
+  "javaScriptSprites": null,
+  "visible": true,
+  "spriteInfo": {
+    "flash": false,
+    "processing": false,
+    "hasSounds": true,
+    "hasBlocks": false,
+    "name": "Boxy"
+  },
+  "json": {
+    "targets": [
+      {
+        "isStage": false,
+        "name": "Boxy",
+        "variables": {},
+        "lists": {},
+        "broadcasts": {},
+        "blocks": {},
+        "comments": {},
+        "currentCostume": 0,
+        "costumes": [
+          {
+            "assetId": "boxy-a",
+            "name": "boxy-a",
+            "bitmapResolution": 1,
+            "md5ext": "boxy-a.svg",
+            "dataFormat": "svg",
+            "rotationCenterX": 48,
+            "rotationCenterY": 50
+          },
+          {
+            "assetId": "boxy-b", 
+            "name": "boxy-b",
+            "bitmapResolution": 1,
+            "md5ext": "boxy-b.svg",
+            "dataFormat": "svg",
+            "rotationCenterX": 48,
+            "rotationCenterY": 50
+          }
+        ],
+        "sounds": [],
+        "volume": 100,
+        "layerOrder": 1,
+        "visible": true,
+        "x": 0,
+        "y": 0,
+        "size": 100,
+        "direction": 90,
+        "draggable": false,
+        "rotationStyle": "all around"
+      }
+    ]
+  }
+}

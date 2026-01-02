@@ -1,31 +1,35 @@
-import GUI from './containers/gui.jsx';
-import AppStateHOC from './lib/app-state-hoc.jsx';
-import GuiReducer, {guiInitialState, guiMiddleware, initEmbedded, initFullScreen, initPlayer} from './reducers/gui';
-import LocalesReducer, {localesInitialState, initLocale} from './reducers/locales';
-import {ScratchPaintReducer} from 'scratch-paint';
-import {setFullScreen, setPlayer} from './reducers/mode';
-import {remixProject} from './reducers/project-state';
-import {setAppElement} from 'react-modal';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import {Provider} from 'react-redux';
+import {createStore, combineReducers} from 'redux';
+import {IntlProvider} from 'react-intl';
 
-const guiReducers = {
-    locales: LocalesReducer,
-    scratchGui: GuiReducer,
-    scratchPaint: ScratchPaintReducer
+import GUI from './components/gui/gui.jsx';
+
+// Create a basic Redux store
+const initialState = {
+    scratchGui: {
+        vm: null // This would normally be the Scratch VM instance
+    }
 };
 
-export {
-    GUI as default,
-    AppStateHOC,
-    setAppElement,
-    guiReducers,
-    guiInitialState,
-    guiMiddleware,
-    initEmbedded,
-    initPlayer,
-    initFullScreen,
-    initLocale,
-    localesInitialState,
-    remixProject,
-    setFullScreen,
-    setPlayer
-};
+const rootReducer = combineReducers({
+    scratchGui: (state = initialState.scratchGui, action) => state
+});
+
+const store = createStore(rootReducer);
+
+// Render the application
+ReactDOM.render(
+    <Provider store={store}>
+        <IntlProvider locale="en">
+            <GUI />
+        </IntlProvider>
+    </Provider>,
+    document.getElementById('app')
+);
+
+// Add some basic styling
+document.body.style.margin = '0';
+document.body.style.padding = '0';
+document.body.style.fontFamily = '"Helvetica Neue", Helvetica, Arial, sans-serif';

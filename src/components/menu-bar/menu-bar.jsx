@@ -1029,6 +1029,12 @@ class MenuBar extends React.Component {
                             </Button>
                         </a>
                     </div>
+                    {/* Issue display: Shows "67" */}
+                    <div className={styles.menuBarItem}>
+                        <div className={styles.issueDisplay}>
+                            <span className={styles.issueNumber}>67</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div className={styles.accountInfoGroup}>

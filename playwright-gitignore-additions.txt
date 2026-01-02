@@ -1,0 +1,13 @@
+# Add these lines to your .gitignore file:
+
+# Playwright test results
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# Error videos (keep locally but don't commit)
+/test-results/error-videos/
+
+# Playwright dependencies
+/playwright/

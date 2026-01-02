@@ -1,0 +1,93 @@
+name: 🎭 Playwright Tests - Error Detection
+
+on:
+  schedule:
+    # Run tests daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      test_type:
+        description: 'Type of test to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - random-clicks
+          - recorded-actions
+      click_count:
+        description: 'Number of random clicks (for random-clicks test)'
+        required: false
+        default: '100'
+
+jobs:
+  playwright-tests:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: 'npm'
+
+    - name: 📦 Install dependencies
+      run: npm ci --legacy-peer-deps
+
+    - name: 🎭 Install Playwright Browsers
+      run: npx playwright install --with-deps
+
+    - name: 🏗️ Build OmniBlocks
+      run: npm run build
+
+    - name: 🧪 Run Playwright Tests
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        if [ "${{ github.event.inputs.test_type }}" = "random-clicks" ]; then
+          npx playwright test random-clicks.spec.js
+        elif [ "${{ github.event.inputs.test_type }}" = "recorded-actions" ]; then
+          npx playwright test recorded-actions.spec.js
+        else
+          npx playwright test
+        fi
+
+    - name: 📹 Upload Test Videos
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: playwright-videos-${{ github.run_number }}
+        path: test-results/
+        retention-days: 30
+
+    - name: 🚨 Upload Error Videos
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: error-videos-${{ github.run_number }}
+        path: test-results/error-videos/
+        retention-days: 90
+
+    - name: 📊 Upload Test Report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: playwright-report-${{ github.run_number }}
+        path: playwright-report/
+        retention-days: 30
+
+    - name: 💬 Comment on PR (if applicable)
+      if: github.event_name == 'pull_request' && failure()
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: '🚨 **Playwright tests detected JavaScript errors!** Check the test artifacts for videos and details.'
+          });

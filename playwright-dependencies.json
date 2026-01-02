@@ -1,0 +1,15 @@
+{
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@octokit/rest": "^20.0.2"
+  },
+  "scripts": {
+    "test:playwright": "playwright test",
+    "test:random": "playwright test random-clicks.spec.js",
+    "test:recorded": "playwright test recorded-actions.spec.js",
+    "test:install": "playwright install --with-deps",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:report": "playwright show-report"
+  }
+}

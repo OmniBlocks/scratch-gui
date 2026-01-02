@@ -206,8 +206,8 @@ const ConnectedGUI = injectIntl(connect(
 // the hierarchy of HOC constructor calls clearer here; it has nothing to do with redux's
 // ability to compose reducers.
 /* why are the og developers using double slashes
- for multiline comments? when you can just use
-   /* and  */
+   for multiline comments? when you can just use
+   block comments like this */
 const WrappedGui = compose(
     LocalizationHOC,
     ErrorBoundaryHOC('Top Level App'),

@@ -351,7 +351,7 @@ Update: As of 11/12/2025, there is even better integration with the music editor
 
 
 ### Short-term Goals (Next 3-6 months)
-- [ ] Add monaco react editor
+- [ ] Enhanced Monaco editor features (Python, C++ support)
 
 ### Long-term Vision
 - [ ] Full Python/C++ IDE integration
@@ -362,6 +362,7 @@ Update: As of 11/12/2025, there is even better integration with the music editor
 
 ### Completed ✅
 - [x] Add a bunch of small QoL features
+- [x] Add Monaco React editor with JavaScript support
 
 
 

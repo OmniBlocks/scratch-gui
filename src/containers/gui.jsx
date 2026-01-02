@@ -16,7 +16,8 @@ import {
     BLOCKS_TAB_INDEX,
     COSTUMES_TAB_INDEX,
     SOUNDS_TAB_INDEX,
-    SONGS_TAB_INDEX
+    SONGS_TAB_INDEX,
+    JAVASCRIPT_TAB_INDEX
 } from '../reducers/editor-tab';
 
 import {
@@ -157,6 +158,7 @@ const mapStateToProps = state => {
         blocksTabVisible: state.scratchGui.editorTab.activeTabIndex === BLOCKS_TAB_INDEX,
         cardsVisible: state.scratchGui.cards.visible,
         connectionModalVisible: state.scratchGui.modals.connectionModal,
+        codeEditorTabVisible: state.scratchGui.editorTab.activeTabIndex === JAVASCRIPT_TAB_INDEX,
         costumeLibraryVisible: state.scratchGui.modals.costumeLibrary,
         costumesTabVisible: state.scratchGui.editorTab.activeTabIndex === COSTUMES_TAB_INDEX,
         error: state.scratchGui.projectState.error,
@@ -191,6 +193,7 @@ const mapDispatchToProps = dispatch => ({
     onActivateTab: tab => dispatch(activateTab(tab)),
     onActivateCostumesTab: () => dispatch(activateTab(COSTUMES_TAB_INDEX)),
     onActivateSoundsTab: () => dispatch(activateTab(SOUNDS_TAB_INDEX)),
+    onActivateCodeEditorTab: () => dispatch(activateTab(JAVASCRIPT_TAB_INDEX)),
     onActivateSongsTab: () => dispatch(activateTab(SONGS_TAB_INDEX)),
     onRequestCloseBackdropLibrary: () => dispatch(closeBackdropLibrary()),
     onRequestCloseCostumeLibrary: () => dispatch(closeCostumeLibrary()),

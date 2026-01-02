@@ -21,6 +21,7 @@ import CostumeLibrary from '../../containers/costume-library.jsx';
 import BackdropLibrary from '../../containers/backdrop-library.jsx';
 import Watermark from '../../containers/watermark.jsx';
 import SongsTab from '../../containers/songs-tab.jsx';
+import MonacoEditor from '../monaco-editor/monaco-editor.jsx';
 import Backpack from '../../containers/backpack.jsx';
 import BrowserModal from '../browser-modal/browser-modal.jsx';
 import TipsLibrary from '../../containers/tips-library.jsx';
@@ -50,6 +51,7 @@ import codeIcon from '!../../lib/tw-recolor/build!./icon--code.svg';
 import costumesIcon from '!../../lib/tw-recolor/build!./icon--costumes.svg';
 import soundsIcon from '!../../lib/tw-recolor/build!./icon--sounds.svg';
 import songsIcon from '!../../lib/tw-recolor/build!./icon--songs.svg';
+import jsIcon from '!../../lib/tw-recolor/build!./icon--js.svg';
 const messages = defineMessages({
     addExtension: {
         id: 'gui.gui.addExtension',
@@ -86,6 +88,7 @@ const GUIComponent = props => {
         blocksId,
         blocksTabVisible,
         cardsVisible,
+        codeEditorTabVisible,
         canChangeLanguage,
         canChangeTheme,
         canCreateNew,
@@ -128,6 +131,7 @@ const GUIComponent = props => {
         onActivateCostumesTab,
         onActivateSoundsTab,
         onActivateSongsTab,
+        onActivateCodeEditorTab,
         onActivateTab,
         onClickLogo,
         onExtensionButtonClick,
@@ -398,6 +402,20 @@ const GUIComponent = props => {
                                         />
                                     </Tab>
                                 </TabList>
+                                    <Tab
+                                        className={tabClassNames.tab}
+                                        onClick={onActivateCodeEditorTab}
+                                    >
+                                        <img
+                                            draggable={false}
+                                            src={jsIcon()}
+                                        />
+                                        <FormattedMessage
+                                            defaultMessage="JavaScript"
+                                            description="Button to get to the JavaScript editor panel"
+                                            id="gui.gui.jsTab"
+                                        />
+                                    </Tab>
                                 <TabPanel className={tabClassNames.tabPanel}>
                                     <Box className={styles.blocksWrapper}>
                                         <Blocks
@@ -442,6 +460,11 @@ const GUIComponent = props => {
                                 <TabPanel className={tabClassNames.tabPanel}>
                                     {songsTabVisible ? <SongsTab vm={vm} /> : null}
                                 </TabPanel>
+                                <TabPanel className={tabClassNames.tabPanel}>
+                                    {codeEditorTabVisible ? (
+                                        <MonacoEditor theme={theme.id === 'dark' ? 'dark' : 'light'} />
+                                    ) : null}
+                                </TabPanel>
                             </Tabs>
                             {backpackVisible ? (
                                 <Backpack host={backpackHost} />
@@ -482,6 +505,7 @@ GUIComponent.propTypes = {
     backpackVisible: PropTypes.bool,
     basePath: PropTypes.string,
     blocksTabVisible: PropTypes.bool,
+    codeEditorTabVisible: PropTypes.bool,
     blocksId: PropTypes.string,
     canChangeLanguage: PropTypes.bool,
     canChangeTheme: PropTypes.bool,
@@ -515,6 +539,7 @@ GUIComponent.propTypes = {
     logo: PropTypes.string,
     onActivateCostumesTab: PropTypes.func,
     onActivateSoundsTab: PropTypes.func,
+    onActivateCodeEditorTab: PropTypes.func,
     onActivateTab: PropTypes.func,
     onClickAccountNav: PropTypes.func,
     onClickAddonSettings: PropTypes.func,

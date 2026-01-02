@@ -32,6 +32,8 @@
     }
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.6.0",
+    "monaco-editor": "^0.52.2",
     "@ffmpeg/ffmpeg": "^0.12.15",
     "@ffmpeg/util": "^0.12.2",
     "@microbit/microbit-universal-hex": "0.2.2",

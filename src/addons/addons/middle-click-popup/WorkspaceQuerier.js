@@ -1275,17 +1275,24 @@ export default class WorkspaceQuerier {
     const aLengths = a.getLengths();
     const bLengths = b.getLengths();
     
-    // First, prioritize built-in blocks over extension blocks
+    // First, prioritize built-in blocks over extension blocks  
     const aBlock = a.getBlock();
     const bBlock = b.getBlock();
-    const aIsBuiltIn = WorkspaceQuerier.BUILT_IN_CATEGORIES.has(aBlock.typeInfo.category.name);
-    const bIsBuiltIn = WorkspaceQuerier.BUILT_IN_CATEGORIES.has(bBlock.typeInfo.category.name);
+    
+    // Check if blocks are built-in based on category
+    const aCategoryName = aBlock.typeInfo.category?.name || '';
+    const bCategoryName = bBlock.typeInfo.category?.name || '';
+    const aIsBuiltIn = WorkspaceQuerier.BUILT_IN_CATEGORIES.has(aCategoryName);
+    const bIsBuiltIn = WorkspaceQuerier.BUILT_IN_CATEGORIES.has(bCategoryName);
 
+    // Prioritize built-in blocks over extension blocks
     if (aIsBuiltIn !== bIsBuiltIn) {
       return bIsBuiltIn ? 1 : -1; // Built-in blocks come first
     }
     
-    // Then sort by string length and token length as before
+    // Within the same priority level (built-in vs extension), sort by:
+    // 1. String length (shorter/more exact matches first)
+    // 2. Token length (simpler blocks first)
     if (aLengths.stringLength != bLengths.stringLength) return aLengths.stringLength - bLengths.stringLength;
     return aLengths.tokenLength - bLengths.tokenLength;
   });

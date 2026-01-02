@@ -5,18 +5,6 @@ import Utils from "./blockly/Utils.js";
 export default async function ({ addon, msg, console }) {
   const Blockly = await addon.tab.traps.getBlockly();
 
-  class FindBar {
-    constructor() {
-      this.utils = new Utils(addon);
-
-      this.prevValue = "";
-
-      this.findBarOuter = null;
-      this.findWrapper = null;
-      this.findInput = null;
-      this.dropdownOut = null;
-      this.dropdown = new Dropdown(this.utils);
-
       document.addEventListener("keydown", (e) => this.eventKeyDown(e), true);
     }
 
@@ -337,31 +325,7 @@ export default async function ({ addon, msg, console }) {
         if (a.lower > b.lower) {
           return 1;
         }
-        return a.y - b.y;
-      });
-
-      return myBlocks;
-    }
-
-    getScratchCostumes() {
-      let costumes = this.utils.getEditingTarget().getCostumes();
-
-      let items = [];
-
-      let i = 0;
-      for (const costume of costumes) {
-        let item = new BlockItem("costume", costume.name, costume.assetId, i);
-        items.push(item);
-        i++;
       }
-
-      return items;
-    }
-
-    getScratchSounds() {
-      let sounds = this.utils.getEditingTarget().getSounds();
-
-      let items = [];
 
       let i = 0;
       for (const sound of sounds) {

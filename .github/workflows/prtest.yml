@@ -442,10 +442,10 @@ jobs:
         continue-on-error: true
         env:
           NODE_OPTIONS: --max-old-space-size=8912
+        env:
         run: |
-          FILES="${{ steps.changed-files.outputs.result }}"
-          
           if [ -z "$FILES" ] || [ "$FILES" = "" ]; then
+          
             echo "No JS/JSX files changed, skipping lint"
             echo "lint_status=skipped" >> $GITHUB_OUTPUT
             echo "[]" > lint-output.json

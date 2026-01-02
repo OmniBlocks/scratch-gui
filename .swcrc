@@ -1,0 +1,26 @@
+{
+  "jsc": {
+    "parser": {
+      "syntax": "ecmascript",
+      "jsx": true,
+      "dynamicImport": true,
+      "objectRestSpread": true,
+      "decorators": false,
+      "functionBind": false
+    },
+    "transform": {
+      "react": {
+        "runtime": "classic",
+        "pragma": "React.createElement",
+        "pragmaFrag": "React.Fragment",
+        "throwIfNamespace": true,
+        "development": false,
+        "useBuiltins": false
+      }
+    },
+    "target": "es2018"
+  },
+  "module": {
+    "type": "es6"
+  }
+}

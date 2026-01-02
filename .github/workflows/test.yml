@@ -1848,6 +1848,7 @@ jobs:
           mkdir -p "tests/$TIMESTAMP"
           cp -r ../dashboard/* "tests/$TIMESTAMP/"
           
+          
           cd tests
           rm -f latest
           ln -s "$TIMESTAMP" latest
@@ -1930,10 +1931,16 @@ jobs:
             </div>
           </body>
           </html>
+          
+          # Add only the tests directory, explicitly excluding .github to prevent permission errors
           INDEXEOF
+          
+          # Remove any .github directory that might have been accidentally copied
+          find tests/ -name ".github" -type d -exec rm -rf {} + 2>/dev/null || true
           
           cd ..
           git add tests/
+            # Push without .github directory to avoid workflow permission issues
           
           if [ -n "$(git status --porcelain)" ]; then
             git commit -m "Update test results with multi-browser chaos testing 🌪️🦊🧭 - $(date -u +"%Y-%m-%d %H:%M:%S UTC")"

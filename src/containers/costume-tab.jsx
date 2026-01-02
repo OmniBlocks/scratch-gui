@@ -25,6 +25,7 @@ import {
 } from '../reducers/editor-tab';
 
 import {setRestore} from '../reducers/restore-deletion';
+import {setPaintEditorFullScreen} from '../reducers/mode';
 import {showStandardAlert, closeAlertWithId} from '../reducers/alerts';
 
 import addLibraryBackdropIcon from '../components/asset-panel/icon--add-backdrop-lib.svg';
@@ -33,8 +34,11 @@ import fileUploadIcon from '../components/action-menu/icon--file-upload.svg';
 import paintIcon from '../components/action-menu/icon--paint.svg';
 import surpriseIcon from '../components/action-menu/icon--surprise.svg';
 import searchIcon from '../components/action-menu/icon--search.svg';
+import fullScreenIcon from '../components/stage-header/icon--fullscreen.svg';
+import unFullScreenIcon from '../components/stage-header/icon--unfullscreen.svg';
 
 import {getCostumeLibrary, getBackdropLibrary} from '../lib/libraries/tw-async-libraries';
+import '../components/paint-editor-fullscreen/paint-editor-fullscreen.css';
 
 let messages = defineMessages({
     addLibraryBackdropMsg: {
@@ -66,6 +70,16 @@ let messages = defineMessages({
         defaultMessage: 'Upload Costume',
         description: 'Button to add a costume by uploading a file in the editor tab',
         id: 'gui.costumeTab.addFileCostume'
+    },
+    fullScreenMessage: {
+        defaultMessage: 'Enter full screen mode',
+        description: 'Button to enter full screen mode for paint editor',
+        id: 'gui.costumeTab.fullScreen'
+    },
+    unFullScreenMessage: {
+        defaultMessage: 'Exit full screen mode',
+        description: 'Button to exit full screen mode for paint editor',
+        id: 'gui.costumeTab.unFullScreen'
     }
 });
 
@@ -86,7 +100,8 @@ class CostumeTab extends React.Component {
             'handleFileUploadClick',
             'handleCostumeUpload',
             'handleDrop',
-            'setFileInput'
+            'setFileInput',
+            'handleTogglePaintEditorFullScreen'
         ]);
         const {
             editingTarget,
@@ -244,6 +259,9 @@ class CostumeTab extends React.Component {
         // https://github.com/LLK/scratch-flash/blob/9fbac92ef3d09ceca0c0782f8a08deaa79e4df69/src/ui/media/MediaInfo.as#L224-L237
         return `${Math.ceil(size[0] / resolution)} x ${Math.ceil(size[1] / resolution)}`;
     }
+    handleTogglePaintEditorFullScreen () {
+        this.props.onTogglePaintEditorFullScreen(!this.props.isPaintEditorFullScreen);
+    }
     render () {
         const {
             dispatchUpdateRestore, // eslint-disable-line no-unused-vars
@@ -251,7 +269,8 @@ class CostumeTab extends React.Component {
             isRtl,
             onNewLibraryBackdropClick,
             onNewLibraryCostumeClick,
-            vm
+            vm,
+            isPaintEditorFullScreen
         } = this.props;
 
         if (!vm.editingTarget) {
@@ -274,6 +293,18 @@ class CostumeTab extends React.Component {
             dragPayload: costume
         })) : [];
         return (
+
+        // Fullscreen button for paint editor
+        const fullscreenButton = (
+            <button
+                className="costume-tab-fullscreen-button"
+                onClick={this.handleTogglePaintEditorFullScreen}
+                title={intl.formatMessage(isPaintEditorFullScreen ? messages.unFullScreenMessage : messages.fullScreenMessage)}
+            >
+                <img src={isPaintEditorFullScreen ? unFullScreenIcon : fullScreenIcon} alt="Fullscreen" />
+            </button>
+        );
+
             <AssetPanel
                 buttons={[
                     {
@@ -318,18 +349,23 @@ class CostumeTab extends React.Component {
                 onItemClick={this.handleSelectCostume}
             >
                 {target.costumes ?
+                <div className="paint-editor-container">
+                    {fullscreenButton}
                     <PaintEditorWrapper
                         selectedCostumeIndex={this.state.selectedCostumeIndex}
                     /> :
                     null
                 }
             </AssetPanel>
+                </div>
         );
     }
 }
 
 CostumeTab.propTypes = {
     dispatchUpdateRestore: PropTypes.func,
+    isPaintEditorFullScreen: PropTypes.bool,
+    onTogglePaintEditorFullScreen: PropTypes.func,
     editingTarget: PropTypes.string,
     intl: intlShape,
     isRtl: PropTypes.bool,
@@ -356,6 +392,7 @@ CostumeTab.propTypes = {
 };
 
 const mapStateToProps = state => ({
+    isPaintEditorFullScreen: state.scratchGui.mode.isPaintEditorFullScreen,
     editingTarget: state.scratchGui.targets.editingTarget,
     isRtl: state.locales.isRtl,
     sprites: state.scratchGui.targets.sprites,
@@ -363,6 +400,7 @@ const mapStateToProps = state => ({
     dragging: state.scratchGui.assetDrag.dragging
 });
 
+    onTogglePaintEditorFullScreen: (isFullScreen) => dispatch(setPaintEditorFullScreen(isFullScreen)),
 const mapDispatchToProps = dispatch => ({
     onActivateSoundsTab: () => dispatch(activateTab(SOUNDS_TAB_INDEX)),
     onNewLibraryBackdropClick: e => {

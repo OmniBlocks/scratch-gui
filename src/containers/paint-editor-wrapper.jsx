@@ -10,6 +10,8 @@ import {openFontsModal} from '../reducers/modals';
 import {connect} from 'react-redux';
 import {Theme} from '../lib/themes/index.js';
 
+import {setPaintEditorFullScreen} from '../reducers/mode';
+import '../components/paint-editor-fullscreen/paint-editor-fullscreen.css';
 class PaintEditorWrapper extends React.Component {
     constructor (props) {
         super(props);
@@ -18,13 +20,21 @@ class PaintEditorWrapper extends React.Component {
             'handleUpdateName',
             'handleUpdateFonts',
             'fontInlineFn'
-        ]);
+            'fontInlineFn',
+            'handleToggleFullScreen',
+            'handleKeyPress'
         this.state = {
             fonts: this.props.vm.runtime.fontManager.getFonts()
         };
     }
     componentDidMount () {
         this.props.vm.runtime.fontManager.on('change', this.handleUpdateFonts);
+    }
+        document.addEventListener('keydown', this.handleKeyPress);
+    }
+    componentWillUnmount () {
+        this.props.vm.runtime.fontManager.off('change', this.handleUpdateFonts);
+        document.removeEventListener('keydown', this.handleKeyPress);
     }
     shouldComponentUpdate (nextProps, nextState) {
         return this.props.imageId !== nextProps.imageId ||
@@ -33,9 +43,6 @@ class PaintEditorWrapper extends React.Component {
             this.props.theme !== nextProps.theme ||
             this.props.customStageSize !== nextProps.customStageSize ||
             this.state.fonts !== nextState.fonts;
-    }
-    componentWillUnmount () {
-        this.props.vm.runtime.fontManager.off('change', this.handleUpdateFonts);
     }
     handleUpdateFonts () {
         this.setState({
@@ -65,6 +72,14 @@ class PaintEditorWrapper extends React.Component {
         return inlineSvgFonts(svgString, this.props.vm.renderer.customFonts);
     }
     render () {
+    handleToggleFullScreen () {
+        this.props.onSetPaintEditorFullScreen(!this.props.isPaintEditorFullScreen);
+    }
+    handleKeyPress (event) {
+        if (event.key === 'Escape' && this.props.isPaintEditorFullScreen) {
+            this.props.onSetPaintEditorFullScreen(false);
+        }
+    }
         if (!this.props.imageId) return null;
         const {
             selectedCostumeIndex,
@@ -74,6 +89,7 @@ class PaintEditorWrapper extends React.Component {
 
         return (
             <PaintEditor
+            <div className={this.props.isPaintEditorFullScreen ? 'paint-editor-fullscreen' : ''}>
                 {...componentProps}
                 image={vm.getCostume(selectedCostumeIndex)}
                 onUpdateImage={this.handleUpdateImage}
@@ -84,6 +100,10 @@ class PaintEditorWrapper extends React.Component {
                 width={this.props.customStageSize.width}
                 height={this.props.customStageSize.height}
             />
+                isFullScreen={this.props.isPaintEditorFullScreen}
+                onToggleFullScreen={this.handleToggleFullScreen}
+            />
+            </div>
         );
     }
 }
@@ -96,6 +116,8 @@ PaintEditorWrapper.propTypes = {
     onManageFonts: PropTypes.func.isRequired,
     imageFormat: PropTypes.string.isRequired,
     imageId: PropTypes.string.isRequired,
+    isPaintEditorFullScreen: PropTypes.bool,
+    onSetPaintEditorFullScreen: PropTypes.func,
     theme: PropTypes.instanceOf(Theme),
     name: PropTypes.string,
     rotationCenterX: PropTypes.number,
@@ -121,6 +143,7 @@ const mapStateToProps = (state, {selectedCostumeIndex}) => {
         imageId: targetId && `${targetId}${costume.skinId}`,
         rtl: state.locales.isRtl,
         selectedCostumeIndex: index,
+        isPaintEditorFullScreen: state.scratchGui.mode.isPaintEditorFullScreen,
         theme: state.scratchGui.theme.theme,
         vm: state.scratchGui.vm,
         zoomLevelId: targetId
@@ -128,7 +151,8 @@ const mapStateToProps = (state, {selectedCostumeIndex}) => {
 };
 
 const mapDispatchToProps = dispatch => ({
-    onManageFonts: () => dispatch(openFontsModal())
+    onManageFonts: () => dispatch(openFontsModal()),
+    onSetPaintEditorFullScreen: (isFullScreen) => dispatch(setPaintEditorFullScreen(isFullScreen))
 });
 
 export default ErrorBoundaryHOC('paint')(connect(

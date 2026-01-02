@@ -9,6 +9,7 @@ import SpriteSelectorItem from '../../containers/sprite-selector-item.jsx';
 import SortableHOC from '../../lib/sortable-hoc.jsx';
 import SortableAsset from '../asset-panel/sortable-asset.jsx';
 import ThrottledPropertyHOC from '../../lib/throttled-property-hoc.jsx';
+import {createSpriteFriends} from '../../lib/sprite-friends.js';
 
 import styles from './sprite-selector.css';
 
@@ -36,6 +37,11 @@ const SpriteList = function (props) {
 
     const isSpriteDrag = draggingType === DragConstants.SPRITE;
 
+    
+    // Create sprite friends mapping from current sprites
+    const spritesById = {};
+    items.forEach(sprite => { spritesById[sprite.id] = sprite; });
+    const spriteFriends = createSpriteFriends(spritesById);
     return (
         <Box
             className={classNames(styles.scrollWrapper, {
@@ -69,6 +75,10 @@ const SpriteList = function (props) {
                         DragConstants.BACKPACK_SOUND,
                         DragConstants.BACKPACK_CODE].includes(draggingType);
 
+                    // Check if this sprite has friends
+                    const hasFriends = spriteFriends[sprite.id] && spriteFriends[sprite.id].length > 0;
+                    const friendIds = hasFriends ? spriteFriends[sprite.id] : [];
+                    
                     return (
                         <SortableAsset
                             className={classNames(styles.spriteWrapper, {
@@ -82,6 +92,8 @@ const SpriteList = function (props) {
                                 asset={sprite.costume && sprite.costume.asset}
                                 className={classNames(styles.sprite, {
                                     [styles.raised]: isRaised,
+                                    [styles.hasFriends]: hasFriends,
+                                    [styles.friendHighlight]: friendIds.includes(selectedId),
                                     [styles.receivedBlocks]: receivedBlocks
                                 })}
                                 dragPayload={sprite.id}
@@ -90,6 +102,7 @@ const SpriteList = function (props) {
                                 index={index}
                                 key={sprite.id}
                                 name={sprite.name}
+                                friendCount={hasFriends ? friendIds.length : 0}
                                 selected={sprite.id === selectedId}
                                 onClick={onSelectSprite}
                                 onDeleteButtonClick={onDeleteSprite}

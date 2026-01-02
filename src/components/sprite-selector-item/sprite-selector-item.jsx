@@ -102,6 +102,24 @@ const SpriteSelectorItem = props => (
                     </DangerousMenuItem>
                 ) : null }
             </ContextMenu>
+                {props.onAddFriendClick ? (
+                    <MenuItem onClick={props.onAddFriendClick}>
+                        <FormattedMessage
+                            defaultMessage="add as friend"
+                            description="Menu item to add sprite as friend"
+                            id="ob.spriteSelectorItem.addFriend"
+                        />
+                    </MenuItem>
+                ) : null}
+                {props.onRemoveFriendClick ? (
+                    <MenuItem onClick={props.onRemoveFriendClick}>
+                        <FormattedMessage
+                            defaultMessage="remove friend"
+                            description="Menu item to remove sprite friend"
+                            id="ob.spriteSelectorItem.removeFriend"
+                        />
+                    </MenuItem>
+                ) : null}
         ) : null}
     </ContextMenuTrigger>
 );
@@ -125,6 +143,8 @@ SpriteSelectorItem.propTypes = {
     onMouseLeave: PropTypes.func,
     preventContextMenu: PropTypes.bool,
     selected: PropTypes.bool.isRequired
+    onAddFriendClick: PropTypes.func,
+    onRemoveFriendClick: PropTypes.func,
 };
 
 export default SpriteSelectorItem;

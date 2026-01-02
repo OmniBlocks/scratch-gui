@@ -121,3 +121,11 @@
 [dir="rtl"] .number {
     right: 0.15rem;
 }
+
+.friend-count {
+    font-size: 0.5rem;
+    color: #4C97FF;
+    margin-top: 0.125rem;
+    font-weight: bold;
+    text-align: center;
+}

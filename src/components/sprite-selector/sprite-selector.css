@@ -125,3 +125,27 @@
     background: black;
     filter: opacity(15%) brightness(0%);
 }
+
+/* Sprite Friends Styling */
+.has-friends {
+    position: relative;
+}
+
+.has-friends::after {
+    content: "👥";
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: 12px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.friend-highlight {
+    box-shadow: 0 0 8px #4C97FF;
+}

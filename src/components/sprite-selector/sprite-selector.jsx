@@ -15,6 +15,7 @@ import fileUploadIcon from '../action-menu/icon--file-upload.svg';
 import paintIcon from '../action-menu/icon--paint.svg';
 import spriteIcon from '../action-menu/icon--sprite.svg';
 import surpriseIcon from '../action-menu/icon--surprise.svg';
+import friendsIcon from '../action-menu/icon--search.svg'; // Reusing search icon for friends
 import searchIcon from '../action-menu/icon--search.svg';
 
 const messages = defineMessages({
@@ -37,6 +38,16 @@ const messages = defineMessages({
         id: 'gui.spriteSelector.addSpriteFromFile',
         description: 'Button to add a sprite in the target pane from file',
         defaultMessage: 'Upload Sprite'
+    },
+    addFriendGroup: {
+        id: 'gui.spriteSelector.addFriendGroup',
+        description: 'Button to add Gobo and friends group',
+        defaultMessage: 'Add Gobo\'s Friends'
+    },
+    manageFriends: {
+        id: 'gui.spriteSelector.manageFriends',
+        description: 'Button to manage sprite friends',
+        defaultMessage: 'Manage Friends'
     }
 });
 
@@ -60,6 +71,7 @@ const SpriteSelectorComponent = function (props) {
         onFileUploadClick,
         onNewSpriteClick,
         onPaintSpriteClick,
+        onAddFriendsClick,
         onSelectSprite,
         onSpriteUpload,
         onSurpriseSpriteClick,
@@ -138,6 +150,10 @@ const SpriteSelectorComponent = function (props) {
                         title: intl.formatMessage(messages.addSpriteFromLibrary),
                         img: searchIcon,
                         onClick: onNewSpriteClick
+                    }, {
+                        title: intl.formatMessage(messages.addFriendGroup),
+                        img: friendsIcon,
+                        onClick: onNewSpriteClick
                     }
                 ]}
                 title={intl.formatMessage(messages.addSpriteFromLibrary)}
@@ -170,6 +186,7 @@ SpriteSelectorComponent.propTypes = {
     onFileUploadClick: PropTypes.func,
     onNewSpriteClick: PropTypes.func,
     onPaintSpriteClick: PropTypes.func,
+    onAddFriendsClick: PropTypes.func,
     onSelectSprite: PropTypes.func,
     onSpriteUpload: PropTypes.func,
     onSurpriseSpriteClick: PropTypes.func,

@@ -1,0 +1,95 @@
+.security-alert {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    max-width: 400px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    border-left: 4px solid #ffc107;
+}
+
+.security-alert.warning {
+    border-left-color: #ffc107;
+}
+
+.security-alert.error {
+    border-left-color: #dc3545;
+}
+
+.security-alert.info {
+    border-left-color: #17a2b8;
+}
+
+.content {
+    display: flex;
+    align-items: flex-start;
+    padding: 16px;
+    gap: 12px;
+}
+
+.icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.text {
+    flex: 1;
+    min-width: 0;
+}
+
+.title {
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.message {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.4;
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.action-button {
+    background: #ff6680;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.action-button:hover {
+    background: #e55a76;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-button:hover {
+    color: #666;
+}

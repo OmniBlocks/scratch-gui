@@ -37,6 +37,7 @@ import TWRestorePointManager from '../../containers/tw-restore-point-manager.jsx
 import TWFontsModal from '../../containers/tw-fonts-modal.jsx';
 import TWUnknownPlatformModal from '../../containers/tw-unknown-platform-modal.jsx';
 import TWInvalidProjectModal from '../../containers/tw-invalid-project-modal.jsx';
+import SecurityDashboard from '../security-dashboard/security-dashboard.jsx';
 
 import {STAGE_SIZE_MODES, FIXED_WIDTH, UNCONSTRAINED_NON_STAGE_WIDTH} from '../../lib/layout-constants';
 import {resolveStageSize} from '../../lib/screen-utils';
@@ -44,6 +45,7 @@ import {Theme} from '../../lib/themes';
 
 import {isRendererSupported, isBrowserSupported} from '../../lib/tw-environment-support-prober';
 
+import {applySecurityHeaders} from '../../lib/security-config';
 import styles from './gui.css';
 import addExtensionIcon from './icon--extensions.svg';
 import codeIcon from '!../../lib/tw-recolor/build!./icon--code.svg';
@@ -72,6 +74,11 @@ const getFullscreenBackgroundColor = () => {
 const fullscreenBackgroundColor = getFullscreenBackgroundColor();
 
 const GUIComponent = props => {
+    // Apply security headers on component mount
+    React.useEffect(() => {
+        applySecurityHeaders();
+    }, []);
+    
     const {
         accountNavOpen,
         activeTabIndex,
@@ -194,6 +201,7 @@ const GUIComponent = props => {
                 {fontsModalVisible && <TWFontsModal />}
                 {unknownPlatformModalVisible && <TWUnknownPlatformModal />}
                 {invalidProjectModalVisible && <TWInvalidProjectModal />}
+                <SecurityDashboard />
             </React.Fragment>
         );
 
@@ -225,6 +233,7 @@ const GUIComponent = props => {
                 </StageWrapper>
                 {alwaysEnabledModals}
             </React.Fragment>
+                <SecurityDashboard />
         ) : (
             <Box
                 className={styles.pageWrapper}

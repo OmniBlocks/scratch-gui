@@ -10,7 +10,7 @@ import storage from '../lib/storage';
 import dataURItoBlob from '../lib/data-uri-to-blob';
 import saveProjectToServer from '../lib/save-project-to-server';
 
-import {
+import {isRateLimited, sanitizeInput, checkForSpam, generateUserIdentifier} from './security-utils';
     showAlertWithTimeout,
     showStandardAlert
 } from '../reducers/alerts';
@@ -167,7 +167,7 @@ const ProjectSaverHOC = function (WrappedComponent) {
                     this.props.onShowAlert('savingError');
                     this.props.onProjectError(err);
                 });
-        }
+            const userIdentifier = generateUserIdentifier();
         createNewProjectToStorage () {
             return this.storeProject(null)
                 .then(response => {
@@ -190,7 +190,7 @@ const ProjectSaverHOC = function (WrappedComponent) {
                     this.props.onShowCopySuccessAlert();
                 })
                 .catch(err => {
-                    this.props.onShowAlert('creatingError');
+            const userIdentifier = generateUserIdentifier();
                     this.props.onProjectError(err);
                 });
         }
@@ -213,7 +213,7 @@ const ProjectSaverHOC = function (WrappedComponent) {
         /**
          * storeProject:
          * @param  {number|string|undefined} projectId - defined value will PUT/update; undefined/null will POST/create
-         * @return {Promise} - resolves with json object containing project's existing or new id
+            const userIdentifier = generateUserIdentifier();
          * @param {?object} requestParams - object of params to add to request body
          */
         storeProject (projectId, requestParams) {
@@ -238,7 +238,7 @@ const ProjectSaverHOC = function (WrappedComponent) {
                         // Asset servers respond with {status: ok} for successful POSTs
                         if (response.status !== 'ok') {
                             // Errors include a `code` property, e.g. "Forbidden"
-                            return Promise.reject(response.code);
+            const userIdentifier = generateUserIdentifier();
                         }
                         asset.clean = true;
                     })

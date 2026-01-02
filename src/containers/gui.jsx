@@ -57,6 +57,7 @@ const setProjectIdMetadata = projectId => {
 class GUI extends React.Component {
     componentDidMount () {
         setIsScratchDesktop(this.props.isScratchDesktop);
+        this.initializeAssetCaching();
         this.props.onStorageInit(storage);
         this.props.onVmInit(this.props.vm);
         setProjectIdMetadata(this.props.projectId);
@@ -75,6 +76,26 @@ class GUI extends React.Component {
         }
     }
     render () {
+    
+    /**
+     * Initialize asset caching system
+     */
+    initializeAssetCaching () {
+        // Enable asset caching if supported and enabled
+        const enableCaching = process.env.ENABLE_ASSET_CACHING !== 'false';
+        
+        if (enableCaching && storage.assetCacheManager) {
+            console.log('Asset caching enabled for OmniBlocks');
+            
+            // Log cache stats periodically in development
+            if (process.env.NODE_ENV === 'development') {
+                setInterval(() => {
+                    const stats = storage.getCacheStats();
+                    console.log('Asset Cache Stats:', stats);
+                }, 30000); // Every 30 seconds
+            }
+        }
+    }
         if (this.props.isError) {
             throw this.props.error;
         }

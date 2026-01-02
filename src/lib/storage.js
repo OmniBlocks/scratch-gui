@@ -2,6 +2,8 @@ import ScratchStorage from '@turbowarp/scratch-storage';
 
 import defaultProject from './default-project';
 import AddonHooks from '../addons/hooks';
+import AssetCacheManager from './asset-cache-manager';
+import { getCacheConfig } from './packager-cache-config';
 
 /**
  * Wrapper for ScratchStorage which adds default web sources.
@@ -11,6 +13,12 @@ class Storage extends ScratchStorage {
     constructor () {
         super();
         this.cacheDefaultProject();
+        
+        // Initialize asset cache manager
+        const cacheMode = process.env.NODE_ENV === 'production' ? 'packager' : 'development';
+        const cacheConfig = getCacheConfig(cacheMode);
+        this.assetCacheManager = new AssetCacheManager(cacheConfig);
+        this.enableAssetCaching = true;
     }
     addOfficialScratchWebStores () {
         this.addWebStore(
@@ -82,6 +90,69 @@ class Storage extends ScratchStorage {
             asset.data,
             asset.id
         ));
+    }
+    
+    /**
+     * Enhanced load method with caching support
+     * @param {string} assetType - Type of asset to load
+     * @param {string} assetId - ID of asset to load
+     * @param {string} dataFormat - Data format of asset
+     * @returns {Promise} - Promise resolving to asset data
+     */
+    async loadWithCache(assetType, assetId, dataFormat) {
+        if (!this.enableAssetCaching || !this.assetCacheManager) {
+            return this.load(assetType, assetId, dataFormat);
+        }
+        
+        const assetDescriptor = {
+            assetType,
+            assetId,
+            dataFormat
+        };
+        
+        try {
+            // Try to get from cache first
+            const cachedAsset = await this.assetCacheManager.getAsset(assetDescriptor);
+            if (cachedAsset && cachedAsset.data) {
+                console.log(`Cache hit for asset: ${assetId}`);
+                return cachedAsset.data;
+            }
+            
+            // Load from original source
+            console.log(`Cache miss for asset: ${assetId}, loading from source`);
+            const assetData = await this.load(assetType, assetId, dataFormat);
+            
+            // Store in cache for future use
+            if (assetData) {
+                const assetToCache = {
+                    ...assetDescriptor,
+                    data: assetData
+                };
+                await this.assetCacheManager.storeAsset(assetToCache);
+            }
+            
+            return assetData;
+        } catch (error) {
+            console.warn('Error in cached asset loading, falling back to direct load:', error);
+            return this.load(assetType, assetId, dataFormat);
+        }
+    }
+    
+    /**
+     * Get cache statistics
+     * @returns {Object} - Cache statistics
+     */
+    getCacheStats() {
+        return this.assetCacheManager ? this.assetCacheManager.getStats() : null;
+    }
+    
+    /**
+     * Clear asset cache
+     */
+    async clearAssetCache() {
+        if (this.assetCacheManager) {
+            await this.assetCacheManager.clearCache();
+        }
     }
 }
 

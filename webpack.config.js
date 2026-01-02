@@ -171,9 +171,26 @@ module.exports = [
         optimization: {
             splitChunks: {
                 chunks: 'all',
-                minChunks: 2,
-                minSize: 50000,
-                maxInitialRequests: 5
+                minChunks: 1,
+                minSize: 30000,
+                maxInitialRequests: 10,
+                cacheGroups: {
+                    // Separate chunk for assets that are likely to be reused
+                    assets: {
+                        test: /\.(svg|png|wav|mp3|gif|jpg|woff2)$/,
+                        name: 'assets',
+                        chunks: 'all',
+                        priority: 10,
+                        enforce: true
+                    },
+                    // Vendor libraries
+                    vendor: {
+                        test: /[\\/]node_modules[\\/]/,
+                        name: 'vendors',
+                        chunks: 'all',
+                        priority: 5
+                    }
+                }
             }
         },
         plugins: base.plugins.concat([
@@ -183,7 +200,8 @@ module.exports = [
                 'process.env.ENABLE_SERVICE_WORKER': JSON.stringify(process.env.ENABLE_SERVICE_WORKER || ''),
                 'process.env.ROOT': JSON.stringify(root),
                 'process.env.ROUTING_STYLE': JSON.stringify(process.env.ROUTING_STYLE || 'filehash'),
-                'process.env.APP_VERSION': JSON.stringify(version || '') 
+                'process.env.APP_VERSION': JSON.stringify(version || ''),
+                'process.env.ENABLE_ASSET_CACHING': JSON.stringify(process.env.ENABLE_ASSET_CACHING || 'true')
             }),
             new HtmlWebpackPlugin({
                 chunks: ['editor'],

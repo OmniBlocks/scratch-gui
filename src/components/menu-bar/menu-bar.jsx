@@ -106,6 +106,7 @@ import sharedMessages from '../../lib/shared-messages';
 import SeeInsideButton from './tw-see-inside.jsx';
 import {notScratchDesktop} from '../../lib/isScratchDesktop.js';
 import {APP_NAME} from '../../lib/brand.js';
+import driverService from '../../lib/driver-service.js';
 
 const ariaMessages = defineMessages({
     tutorials: {
@@ -227,7 +228,8 @@ class MenuBar extends React.Component {
             'handleRestoreOption',
             'getSaveToComputerHandler',
             'restoreOptionMessage'
-        ]);
+            'restoreOptionMessage',
+            'highlightButton'
     }
     componentDidMount () {
         document.addEventListener('keydown', this.handleKeyPress);
@@ -441,7 +443,26 @@ class MenuBar extends React.Component {
     }
     render () {
         const saveNowMessage = (
+    /**
+     * Highlight a button using driver.js
+     * @param {string} selector - CSS selector for the button to highlight
+     * @param {Object} options - Highlight options (title, description, position, etc.)
+     */
+    highlightButton(selector, options = {}) {
+        driverService.highlightButton(selector, {
+            title: options.title || 'Button Highlight',
+            description: options.description || 'This button performs an important action.',
+            position: options.position || 'bottom',
+            ...options
+        });
+    }
+    
             <FormattedMessage
+        // Expose highlight method to window for external access
+        if (typeof window !== 'undefined') {
+            window.omniBlocksHighlight = this.highlightButton;
+        }
+        
                 defaultMessage="Save now"
                 description="Menu bar item for saving now"
                 id="gui.menuBar.saveNow"
@@ -561,6 +582,7 @@ class MenuBar extends React.Component {
                         {(this.props.canManageFiles) && (
                             <MenuLabel
                                 open={this.props.fileMenuOpen}
+                                data-driver="file-menu"
                                 onOpen={this.props.onClickFile}
                                 onClose={this.props.onRequestCloseFile}
                             >
@@ -717,6 +739,7 @@ class MenuBar extends React.Component {
                         <MenuLabel
                             open={this.props.editMenuOpen}
                             onOpen={this.props.onClickEdit}
+                            data-driver="edit-menu"
                             onClose={this.props.onRequestCloseEdit}
                         >
                             <img
@@ -885,6 +908,7 @@ class MenuBar extends React.Component {
                         {this.props.onClickAddonSettings && (
                             <div
                                 className={classNames(styles.menuBarItem, styles.hoverable)}
+                                data-driver="addons-button"
                                 onClick={this.props.onClickAddonSettings}
                             >
                                 <img
@@ -905,6 +929,7 @@ class MenuBar extends React.Component {
                         {this.props.onClickSettingsModal && (
                             <div
                                 className={classNames(styles.menuBarItem, styles.hoverable)}
+                                data-driver="advanced-button"
                                 onClick={this.props.onClickSettingsModal}
                             >
                                 <img
@@ -1012,6 +1037,7 @@ class MenuBar extends React.Component {
                     <div className={styles.menuBarItem}>
                         <a
                             className={styles.feedbackLink}
+                            data-driver="feedback-button"
                             href="https://scratch.mit.edu/users/scratchcode1_2_3/#comments"
                             rel="noopener noreferrer"
                             target="_blank"

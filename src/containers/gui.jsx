@@ -43,6 +43,7 @@ import TWFullScreenResizerHOC from '../lib/tw-fullscreen-resizer-hoc.jsx';
 import TWThemeManagerHOC from './tw-theme-manager-hoc.jsx';
 
 const {RequestMetadata, setMetadata, unsetMetadata} = storage.scratchFetch;
+import highlightAPI from '../lib/highlight-api.js';
 
 const setProjectIdMetadata = projectId => {
     // If project ID is '0' or zero, it's not a real project ID. In that case, remove the project ID metadata.
@@ -65,6 +66,12 @@ class GUI extends React.Component {
         if (this.props.projectId !== prevProps.projectId) {
             if (this.props.projectId !== null) {
                 this.props.onUpdateProjectId(this.props.projectId);
+        
+        // Expose highlight API globally
+        if (typeof window !== 'undefined') {
+            window.OmniBlocks = window.OmniBlocks || {};
+            window.OmniBlocks.highlight = highlightAPI;
+        }
             }
             setProjectIdMetadata(this.props.projectId);
         }

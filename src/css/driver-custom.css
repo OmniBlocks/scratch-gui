@@ -1,0 +1,90 @@
+/* Custom Driver.js styling for OmniBlocks */
+
+/* Import driver.js base styles */
+@import '~driver.js/dist/driver.css';
+
+/* OmniBlocks custom driver popover styling */
+.omniblocks-driver-popover {
+    background: var(--ui-primary);
+    border: 2px solid var(--ui-secondary);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    max-width: 300px;
+    z-index: 10000;
+}
+
+.omniblocks-driver-popover .driver-popover-title {
+    color: var(--text-primary);
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    padding: 0;
+}
+
+.omniblocks-driver-popover .driver-popover-description {
+    color: var(--text-primary);
+    font-size: 14px;
+    line-height: 1.4;
+    margin-bottom: 16px;
+}
+
+.omniblocks-driver-popover .driver-popover-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.omniblocks-driver-popover .driver-popover-progress-text {
+    color: var(--text-primary-transparent);
+    font-size: 12px;
+    flex: 1;
+}
+
+.omniblocks-driver-popover .driver-popover-navigation-btns {
+    display: flex;
+    gap: 8px;
+}
+
+.omniblocks-driver-popover .driver-popover-btn {
+    background: var(--ui-secondary);
+    border: 1px solid var(--ui-border);
+    border-radius: 4px;
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 12px;
+    padding: 6px 12px;
+    transition: all 0.2s ease;
+}
+
+.omniblocks-driver-popover .driver-popover-btn:hover {
+    background: var(--ui-tertiary);
+    border-color: var(--ui-border-transparent);
+}
+
+.omniblocks-driver-popover .driver-popover-next-btn {
+    background: var(--looks-secondary);
+    border-color: var(--looks-secondary);
+    color: white;
+}
+
+.omniblocks-driver-popover .driver-popover-next-btn:hover {
+    background: var(--looks-tertiary);
+    border-color: var(--looks-tertiary);
+}
+
+.omniblocks-driver-popover .driver-popover-close-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-primary-transparent);
+    font-size: 16px;
+    padding: 4px;
+    position: absolute;
+    right: 8px;
+    top: 8px;
+}
+
+.omniblocks-driver-popover .driver-popover-close-btn:hover {
+    color: var(--text-primary);
+}

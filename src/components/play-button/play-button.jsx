@@ -40,6 +40,7 @@ const PlayButtonComponent = ({
     return (
         <div
             aria-label={label}
+            data-driver="play-button"
             className={classNames(styles.playButton, className, {
                 [styles.playing]: isPlaying
             })}

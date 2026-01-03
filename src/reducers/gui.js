@@ -26,6 +26,7 @@ import timeoutReducer, {timeoutInitialState} from './timeout';
 import timeTravelReducer, {timeTravelInitialState} from './time-travel';
 import toolboxReducer, {toolboxInitialState} from './toolbox';
 import twReducer, {twInitialState} from './tw';
+import gitReducer, {gitInitialState} from './git';
 import customStageSizeReducer, {customStageSizeInitialState} from './custom-stage-size';
 import vmReducer, {vmInitialState} from './vm';
 import vmStatusReducer, {vmStatusInitialState} from './vm-status';
@@ -65,6 +66,7 @@ const guiInitialState = {
     timeTravel: timeTravelInitialState,
     toolbox: toolboxInitialState,
     tw: twInitialState,
+    git: gitInitialState,
     vm: vmInitialState,
     vmStatus: vmStatusInitialState,
     workspaceMetrics: workspaceMetricsInitialState
@@ -171,6 +173,7 @@ const guiReducer = combineReducers({
     timeTravel: timeTravelReducer,
     toolbox: toolboxReducer,
     tw: twReducer,
+    git: gitReducer,
     vm: vmReducer,
     vmStatus: vmStatusReducer,
     workspaceMetrics: workspaceMetricsReducer

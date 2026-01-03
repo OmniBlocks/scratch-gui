@@ -33,7 +33,7 @@ import ChangeUsername from '../../containers/tw-change-username.jsx';
 import CloudVariablesToggler from '../../containers/tw-cloud-toggler.jsx';
 import TWSaveStatus from './tw-save-status.jsx';
 
-import {openTipsLibrary, openSettingsModal, openRestorePointModal} from '../../reducers/modals';
+import {openTipsLibrary, openSettingsModal, openRestorePointModal, openGitModal} from '../../reducers/modals';
 import {setPlayer} from '../../reducers/mode';
 import {
     isTimeTravel220022BC,
@@ -76,7 +76,10 @@ import {
     closeSettingsMenu,
     errorsMenuOpen,
     openErrorsMenu,
-    closeErrorsMenu
+    closeErrorsMenu,
+    openGitMenu,
+    closeGitMenu,
+    gitMenuOpen
 } from '../../reducers/menus';
 import {setFileHandle} from '../../reducers/tw.js';
 
@@ -715,6 +718,38 @@ class MenuBar extends React.Component {
                             </MenuLabel>
                         )}
                         <MenuLabel
+                            open={this.props.gitMenuOpen}
+                            onOpen={this.props.onClickGit}
+                            onClose={this.props.onRequestCloseGit}
+                        >
+                            <span className={styles.collapsibleLabel}>
+                                <FormattedMessage
+                                    defaultMessage="Git"
+                                    description="Text for git dropdown menu"
+                                    id="tw.menuBar.git"
+                                />
+                            </span>
+                            <img
+                                src={dropdownCaret}
+                                draggable={false}
+                                width={8}
+                                height={5}
+                            />
+                            <MenuBarMenu
+                                className={classNames(styles.menuBarMenu)}
+                                open={this.props.gitMenuOpen}
+                                place={this.props.isRtl ? 'left' : 'right'}
+                            >
+                                <MenuItem onClick={this.props.onClickGitModal}>
+                                    <FormattedMessage
+                                        defaultMessage="Git Integration"
+                                        description="Menu bar item to open Git integration modal"
+                                        id="tw.menuBar.gitIntegration"
+                                    />
+                                </MenuItem>
+                            </MenuBarMenu>
+                        </MenuLabel>
+                        <MenuLabel
                             open={this.props.editMenuOpen}
                             onOpen={this.props.onClickEdit}
                             onClose={this.props.onRequestCloseEdit}
@@ -1073,6 +1108,7 @@ MenuBar.propTypes = {
     confirmReadyToReplaceProject: PropTypes.func,
     currentLocale: PropTypes.string.isRequired,
     editMenuOpen: PropTypes.bool,
+    gitMenuOpen: PropTypes.bool,
     enableCommunity: PropTypes.bool,
     fileMenuOpen: PropTypes.bool,
     handleSaveProject: PropTypes.func,
@@ -1103,6 +1139,8 @@ MenuBar.propTypes = {
     onClickAccount: PropTypes.func,
     onClickAddonSettings: PropTypes.func,
     onClickDesktopSettings: PropTypes.func,
+    onClickGit: PropTypes.func,
+    onClickGitModal: PropTypes.func,
     onClickPackager: PropTypes.func,
     onClickRestorePoints: PropTypes.func,
     onClickEdit: PropTypes.func,
@@ -1124,6 +1162,7 @@ MenuBar.propTypes = {
     onRequestCloseAccount: PropTypes.func,
     onRequestCloseEdit: PropTypes.func,
     onRequestCloseFile: PropTypes.func,
+    onRequestCloseGit: PropTypes.func,
     onRequestCloseLogin: PropTypes.func,
     onRequestCloseMode: PropTypes.func,
     onRequestCloseSettings: PropTypes.func,
@@ -1162,6 +1201,7 @@ const mapStateToProps = (state, ownProps) => {
         currentLocale: state.locales.locale,
         fileMenuOpen: fileMenuOpen(state),
         editMenuOpen: editMenuOpen(state),
+        gitMenuOpen: gitMenuOpen(state),
         errors: state.scratchGui.tw.compileErrors,
         errorsMenuOpen: errorsMenuOpen(state),
         isPlayerOnly: state.scratchGui.mode.isPlayerOnly,
@@ -1196,6 +1236,8 @@ const mapDispatchToProps = dispatch => ({
     onRequestCloseFile: () => dispatch(closeFileMenu()),
     onClickEdit: () => dispatch(openEditMenu()),
     onRequestCloseEdit: () => dispatch(closeEditMenu()),
+    onClickGit: () => dispatch(openGitMenu()),
+    onRequestCloseGit: () => dispatch(closeGitMenu()),
     onClickErrors: () => dispatch(openErrorsMenu()),
     onRequestCloseErrors: () => dispatch(closeErrorsMenu()),
     onClickLogin: () => dispatch(openLoginMenu()),
@@ -1209,6 +1251,10 @@ const mapDispatchToProps = dispatch => ({
     onClickSettingsModal: () => {
         dispatch(closeEditMenu());
         dispatch(openSettingsModal());
+    },
+    onClickGitModal: () => {
+        dispatch(closeGitMenu());
+        dispatch(openGitModal());
     },
     onRequestCloseSettings: () => dispatch(closeSettingsMenu()),
     onClickNew: needSave => {

@@ -276,6 +276,24 @@ const alerts = [
         ),
         iconSpinner: true,
         level: AlertLevels.SUCCESS
+    },
+    {
+        alertId: 'gitAlert',
+        alertType: AlertTypes.STANDARD,
+        clearList: ['gitAlert'],
+        content: (
+            <FormattedMessage
+                defaultMessage="Git: {message}"
+                description="Generic Git alert"
+                id="tw.alerts.gitAlert"
+                values={{
+                    message: '{message}'
+                }}
+            />
+        ),
+        closeButton: true,
+        level: AlertLevels.INFO,
+        maxDisplaySecs: 5
     }
 ];
 

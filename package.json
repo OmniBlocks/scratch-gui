@@ -34,6 +34,7 @@
   "dependencies": {
     "@ffmpeg/ffmpeg": "^0.12.15",
     "@ffmpeg/util": "^0.12.2",
+    "@isomorphic-git/lightning-fs": "^4.6.2",
     "@microbit/microbit-universal-hex": "0.2.2",
     "@turbowarp/jszip": "^3.11.1",
     "@turbowarp/nanolog": "^1.0.1",
@@ -46,6 +47,7 @@
     "balance-text": "3.3.1",
     "base64-loader": "1.0.0",
     "bowser": "1.9.4",
+    "buffer": "^6.0.3",
     "classnames": "2.2.6",
     "computed-style-to-inline-style": "3.0.0",
     "cookie": "0.5.0",
@@ -59,6 +61,7 @@
     "immutable": "3.8.2",
     "intl": "1.2.5",
     "intl-messageformat": "^2.2.0",
+    "isomorphic-git": "^1.36.1",
     "js-base64": "2.4.9",
     "jszip": "^3.10.1",
     "keymirror": "0.1.1",

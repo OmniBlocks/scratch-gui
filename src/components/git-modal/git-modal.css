@@ -1,0 +1,63 @@
+.modal-content {
+    width: 500px;
+}
+
+.body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.section {
+    margin-bottom: 1.5rem;
+}
+
+.input-group {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.button {
+    padding: 0.5rem 1rem;
+    background-color: var(--ui-primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: var(--ui-primary-hover);
+}
+
+.divider {
+    height: 1px;
+    background-color: var(--ui-modal-divider);
+    margin: 1rem 0;
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    z-index: 100;
+}

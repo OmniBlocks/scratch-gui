@@ -19,6 +19,7 @@ const AlertComponent = ({
     content,
     closeButton,
     extensionName,
+    message,
     iconSpinner,
     iconURL,
     level,
@@ -63,7 +64,11 @@ const AlertComponent = ({
                         )
                     }}
                 />
-            ) : content}
+            ) : (
+                message ? (
+                    <span>{message}</span>
+                ) : content
+            )}
         </div>
         <div className={styles.alertButtons}>
             {showSaveNow && (
@@ -122,6 +127,7 @@ AlertComponent.propTypes = {
     closeButton: PropTypes.bool,
     content: PropTypes.oneOfType([PropTypes.element, PropTypes.string]),
     extensionName: PropTypes.string,
+    message: PropTypes.string,
     iconSpinner: PropTypes.bool,
     iconURL: PropTypes.string,
     level: PropTypes.string,

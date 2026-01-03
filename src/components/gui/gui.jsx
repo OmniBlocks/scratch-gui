@@ -37,6 +37,7 @@ import TWRestorePointManager from '../../containers/tw-restore-point-manager.jsx
 import TWFontsModal from '../../containers/tw-fonts-modal.jsx';
 import TWUnknownPlatformModal from '../../containers/tw-unknown-platform-modal.jsx';
 import TWInvalidProjectModal from '../../containers/tw-invalid-project-modal.jsx';
+import GitModal from '../../containers/git-modal.jsx';
 
 import {STAGE_SIZE_MODES, FIXED_WIDTH, UNCONSTRAINED_NON_STAGE_WIDTH} from '../../lib/layout-constants';
 import {resolveStageSize} from '../../lib/screen-utils';
@@ -160,6 +161,7 @@ const GUIComponent = props => {
         fontsModalVisible,
         unknownPlatformModalVisible,
         invalidProjectModalVisible,
+        gitModalVisible,
         vm,
         ...componentProps
     } = omit(props, 'dispatch');
@@ -194,6 +196,7 @@ const GUIComponent = props => {
                 {fontsModalVisible && <TWFontsModal />}
                 {unknownPlatformModalVisible && <TWUnknownPlatformModal />}
                 {invalidProjectModalVisible && <TWInvalidProjectModal />}
+                {gitModalVisible && <GitModal />}
             </React.Fragment>
         );
 
@@ -554,6 +557,7 @@ GUIComponent.propTypes = {
     settingsModalVisible: PropTypes.bool,
     customExtensionModalVisible: PropTypes.bool,
     fontsModalVisible: PropTypes.bool,
+    gitModalVisible: PropTypes.bool,
     unknownPlatformModalVisible: PropTypes.bool,
     invalidProjectModalVisible: PropTypes.bool,
     vm: PropTypes.instanceOf(VM).isRequired

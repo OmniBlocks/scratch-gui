@@ -19,7 +19,7 @@ class GitManager {
         this.dir = dir;
     }
 
-    async setDirectoryHandle (handle) {
+    setDirectoryHandle (handle) {
         this.fs = new FSAAdapter(handle);
         this.dir = '.'; // When using FSA, the handle itself is the repo root
         this.initialized = true;

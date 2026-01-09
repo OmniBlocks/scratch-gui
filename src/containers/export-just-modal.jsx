@@ -106,23 +106,20 @@ class ExportJustModal extends React.Component {
             }
             totalItems = target.sprite.costumes.length;
 
-            const costumePromises = target.sprite.costumes.map(item =>
-                this.props.vm.getExportedCostume(item)
-                    .then(data => {
-                        if (data) {
-                            zip.file(`${item.name}.${item.asset.dataFormat}`, data, {binary: true});
-                        }
-                        processedItems++;
-                        this.updateProgress(Math.floor((processedItems / totalItems) * 100));
-                    })
-                    .catch(err => {
-                        console.error(`Error exporting costume ${item.name}:`, err);
-                        processedItems++;
-                        this.updateProgress(Math.floor((processedItems / totalItems) * 100));
-                    })
-            );
+            target.sprite.costumes.forEach(item => {
+                try {
+                    const data = this.props.vm.getExportedCostume(item);
+                    if (data) {
+                        zip.file(`${item.name}.${item.asset.dataFormat}`, data, {binary: true});
+                    }
+                } catch (err) {
+                    console.error(`Error exporting costume ${item.name}:`, err);
+                }
+                processedItems++;
+                this.updateProgress(Math.floor((processedItems / totalItems) * 100));
+            });
 
-            Promise.all(costumePromises).then(onComplete);
+            onComplete();
         } else if (this.state.exportType === 'sounds') {
             if (!target.sprite.sounds || target.sprite.sounds.length === 0) {
                 this.setState({

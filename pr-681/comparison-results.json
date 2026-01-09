@@ -1,5 +1,5 @@
 {
-  "changesDetected": false,
+  "changesDetected": true,
   "results": [
     {
       "name": "editor-initial.png",
@@ -66,9 +66,9 @@
     },
     {
       "name": "advanced-settings.png",
-      "diffPixels": 0,
+      "diffPixels": 1,
       "diffPercentage": "0.00",
-      "hasDiff": false,
+      "hasDiff": true,
       "skipped": false
     }
   ]

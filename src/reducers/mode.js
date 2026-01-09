@@ -39,10 +39,18 @@ const setPlayer = function (isPlayerOnly) {
         isPlayerOnly: isPlayerOnly
     };
 };
+const setPaintEditorFullScreen = function (isPaintEditorFullScreen) {
+    return {
+        type: SET_PAINT_EDITOR_FULL_SCREEN,
+        isPaintEditorFullScreen: isPaintEditorFullScreen
+    };
+};
+
 
 export {
     reducer as default,
     initialState as modeInitialState,
-    setFullScreen,
+    setPlayer,
+    setPaintEditorFullScreen
     setPlayer
 };

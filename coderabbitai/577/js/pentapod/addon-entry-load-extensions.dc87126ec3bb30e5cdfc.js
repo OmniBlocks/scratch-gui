@@ -1,0 +1,2 @@
+(window.webpackJsonpGUI=window.webpackJsonpGUI||[]).push([[41],{1801:function(n,e,t){"use strict";t.r(e),t.d(e,"resources",function(){return s});const s={"userscript.js":async function(n){let{addon:e,console:t}=n;const s=e.tab.traps.vm,o=()=>{if(e.self.disabled)return;const n=["music","pen","text2speech","translate"];for(let t of n)e.settings.get(t)&&!s.extensionManager.isExtensionLoaded(t)&&s.extensionManager.loadExtensionIdSync(t)};s.editingTarget?o():s.runtime.once("PROJECT_LOADED",o)}}}}]);
+//# sourceMappingURL=addon-entry-load-extensions.dc87126ec3bb30e5cdfc.js.map

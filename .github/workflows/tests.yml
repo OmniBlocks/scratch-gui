@@ -94,12 +94,12 @@ jobs:
       - name: Detect new UI components
         id: detect
         run: |
-          cat > detect-components.js << 'DETECT_EOF'
-          #!/usr/bin/env node
-          const { execSync } = require('child_process');
-          const fs = require('fs');
+         cat > detect-components.js << 'DETECT_EOF'
+        #!/usr/bin/env node
+        const { execSync } = require('child_process');
+        const fs = require('fs');
 
-          function getChangedFiles(baseSha, prSha) {
+        function getChangedFiles(baseSha, prSha) {
             try {
               const diff = execSync(`git diff --name-status ${baseSha} ${prSha}`, { encoding: 'utf8' });
               return diff.split('\n')
@@ -111,6 +111,40 @@ jobs:
               console.error('Error getting diff:', e.message);
               return [];
             }
+          }
+
+          function detectComponentHierarchy(components) {
+           // Group components by file and detect hierarchy
+           const fileComponents = {};
+           components.forEach(comp => {
+             if (!fileComponents[comp.file]) {
+               fileComponents[comp.file] = [];
+             }
+             fileComponents[comp.file].push(comp);
+           });
+
+           // Analyze each file's content to detect parent-child relationships
+           Object.keys(fileComponents).forEach(filePath => {
+             if (!fs.existsSync(filePath)) return;
+
+             const content = fs.readFileSync(filePath, 'utf8');
+             const fileComps = fileComponents[filePath];
+
+             // Simple heuristic: if a menu-label appears before menu-items in the same file,
+             // the menu-items are likely children of that menu-label
+             let lastMenuLabel = null;
+
+             fileComps.forEach(comp => {
+               if (comp.type === 'menu-label') {
+                 lastMenuLabel = comp;
+               } else if (comp.type === 'menu-item' && lastMenuLabel) {
+                 // This menu item is likely a child of the last menu label
+                 comp.parentMenuLabel = lastMenuLabel.label;
+               }
+             });
+           });
+
+           return components;
           }
 
           function analyzeComponent(filePath) {
@@ -155,19 +189,36 @@ jobs:
               }
             }
             
+            // Detect menu labels
+            const menuLabelRegex = /<MenuLabel([^>]*)>([\s\S]*?)<\/MenuLabel>/gi;
+            while ((match = menuLabelRegex.exec(content)) !== null) {
+               const innerContent = match[2];
+               const text = innerContent.replace(/<[^>]+>/g, '').trim();
+               if (text && text.length < 50) {
+                   components.push({
+                       type: 'menu-label',
+                       file: filePath,
+                       label: text,
+                       line: content.substring(0, match.index).split('\n').length,
+                       isMenuOpener: true
+                   });
+               }
+            }
+
             // Detect menu items
             const menuRegex = /<MenuItem([^>]*)>([\s\S]*?)<\/MenuItem>/gi;
             while ((match = menuRegex.exec(content)) !== null) {
-              const innerContent = match[2];
-              const text = innerContent.replace(/<[^>]+>/g, '').trim();
-              if (text && text.length < 50) {
-                components.push({
-                  type: 'menu-item',
-                  file: filePath,
-                  label: text,
-                  line: content.substring(0, match.index).split('\n').length
-                });
-              }
+               const innerContent = match[2];
+               const text = innerContent.replace(/<[^>]+>/g, '').trim();
+               if (text && text.length < 50) {
+                   components.push({
+                       type: 'menu-item',
+                       file: filePath,
+                       label: text,
+                       line: content.substring(0, match.index).split('\n').length,
+                       isNested: true
+                   });
+               }
             }
             
             return components;
@@ -183,13 +234,16 @@ jobs:
 
           const allComponents = [];
           for (const file of changedFiles) {
-            const components = analyzeComponent(file);
-            allComponents.push(...components);
+           const components = analyzeComponent(file);
+           allComponents.push(...components);
           }
 
-          console.log(`✨ Detected ${allComponents.length} interactive components!`);
+          // Detect component hierarchy and relationships
+          const componentsWithHierarchy = detectComponentHierarchy(allComponents);
 
-          fs.writeFileSync('detected-components.json', JSON.stringify(allComponents, null, 2));
+          console.log(`✨ Detected ${componentsWithHierarchy.length} interactive components!`);
+
+          fs.writeFileSync('detected-components.json', JSON.stringify(componentsWithHierarchy, null, 2));
           console.log('📝 Output written to detected-components.json');
           DETECT_EOF
 
@@ -262,6 +316,48 @@ jobs:
 
               try {
                 console.log('🧪 Testing component: ${comp.label || comp.type}');
+
+                // Execute context-aware navigation steps
+                const navigationSteps = generateNavigationSteps(comp);
+                if (navigationSteps.length > 0) {
+                  console.log('🗺️  Executing navigation steps:', navigationSteps.map(s => s.description).join(', '));
+                }
+
+                for (const step of navigationSteps) {
+                  if (step.action === 'open-menu') {
+                    // Try to find and click the parent menu label
+                    const menuLabel = page.getByText(step.target, { exact: false }).first();
+                    if (await menuLabel.count() > 0) {
+                      console.log('🖱️  Opening menu:', step.target);
+                      await menuLabel.click({ timeout: 3000 });
+                      await page.waitForTimeout(1000); // Wait for menu to open
+                    }
+                  } else if (step.action === 'ensure-visible') {
+                    // For nested components, try to make them visible
+                    console.log('👁️  Ensuring component visibility...');
+
+                    // Try common strategies to make nested components visible
+                    const commonOpeners = [
+                      '[aria-label*="open"]',
+                      '[class*="modal-opener"]',
+                      '[role="button"]:has-text("open")',
+                      '[class*="dropdown-toggle"]'
+                    ];
+
+                    for (const opener of commonOpeners) {
+                      try {
+                        const openerElement = page.locator(opener).first();
+                        if (await openerElement.isVisible({ timeout: 500 })) {
+                          await openerElement.click({ timeout: 2000 });
+                          await page.waitForTimeout(1000);
+                          break;
+                        }
+                      } catch (e) {
+                        // Continue to next opener
+                      }
+                    }
+                  }
+                }
           `;
 
               if (comp.label) {
@@ -293,33 +389,63 @@ jobs:
                 
                 // Strategy 3: For menu items, try opening menus first
                 if (await locator.count() === 0 && '${comp.type}' === 'menu-item') {
-                  console.log('🔓 Attempting to open menu to find menu item...');
-                  
-                  // Try common menu openers
-                  const menuOpeners = [
-                    '[aria-label="Menu"]',
-                    '[class*="menu-button"]',
-                    '[role="button"]:has-text("Menu")',
-                    '.gui-menu-bar',
-                    '[class*="menubar"] button'
-                  ];
-                  
-                  for (const opener of menuOpeners) {
-                    try {
-                      const menuButton = page.locator(opener).first();
-                      if (await menuButton.isVisible({ timeout: 500 })) {
-                        console.log('🖱️  Clicking menu opener:', opener);
-                        await menuButton.click({ timeout: 2000 });
-                        await page.waitForTimeout(1000);
-                        break;
-                      }
-                    } catch (e) {
-                      // Continue to next opener
-                    }
-                  }
-                  
-                  // Now try to find the menu item again
-                  locator = page.getByText(targetText, { exact: false });
+                 console.log('🔓 Attempting to open menu to find menu item...');
+
+                 // Try common menu openers
+                 const menuOpeners = [
+                   '[aria-label="Menu"]',
+                   '[class*="menu-button"]',
+                   '[role="button"]:has-text("Menu")',
+                   '.gui-menu-bar',
+                   '[class*="menubar"] button',
+                   '[class*="menu-bar-item"]',
+                   '[class*="hoverable"]'
+                 ];
+
+                 for (const opener of menuOpeners) {
+                   try {
+                     const menuButton = page.locator(opener).first();
+                     if (await menuButton.isVisible({ timeout: 500 })) {
+                       console.log('🖱️  Clicking menu opener:', opener);
+                       await menuButton.click({ timeout: 2000 });
+                       await page.waitForTimeout(1000);
+                       break;
+                     }
+                   } catch (e) {
+                     // Continue to next opener
+                   }
+                 }
+
+                 // Now try to find the menu item again
+                 locator = page.getByText(targetText, { exact: false });
+                }
+
+                // Strategy 4: For menu labels, handle them as top-level menu items
+                if (await locator.count() === 0 && '${comp.type}' === 'menu-label') {
+                 console.log('🏷️  Handling menu label component...');
+
+                 // Menu labels are typically in the menu bar
+                 const menuBarSelectors = [
+                   '.gui-menu-bar',
+                   '[class*="menu-bar"]',
+                   '[class*="mainMenu"]',
+                   '[role="menubar"]'
+                 ];
+
+                 for (const menuBarSelector of menuBarSelectors) {
+                   try {
+                     const menuBar = page.locator(menuBarSelector).first();
+                     if (await menuBar.count() > 0) {
+                       locator = menuBar.locator(':has-text("${targetText}")').first();
+                       if (await locator.count() > 0) {
+                         console.log('🎯 Found menu label in menu bar');
+                         break;
+                       }
+                     }
+                   } catch (e) {
+                     // Continue to next selector
+                   }
+                 }
                 }
                 
                 if (await locator.count() === 0) {
@@ -440,8 +566,32 @@ jobs:
           const components = JSON.parse(fs.readFileSync('detected-components.json', 'utf8'));
 
           if (components.length === 0) {
-            console.log('No components detected');
-            process.exit(0);
+           console.log('No components detected');
+           process.exit(0);
+          }
+
+          // Generate context-aware navigation steps for each component
+          function generateNavigationSteps(comp) {
+           const steps = [];
+
+           // For menu items that have a parent menu label, we need to open the menu first
+           if (comp.type === 'menu-item' && comp.parentMenuLabel) {
+             steps.push({
+               action: 'open-menu',
+               target: comp.parentMenuLabel,
+               description: `Click parent menu label "${comp.parentMenuLabel}" to open dropdown`
+             });
+           }
+
+           // For nested components (like modal buttons), we might need additional steps
+           if (comp.isNested) {
+             steps.push({
+               action: 'ensure-visible',
+               description: 'Ensure component is visible (open parent containers if needed)'
+             });
+           }
+
+           return steps;
           }
 
           const testCode = generateTest(components);

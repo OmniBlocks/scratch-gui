@@ -4,6 +4,234 @@ This file is automatically updated by the Changelog Updater bot.
 
 <!-- UNRELEASED_COMMITS_START -->
 
+### Commit [`8309003dd`](https://github.com/OmniBlocks/scratch-gui/commit/8309003dd936de5abb25c51500a3e75e7997d596) - 2026-01-09 18:56:18 -0500
+
+**Merge pull request #688 from OmniBlocks/cto-task-687**
+
+fix(tester): stabilize auto-generated component tests and screenshot workflow
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`7d311f457`](https://github.com/OmniBlocks/scratch-gui/commit/7d311f457bea285cd07a23c7695c736b1bfe7111) - 2026-01-09 23:43:38 +0000
+
+**fix: upgrade workflow files to node 22**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`654d032bb`](https://github.com/OmniBlocks/scratch-gui/commit/654d032bb290a68f436e1fdec90856849c8325da) - 2026-01-09 13:34:29 -0500
+
+**Update tests.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`20c8917a5`](https://github.com/OmniBlocks/scratch-gui/commit/20c8917a5aca2a7345e3df93e7f2692af597f295) - 2026-01-09 13:00:08 -0500
+
+**Update tests.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`2e25bac3f`](https://github.com/OmniBlocks/scratch-gui/commit/2e25bac3faa8af3593a8c10866146d1180109cda) - 2026-01-09 12:45:51 -0500
+
+**Update tests.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`cfbc23fa6`](https://github.com/OmniBlocks/scratch-gui/commit/cfbc23fa63270906b3c7da4a24a99ff78a2839a5) - 2026-01-09 12:05:09 -0500
+
+**Update tests.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`3a4b240e0`](https://github.com/OmniBlocks/scratch-gui/commit/3a4b240e066649e830ecbafb50de825b3f9e7d89) - 2026-01-09 12:02:54 -0500
+
+**Create tests.yml**
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`2c9392bbe`](https://github.com/OmniBlocks/scratch-gui/commit/2c9392bbe0181f777a02936962edab0ad9f7199f) - 2026-01-07 10:18:22 -0600
+
+**Update maintainer usernames in ulti.yaml**
+
+*Author: Graison P*
+
+---
+
+
+### Commit [`f3d3cabc7`](https://github.com/OmniBlocks/scratch-gui/commit/f3d3cabc78bb680bb925df458f71569c1aa4a427) - 2026-01-05 00:14:30 -0500
+
+**Delete .github/workflows/ideas.yaml**
+
+this thing fills up issues tab
+
+*Author: supervoidcoder*
+
+---
+
+
+### Commit [`dd7d6d313`](https://github.com/OmniBlocks/scratch-gui/commit/dd7d6d3137f78a80a8713a729daa1a5d19930f7a) - 2026-01-03 17:40:10 +0000
+
+**Update ideas.yaml**
+
+*Author: 8to16*
+
+---
+
+
+### Commit [`35f86df16`](https://github.com/OmniBlocks/scratch-gui/commit/35f86df164c3bc0ea66a5de647f083d417a53914) - 2026-01-03 17:38:41 +0000
+
+**Update ideas.yaml**
+
+*Author: 8to16*
+
+---
+
+
+### Commit [`ff5e69419`](https://github.com/OmniBlocks/scratch-gui/commit/ff5e69419800262c8a3a5b0f49dec757faf26dbb) - 2026-01-03 17:37:41 +0000
+
+**Update ideas.yaml**
+
+*Author: 8to16*
+
+---
+
+
+### Commit [`c3e072865`](https://github.com/OmniBlocks/scratch-gui/commit/c3e0728659011bf22be9fef43cf085a4a2bdb94c) - 2026-01-03 15:00:49 +0000
+
+**Merge pull request #671 from OmniBlocks/cto-task-667**
+
+Export Project as Folder
+
+*Author: 8to16*
+
+---
+
+
+### Commit [`85400ea4b`](https://github.com/OmniBlocks/scratch-gui/commit/85400ea4ba501814c6b908c56edf9ea14677ba88) - 2026-01-03 14:57:54 +0000
+
+**fix inference**
+
+*Author: 8to16*
+
+---
+
+
+### Commit [`2eb9285d2`](https://github.com/OmniBlocks/scratch-gui/commit/2eb9285d2ade930246dd7d3e0bc7b08788fe98c5) - 2026-01-03 02:01:24 +0000
+
+**large tool you should outsource from somewhere else**
+
+*Author: 8to16*
+
+---
+
+
+### Commit [`6db93bf7d`](https://github.com/OmniBlocks/scratch-gui/commit/6db93bf7df2fa61a6ce2ea09c9d8cb218e619013) - 2026-01-03 00:12:37 +0000
+
+**Merge pull request #672 from OmniBlocks/cto-task-670**
+
+docs(wiki): expand OmniBlocks Wiki with comprehensive pages and standalone build guide
+
+*Author: 8to16*
+
+---
+
+
+### Commit [`faccd46cb`](https://github.com/OmniBlocks/scratch-gui/commit/faccd46cb52f4a6741c14fe47c9a588539f291d3) - 2026-01-02 23:39:48 +0000
+
+**Create ideas.yaml**
+
+*Author: 8to16*
+
+---
+
+
+### Commit [`8e30dd452`](https://github.com/OmniBlocks/scratch-gui/commit/8e30dd452b33366dfc551615073b6877d8c82d62) - 2026-01-02 23:22:59 +0000
+
+**Rename README.md to Home.md**
+
+*Author: 8to16*
+
+---
+
+
+### Commit [`1f2df12af`](https://github.com/OmniBlocks/scratch-gui/commit/1f2df12af07a6d5e9efa1c2ab42866712adcb59d) - 2026-01-02 23:21:42 +0000
+
+**Create README.md**
+
+*Author: 8to16*
+
+---
+
+
+### Commit [`beaa6276a`](https://github.com/OmniBlocks/scratch-gui/commit/beaa6276a4e29cb3140e3ee703e0c1c6f1bc44df) - 2026-01-02 23:19:06 +0000
+
+**Create wiki.yaml**
+
+*Author: 8to16*
+
+---
+
+
+### Commit [`80aeab2f4`](https://github.com/OmniBlocks/scratch-gui/commit/80aeab2f4a05aba9cbacbc0303e11414aa8af2a8) - 2026-01-02 22:19:43 +0000
+
+**Update grammar.yaml**
+
+*Author: 8to16*
+
+---
+
+
+### Commit [`52aac1766`](https://github.com/OmniBlocks/scratch-gui/commit/52aac1766d97dfaf393b5d272a08a034bbb19580) - 2026-01-02 22:14:48 +0000
+
+**Create Google Translate.yaml**
+
+*Author: 8to16*
+
+---
+
+
+### Commit [`7154dfdc6`](https://github.com/OmniBlocks/scratch-gui/commit/7154dfdc669d16b6b9c6c2322f978fbefd07b1d5) - 2026-01-02 22:13:50 +0000
+
+**Add GitHub Actions workflow for issue refinement**
+
+This workflow automates the refinement of grammar and clarity in GitHub issues using a simulated AI prompt.
+
+*Author: 8to16*
+
+---
+
+
+### Commit [`22138f482`](https://github.com/OmniBlocks/scratch-gui/commit/22138f482bca779497d898b1f1e4d43c10d042cd) - 2026-01-02 21:48:10 +0000
+
+**Merge pull request #637 from OmniBlocks/cto-task-595**
+
+feat(workflows): add Issue Poem Generator and PR Poem Generator workflows
+
+*Author: 8to16*
+
+---
+
+
 ### Commit [`fc58854d8`](https://github.com/OmniBlocks/scratch-gui/commit/fc58854d888d542ec9a7ece9af27b8faac3ca693) - 2026-01-02 12:14:58 +0000
 
 **allow telewarp to iframe the editor**

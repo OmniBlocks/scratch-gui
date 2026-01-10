@@ -222,9 +222,43 @@ jobs:
             }
             
             return components;
-          }
+            }
 
-          const baseSha = process.argv[2];
+            function detectComponentHierarchy(components) {
+            // Group components by file and detect hierarchy
+            const fileComponents = {};
+            components.forEach(comp => {
+              if (!fileComponents[comp.file]) {
+                fileComponents[comp.file] = [];
+              }
+              fileComponents[comp.file].push(comp);
+            });
+
+            // Analyze each file's content to detect parent-child relationships
+            Object.keys(fileComponents).forEach(filePath => {
+              if (!fs.existsSync(filePath)) return;
+
+              const content = fs.readFileSync(filePath, 'utf8');
+              const fileComps = fileComponents[filePath];
+
+              // Simple heuristic: if a menu-label appears before menu-items in the same file,
+              // the menu-items are likely children of that menu-label
+              let lastMenuLabel = null;
+
+              fileComps.forEach(comp => {
+                if (comp.type === 'menu-label') {
+                  lastMenuLabel = comp;
+                } else if (comp.type === 'menu-item' && lastMenuLabel) {
+                  // This menu item is likely a child of the last menu label
+                  comp.parentMenuLabel = lastMenuLabel.label;
+                }
+              });
+            });
+
+            return components;
+            }
+
+            const baseSha = process.argv[2];
           const prSha = process.argv[3];
 
           console.log(`🔍 Scanning for new components between ${baseSha.substring(0, 7)} and ${prSha.substring(0, 7)}...`);

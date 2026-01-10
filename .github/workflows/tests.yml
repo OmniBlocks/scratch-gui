@@ -671,11 +671,14 @@ jobs:
       - name: Update comment with results and screenshots
         if: always()
         uses: actions/github-script@v7
+        env:
+          SKIP_TESTS: ${{ steps.detect.outputs.skip_tests }}
+          COMPONENT_COUNT: ${{ steps.detect.outputs.component_count }}
         with:
           script: |
             const pr = ${{ fromJSON(steps.pr.outputs.result) }};
-            const skipTests = '${{ steps.detect.outputs.skip_tests }}' === 'true';
-            const componentCount = Number('${{ steps.detect.outputs.component_count }}');
+            const skipTests = process.env.SKIP_TESTS === 'true';
+            const componentCount = Number(process.env.COMPONENT_COUNT || '0');
             const actorMention = pr.actor_type === 'User' ? `@${pr.actor}` : pr.actor;
             const commentId = ${{ steps.initial_comment.outputs.result }};
             

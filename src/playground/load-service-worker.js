@@ -1,9 +1,8 @@
 import log from '../lib/log';
-import serviceWorker from '!!file-loader?name=sw.js!./service-worker.js';
 
 let loaded = false;
 const actuallyLoadServiceWorker = () => {
-    navigator.serviceWorker.register(serviceWorker)
+    navigator.serviceWorker.register('/sw.js')
         .then(registration => {
             log.info('Service worker registered successfully:', registration);
             

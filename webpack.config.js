@@ -5,6 +5,7 @@ const webpack = require('webpack');
 // Plugins
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const WorkboxPlugin = require('workbox-webpack-plugin');
 
 // PostCss
 const autoprefixer = require('autoprefixer');
@@ -81,10 +82,6 @@ const base = {
                 // Explicitly disable babelrc so we don't catch various config
                 // in much lower dependencies.
                 babelrc: false,
-                plugins: [
-                    ['react-intl', {
-                        messagesDir: './translations/messages/'
-                    }]],
                 presets: ['@babel/preset-env', '@babel/preset-react']
             }
         },
@@ -120,11 +117,17 @@ const base = {
             patterns: [
                 {
                     from: 'node_modules/scratch-blocks/media',
-                    to: 'static/blocks-media/default'
+                    to: 'static/blocks-media/default',
+                    globOptions: {
+                        ignore: ['*.DS_Store']
+                    }
                 },
                 {
                     from: 'node_modules/scratch-blocks/media',
-                    to: 'static/blocks-media/high-contrast'
+                    to: 'static/blocks-media/high-contrast',
+                    globOptions: {
+                        ignore: ['*.DS_Store']
+                    }
                 },
                 {
                     from: 'src/lib/themes/blocks/high-contrast-media/blocks-media',
@@ -244,6 +247,18 @@ module.exports = [
                         context: 'src/examples'
                     }
                 ]
+            }),
+            // Workbox plugin for PWA and caching
+            new WorkboxPlugin.GenerateSW({
+                swDest: 'sw.js',
+                exclude: [
+                    /\.map$/,
+                    /hot-update\.js$/,
+                ],
+                navigateFallback: 'index.html',
+                cleanupOutdatedCaches: true,
+                skipWaiting: true,
+                clientsClaim: true
             })
         ])
     })

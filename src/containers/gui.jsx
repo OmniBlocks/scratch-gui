@@ -5,7 +5,7 @@ import {connect} from 'react-redux';
 import ReactModal from 'react-modal';
 import VM from 'scratch-vm';
 import {injectIntl, intlShape} from 'react-intl';
-
+import {hasCompletedWelcome} from '../components/welcome-modal/welcome-modal.jsx';
 import ErrorBoundaryHOC from '../lib/error-boundary-hoc.jsx';
 import {
     getIsError,
@@ -36,6 +36,7 @@ import storage from '../lib/storage';
 import vmListenerHOC from '../lib/vm-listener-hoc.jsx';
 import vmManagerHOC from '../lib/vm-manager-hoc.jsx';
 import cloudManagerHOC from '../lib/cloud-manager-hoc.jsx';
+
 
 import GUIComponent from '../components/gui/gui.jsx';
 import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
@@ -149,6 +150,8 @@ GUI.defaultProps = {
 };
 
 const mapStateToProps = state => {
+    const showWelcomeModal = !hasCompletedWelcome();
+    console.log('🔗 Container showWelcomeModal:', showWelcomeModal);
     const loadingState = state.scratchGui.projectState.loadingState;
     return {
         activeTabIndex: state.scratchGui.editorTab.activeTabIndex,
@@ -162,6 +165,7 @@ const mapStateToProps = state => {
         error: state.scratchGui.projectState.error,
         isError: getIsError(loadingState),
         isEmbedded: state.scratchGui.mode.isEmbedded,
+        showWelcomeModal: !hasCompletedWelcome(),
         isFullScreen: state.scratchGui.mode.isFullScreen || state.scratchGui.mode.isEmbedded,
         isPlayerOnly: state.scratchGui.mode.isPlayerOnly,
         isRtl: state.locales.isRtl,
@@ -194,7 +198,9 @@ const mapDispatchToProps = dispatch => ({
     onActivateSongsTab: () => dispatch(activateTab(SONGS_TAB_INDEX)),
     onRequestCloseBackdropLibrary: () => dispatch(closeBackdropLibrary()),
     onRequestCloseCostumeLibrary: () => dispatch(closeCostumeLibrary()),
+    onRequestCloseWelcomeModal: () => {},
     onRequestCloseTelemetryModal: () => dispatch(closeTelemetryModal())
+    
 });
 
 const ConnectedGUI = injectIntl(connect(

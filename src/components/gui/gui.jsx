@@ -8,7 +8,6 @@ import MediaQuery from 'react-responsive';
 import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
 import tabStyles from 'react-tabs/style/react-tabs.css';
 import VM from 'scratch-vm';
-
 import Blocks from '../../containers/blocks.jsx';
 import CostumeTab from '../../containers/costume-tab.jsx';
 import TargetPane from '../../containers/target-pane.jsx';
@@ -37,7 +36,7 @@ import TWRestorePointManager from '../../containers/tw-restore-point-manager.jsx
 import TWFontsModal from '../../containers/tw-fonts-modal.jsx';
 import TWUnknownPlatformModal from '../../containers/tw-unknown-platform-modal.jsx';
 import TWInvalidProjectModal from '../../containers/tw-invalid-project-modal.jsx';
-
+import WelcomeModal from '../welcome-modal/welcome-modal.jsx';
 import {STAGE_SIZE_MODES, FIXED_WIDTH, UNCONSTRAINED_NON_STAGE_WIDTH} from '../../lib/layout-constants';
 import {resolveStageSize} from '../../lib/screen-utils';
 import {Theme} from '../../lib/themes';
@@ -160,9 +159,15 @@ const GUIComponent = props => {
         fontsModalVisible,
         unknownPlatformModalVisible,
         invalidProjectModalVisible,
+        showWelcomeModal,
+        onRequestCloseWelcomeModal,
         vm,
         ...componentProps
     } = omit(props, 'dispatch');
+    console.log('🎯 showWelcomeModal:', showWelcomeModal);
+        const welcomeModalElement = showWelcomeModal ? (
+        <WelcomeModal onRequestClose={onRequestCloseWelcomeModal} />
+    ) : null;
     if (children) {
         return <Box {...componentProps}>{children}</Box>;
     }
@@ -236,6 +241,7 @@ const GUIComponent = props => {
                 {...componentProps}
             >
                 {alwaysEnabledModals}
+               
                 {telemetryModalVisible ? (
                     <TelemetryModal
                         isRtl={isRtl}
@@ -555,6 +561,8 @@ GUIComponent.propTypes = {
     customExtensionModalVisible: PropTypes.bool,
     fontsModalVisible: PropTypes.bool,
     unknownPlatformModalVisible: PropTypes.bool,
+    showWelcomeModal: PropTypes.bool, 
+    onRequestCloseWelcomeModal: PropTypes.func,
     invalidProjectModalVisible: PropTypes.bool,
     vm: PropTypes.instanceOf(VM).isRequired
 };
@@ -589,6 +597,7 @@ const mapStateToProps = state => ({
     blocksId: state.scratchGui.timeTravel.year.toString(),
     stageSizeMode: state.scratchGui.stageSize.stageSize,
     theme: state.scratchGui.theme.theme
+
 });
 
 export default injectIntl(connect(

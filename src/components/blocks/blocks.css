@@ -97,3 +97,7 @@
     min-width: auto;
     min-height: auto;
 }
+
+.blocks :global(.blocklyZoom) {
+    transform: scale(0) !important;
+}

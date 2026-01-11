@@ -37,10 +37,15 @@ import TWRestorePointManager from '../../containers/tw-restore-point-manager.jsx
 import TWFontsModal from '../../containers/tw-fonts-modal.jsx';
 import TWUnknownPlatformModal from '../../containers/tw-unknown-platform-modal.jsx';
 import TWInvalidProjectModal from '../../containers/tw-invalid-project-modal.jsx';
+import NanoscriptEditor from '../ob-nanoscript-editor/nanoscript-editor.jsx';
 
 import {STAGE_SIZE_MODES, FIXED_WIDTH, UNCONSTRAINED_NON_STAGE_WIDTH} from '../../lib/layout-constants';
 import {resolveStageSize} from '../../lib/screen-utils';
 import {Theme} from '../../lib/themes';
+import AddonHooks from '../../addons/hooks.js';
+import ToggleButtons from '../toggle-buttons/toggle-buttons.jsx';
+import Prompt from '../../containers/prompt.jsx';
+import nanoscriptIcon from '!../../lib/tw-recolor/build!./nanoscriptIcon.svg';
 
 import {isRendererSupported, isBrowserSupported} from '../../lib/tw-environment-support-prober';
 
@@ -50,6 +55,7 @@ import codeIcon from '!../../lib/tw-recolor/build!./icon--code.svg';
 import costumesIcon from '!../../lib/tw-recolor/build!./icon--costumes.svg';
 import soundsIcon from '!../../lib/tw-recolor/build!./icon--sounds.svg';
 import songsIcon from '!../../lib/tw-recolor/build!./icon--songs.svg';
+import SpinnerComponent from '../tw-loading-spinner/spinner.jsx';
 const messages = defineMessages({
     addExtension: {
         id: 'gui.gui.addExtension',
@@ -399,7 +405,10 @@ const GUIComponent = props => {
                                     </Tab>
                                 </TabList>
                                 <TabPanel className={tabClassNames.tabPanel}>
-                                    <Box className={styles.blocksWrapper}>
+                                    {isNano ? blocksTabVisible && <NanoscriptEditor
+                                        theme={theme}
+                                        vm={vm}
+                                    /> : <><Box className={styles.blocksWrapper}>
                                         <Blocks
                                             key={`${blocksId}/${theme.id}`}
                                             canUseCloud={canUseCloud}
@@ -413,20 +422,67 @@ const GUIComponent = props => {
                                             theme={theme}
                                             vm={vm}
                                         />
-                                    </Box>
-                                    <Box className={styles.extensionButtonContainer}>
-                                        <button
-                                            className={styles.extensionButton}
-                                            title={intl.formatMessage(messages.addExtension)}
-                                            onClick={onExtensionButtonClick}
-                                        >
-                                            <img
-                                                className={styles.extensionButtonIcon}
-                                                draggable={false}
-                                                src={addExtensionIcon}
-                                            />
-                                        </button>
-                                    </Box>
+                                        <Box className={styles.extensionButtonContainer}>
+                                            <button
+                                                className={styles.extensionButton}
+                                                title={intl.formatMessage(messages.addExtension)}
+                                                onClick={isNano ? () => {
+                                                    alert('Adding extensions in NanoScript is not available yet');
+                                                } : onExtensionButtonClick}
+                                            >
+                                                <img
+                                                    className={styles.extensionButtonIcon}
+                                                    draggable={false}
+                                                    src={addExtensionIcon}
+                                                />{isNano && intl.formatMessage(messages.addExtension)}
+                                            </button>
+                                        </Box>
+                                    </Box></>}
+                                    <div className={classNames(styles.nanoscriptContainer, !isNano && styles.notNano)}>
+                                        {!isNano && <ToggleButtons
+                                            className={styles.buttonRow}
+                                            buttons={[
+                                                {
+                                                    handleClick: () => {
+                                                        window.blocklyWorkspace.zoomCenter(1);
+                                                    },
+                                                    isSelected: false,
+                                                    children: '+'
+                                                },
+                                                {
+                                                    handleClick: () => {
+                                                        window.blocklyWorkspace.zoomCenter(-1);
+                                                    },
+                                                    isSelected: false,
+                                                    children: '-'
+                                                },
+                                                {
+                                                    handleClick: () => {
+                                                        window.blocklyWorkspace.setScale(0.675);
+                                                    },
+                                                    isSelected: false,
+                                                    children: '='
+                                                }
+                                            ]}
+                                        />}
+                                        <ToggleButtons
+                                            className={styles.buttonRow}
+                                            buttons={[
+                                                {
+                                                    handleClick: () => setNano(false),
+                                                    icon: codeIcon,
+                                                    isSelected: !isNano,
+                                                    title: 'Block-based'
+                                                },
+                                                {
+                                                    handleClick: () => setNano(true),
+                                                    icon: nanoscriptIcon,
+                                                    isSelected: isNano,
+                                                    title: 'Text-based'
+                                                }
+                                            ]}
+                                        />
+                                    </div>
                                     <Box className={styles.watermark}>
                                         <Watermark />
                                     </Box>

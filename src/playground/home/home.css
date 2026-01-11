@@ -1,0 +1,35 @@
+/* Styles for the home IDE cards */
+@import '../../css/colors.css';
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+.card {
+  background: $badge-background;
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid $badge-border;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.cardTitle {
+  margin: 0 0 8px 0;
+  font-size: 1.1rem;
+}
+.cardDesc {
+  margin: 0 0 10px 0;
+  color: $text-primary;
+}
+.cardLink {
+  display: inline-block;
+  margin-top: 6px;
+  color: $link-color;
+  text-decoration: none;
+}
+.coming {
+  font-weight: 400;
+  font-size: 0.9rem;
+  margin-left: 6px;
+}

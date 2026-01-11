@@ -32,8 +32,14 @@
     }
   },
   "dependencies": {
+    "@codemirror/autocomplete": "^6.14.0",
+    "@codemirror/language": "^6.11.3",
+    "@codemirror/state": "^6.5.2",
+    "@codemirror/view": "^6.38.8",
     "@ffmpeg/ffmpeg": "^0.12.15",
     "@ffmpeg/util": "^0.12.2",
+    "@lezer/highlight": "^1.2.3",
+    "@lezer/lr": "^1.4.4",
     "@microbit/microbit-universal-hex": "0.2.2",
     "@turbowarp/jszip": "^3.11.1",
     "@turbowarp/nanolog": "^1.0.1",
@@ -47,6 +53,7 @@
     "base64-loader": "1.0.0",
     "bowser": "1.9.4",
     "classnames": "2.2.6",
+    "codemirror": "^6.0.2",
     "computed-style-to-inline-style": "3.0.0",
     "cookie": "0.5.0",
     "copy-webpack-plugin": "6.4.1",

@@ -54,6 +54,7 @@
 
     display: flex;
     flex-direction: column;
+    min-height: 0;
 }
 
 .tab-list {
@@ -343,6 +344,22 @@ $fade-out-distance: 15px;
     background-color: white;
 }
 
+.nanoscript-container {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin: 20px;
+    margin-right: 32px;
+    display: flex;
+}
+.nanoscript-container.not-nano {
+    gap: $space;
+    margin-right: 30px;
+}
+.button-row {
+    background: $ui-white;
+    border-radius: $form-radius;
+}
 /* Mobile support */
 @media (max-width: 768px) {
     .flex-wrapper {

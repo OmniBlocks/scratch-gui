@@ -1,0 +1,49 @@
+@import "../../../css/colors.css";
+@import "../../../css/units.css";
+
+.header {
+    background: $menu-bar-background;
+    color: $menu-bar-foreground;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    gap: $space;
+    height: $menu-bar-height;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    z-index: 900000;
+    box-shadow: 0 2px 4px $ui-black-transparent;
+}
+
+.header-link, .header-logo {
+    color: $menu-bar-foreground;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 4px 8px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.header-logo {
+    font-size: 1.4em;
+    transition: transform 0.2s ease-in-out;
+}
+
+.header-logo:hover {
+    transform: scale(1.1);
+}
+
+.header-link {
+    transition: background 0.1s ease-in-out;
+}
+
+.header-link:hover {
+    background: $ui-black-transparent;
+}
+
+.header-spacing-hack {
+    margin-bottom: $menu-bar-height;
+}

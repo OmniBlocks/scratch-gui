@@ -1,4 +1,4 @@
-@import "../../css/colors.css";
+@import "../css/colors.css";
 
 * {
     box-sizing: border-box;
@@ -24,13 +24,18 @@ a {
 
 .header-container {
     color: white;
-    background-color: $looks-secondary;
-    padding: 20px 0;
+    background-color: $motion-tertiary;
+    padding: 30px 0;
     text-align: center;
     margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 4px;
 }
 .header-text {
-
+    max-width: 900px;
+    margin: 0;
 }
 
 .users {

@@ -1,0 +1,35 @@
+<!doctype html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Addon Settings - OmniBlocks</title><style>body[data-splash-theme="dark"] {
+        background: #111;
+      }
+
+      noscript {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      }</style></head><body><noscript><h1>This page requires JavaScript</h1></noscript><script>(function() {
+        var theme = '';
+
+        try {
+          var themeSetting = localStorage.getItem('tw:theme');
+        } catch (e) {
+          // ignore
+        }
+        if (themeSetting === 'light') {
+          theme = 'light';
+        } else if (themeSetting === 'dark') {
+          theme = 'dark';
+        } else if (themeSetting) {
+          try {
+            var parsed = JSON.parse(themeSetting);
+            if (parsed.gui === 'dark' || parsed.gui === 'light') {
+              theme = parsed.gui;
+            }
+          } catch (e) {
+            // ignore
+          }
+        }
+
+        if (!theme) {
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+
+        document.body.setAttribute('data-splash-theme', theme);
+      })();</script><div id="app"></div><script src="js/pentapod/vendors~addon-settings~credits~editor~embed~fullscreen~player.4124da72dc06e7a580ec.js"></script><script src="js/pentapod/addon-settings~addons~editor~fullscreen~player.a08080464c9dede2d3fa.js"></script><script src="js/pentapod/addon-settings~editor~embed~fullscreen~player.d327b9e64a9b9f696e2c.js"></script><script src="js/pentapod/addon-settings.2a439fbda949844d5b0b.js"></script></body></html>

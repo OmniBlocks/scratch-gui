@@ -271,20 +271,43 @@ jobs:
           
           # 1. Check for hardcoded credentials/secrets (CRITICAL SECURITY CHECK)
           echo "Checking for hardcoded secrets..."
+          HARDCODED_SECRETS_FOUND=false
+          HARDCODED_SECRETS_DETAILS=""
+          
           if grep -r "password\s*=\s*['\"].\+['\"]\|api_key\s*=\s*['\"].\+['\"]\|secret\s*=\s*['\"].\+['\"]\|token\s*=\s*['\"].\+['\"]" \
              --include="*.js" --include="*.jsx" src/ 2>/dev/null | grep -v "// " | grep -v "password: ''" | grep -v "password: \"\"" | grep -v "token: ''"; then
             ETHICS_VIOLATIONS=true
-            ETHICS_DETAILS="${ETHICS_DETAILS}\n### 🚨 CRITICAL: Potential Hardcoded Credentials Found!\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}**This is a severe security risk!** Never commit real credentials to source code.\n\n"
+            HARDCODED_SECRETS_FOUND=true
+            
+            # Capture the found secrets with full context
+            FOUND_SECRETS=$(grep -rn "password\s*=\s*['\"].\+['\"]\|api_key\s*=\s*['\"].\+['\"]\|secret\s*=\s*['\"].\+['\"]\|token\s*=\s*['\"]" \
+              --include="*.js" --include="*.jsx" src/ 2>/dev/null | grep -v "// " | grep -v "password: ''" | grep -v "password: \"\"" | grep -v "token: ''" | head -10)
+            
+            ETHICS_DETAILS="${ETHICS_DETAILS}\n### 🚨 CRITICAL SECURITY VULNERABILITY: Hardcoded Credentials Found!\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}**⚠️ IMMEDIATE ACTION REQUIRED - SECURITY BREACH DETECTED ⚠️**\n\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}Hardcoded credentials have been detected in the source code. This is a **CRITICAL SECURITY VULNERABILITY**.\n\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}**Found Credentials (REDACTED FOR SECURITY):**\n"
             ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}$(grep -rn "password\s*=\s*['\"].\+['\"]\|api_key\s*=\s*['\"].\+['\"]\|secret\s*=\s*['\"].\+['\"]" \
-              --include="*.js" --include="*.jsx" src/ 2>/dev/null | grep -v "// " | grep -v "password: ''" | grep -v "password: \"\"" | grep -v "token: ''" | head -10)\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}${FOUND_SECRETS}\n"
             ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}**Action Required:**\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}- Remove any real credentials immediately\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}- Use environment variables instead\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}- If real secrets were committed, rotate them immediately\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}- Consider using GitHub Secrets or a secrets manager\n\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}**IMMEDIATE ACTION REQUIRED:**\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}1. 🚨 **IMMEDIATELY REVOKE/ROTATE** all exposed credentials\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}2. 🔒 **DELETE** the exposed keys from your service provider\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}3. 🗑️ **REMOVE** hardcoded secrets from code immediately\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}4. 🔐 Use environment variables or GitHub Secrets instead\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}5. 📋 A security advisory will be created for this issue\n\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}**All repository members will be notified of this security issue.**\n\n"
+            
+            # Store secrets details for security advisory
+            HARDCODED_SECRETS_DETAILS="$FOUND_SECRETS"
+          fi
+          
+          # Output hardcoded secrets info for later steps
+          echo "hardcoded_secrets_found=$HARDCODED_SECRETS_FOUND" >> $GITHUB_OUTPUT
+          if [ "$HARDCODED_SECRETS_FOUND" = true ]; then
+            echo "hardcoded_secrets_details<<EOF" >> $GITHUB_OUTPUT
+            echo "$HARDCODED_SECRETS_DETAILS" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
           fi
           
           # 2. Check for eval() usage (security risk)
@@ -452,6 +475,210 @@ jobs:
             // Fail the check if critical issues found (deprecated or ethics violations)
             if (deprecatedFound || ethicsViolations) {
               core.setFailed('Critical code quality issues detected');
+            }
+
+      # ============================================================
+      # 6. CREATE SECURITY ADVISORY FOR HARDCODED SECRETS
+      # ============================================================
+      - name: Create security advisory for hardcoded secrets
+        if: steps.ethics_check.outputs.hardcoded_secrets_found == 'true'
+        id: security_advisory
+        uses: actions/github-script@v7
+        env:
+          HARDCODED_SECRETS_DETAILS: ${{ steps.ethics_check.outputs.hardcoded_secrets_details }}
+        with:
+          script: |
+            const secretsDetails = process.env.HARDCODED_SECRETS_DETAILS || '';
+            
+            try {
+              // Create a security advisory
+              const advisory = await github.rest.securityAdvisories.createRepositoryAdvisory({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                summary: '🚨 CRITICAL: Hardcoded Credentials Detected in Source Code',
+                description: `## CRITICAL SECURITY VULNERABILITY
+            
+            Hardcoded credentials have been detected in the source code during automated security scanning.
+            
+            ### Severity: CRITICAL
+            
+            ### Impact
+            Exposed credentials in source code can lead to:
+            - Unauthorized access to services
+            - Data breaches
+            - System compromise
+            - Financial loss
+            
+            ### Affected Locations
+            \`\`\`
+            ${secretsDetails}
+            \`\`\`
+            
+            ### IMMEDIATE ACTION REQUIRED
+            
+            1. **🚨 IMMEDIATELY REVOKE/ROTATE** all exposed credentials
+            2. **🔒 DELETE** the exposed keys from your service provider (API provider, database, etc.)
+            3. **🗑️ REMOVE** all hardcoded secrets from the codebase
+            4. **🔐 MIGRATE** to using environment variables or GitHub Secrets
+            5. **📋 AUDIT** git history to ensure secrets weren't committed previously
+            
+            ### Recommended Actions
+            
+            - Use GitHub Secrets for sensitive data in workflows
+            - Use environment variables for application secrets
+            - Add \`.env\` files to \`.gitignore\`
+            - Consider using a secrets manager (AWS Secrets Manager, HashiCorp Vault, etc.)
+            - Enable secret scanning in repository settings
+            
+            ### Detection Information
+            
+            - Detected by: Automated Code Quality Workflow
+            - PR: #${context.payload.pull_request?.number || 'N/A'}
+            - Commit: ${context.sha}
+            - Workflow Run: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}
+            
+            **All repository members and collaborators have been notified.**`,
+                severity: 'critical',
+                cve_id: null,
+                vulnerabilities: [{
+                  package: {
+                    ecosystem: 'other',
+                    name: context.repo.repo
+                  },
+                  vulnerable_version_range: '*',
+                  patched_versions: 'none'
+                }],
+                cwe_ids: ['CWE-798'], // Use of Hard-coded Credentials
+                credits: []
+              });
+              
+              console.log(`Security advisory created: ${advisory.data.html_url}`);
+              core.setOutput('advisory_url', advisory.data.html_url);
+              core.setOutput('advisory_id', advisory.data.ghsa_id);
+              
+              return advisory.data.html_url;
+            } catch (error) {
+              console.error('Failed to create security advisory:', error);
+              console.log('Continuing workflow despite advisory creation failure...');
+              // Don't fail the workflow if advisory creation fails
+              return null;
+            }
+
+      - name: Notify all members about security issue
+        if: steps.ethics_check.outputs.hardcoded_secrets_found == 'true'
+        uses: actions/github-script@v7
+        env:
+          ADVISORY_URL: ${{ steps.security_advisory.outputs.advisory_url }}
+          ADVISORY_ID: ${{ steps.security_advisory.outputs.advisory_id }}
+        with:
+          script: |
+            const advisoryUrl = process.env.ADVISORY_URL || 'N/A';
+            const advisoryId = process.env.ADVISORY_ID || 'N/A';
+            
+            // Get all collaborators
+            const collaborators = await github.rest.repos.listCollaborators({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              affiliation: 'all'
+            });
+            
+            // Create mention string for all members
+            const mentions = collaborators.data.map(c => `@${c.login}`).join(' ');
+            
+            // Post urgent security notification
+            const securityMessage = `## 🚨 CRITICAL SECURITY ALERT 🚨
+            
+            ${mentions}
+            
+            **HARDCODED CREDENTIALS DETECTED IN SOURCE CODE**
+            
+            A critical security vulnerability has been detected in PR #${context.payload.pull_request?.number || 'N/A'}.
+            Hardcoded credentials (passwords, API keys, tokens, or secrets) were found in the source code.
+            
+            ### Security Advisory Created
+            ${advisoryUrl !== 'N/A' ? `**Advisory:** ${advisoryUrl}` : 'Security advisory creation in progress...'}
+            ${advisoryId !== 'N/A' ? `**ID:** ${advisoryId}` : ''}
+            
+            ### IMMEDIATE ACTION REQUIRED
+            
+            1. 🚨 **STOP** - Do not merge this PR
+            2. 🔒 **REVOKE/ROTATE** all exposed credentials immediately
+            3. 🗑️ **DELETE** exposed keys from service providers
+            4. 🔐 **REMOVE** hardcoded secrets from code
+            5. 📋 **REVIEW** git history for previous exposures
+            
+            ### What to do next
+            
+            - Check the security advisory for full details
+            - Review the workflow run: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}
+            - Coordinate with the team to rotate all potentially exposed credentials
+            
+            **This is an automated security notification from the Code Quality Workflow.**`;
+            
+            // Post comment on PR
+            if (context.payload.pull_request) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body: securityMessage
+              });
+            }
+            
+            // Also create an issue for tracking
+            try {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `🚨 CRITICAL: Hardcoded Credentials Detected (${advisoryId})`,
+                body: securityMessage,
+                labels: ['security', 'critical', 'needs-immediate-attention'],
+                assignees: collaborators.data.slice(0, 10).map(c => c.login) // Assign first 10 collaborators
+              });
+            } catch (error) {
+              console.error('Failed to create tracking issue:', error);
+            }
+
+      - name: Update PR comment with security advisory link
+        if: steps.ethics_check.outputs.hardcoded_secrets_found == 'true' && steps.security_advisory.outputs.advisory_url
+        uses: actions/github-script@v7
+        env:
+          ADVISORY_URL: ${{ steps.security_advisory.outputs.advisory_url }}
+          ADVISORY_ID: ${{ steps.security_advisory.outputs.advisory_id }}
+        with:
+          script: |
+            const advisoryUrl = process.env.ADVISORY_URL;
+            const advisoryId = process.env.ADVISORY_ID;
+            
+            if (!advisoryUrl || !context.payload.pull_request) {
+              return;
+            }
+            
+            // Find the bot's code quality comment
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number
+            });
+            
+            const botComment = comments.data.find(comment => 
+              comment.user.login === 'github-actions[bot]' && 
+              comment.body.includes('Code Quality Analysis Report')
+            );
+            
+            if (botComment) {
+              // Update the comment to add security advisory link
+              const updatedBody = botComment.body.replace(
+                /## 🚨 Security & Ethics Violations/,
+                `## 🚨 Security & Ethics Violations\n\n**🔗 Security Advisory Created:** [${advisoryId}](${advisoryUrl})\n`
+              );
+              
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: updatedBody
+              });
             }
 
       - name: Upload detailed reports

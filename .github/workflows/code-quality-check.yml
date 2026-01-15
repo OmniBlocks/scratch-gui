@@ -1,0 +1,480 @@
+name: Code Quality & Standards Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  code-quality-analysis:
+    runs-on: ubuntu-latest
+    name: Code Quality Analysis
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for better duplicate detection
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # ============================================================
+      # 1. DEPRECATED REACT FUNCTIONS CHECK
+      # ============================================================
+      - name: Check for deprecated React functions
+        id: react_deprecated
+        continue-on-error: true
+        run: |
+          echo "🔍 Scanning for deprecated React lifecycle methods and patterns..."
+          
+          # Create patterns file for deprecated React APIs
+          cat > /tmp/deprecated-react-patterns.txt << 'EOF'
+          componentWillMount
+          componentWillReceiveProps
+          componentWillUpdate
+          UNSAFE_componentWillMount
+          UNSAFE_componentWillReceiveProps
+          UNSAFE_componentWillUpdate
+          React.createClass
+          ReactDOM.findDOMNode
+          String refs (ref="string")
+          isMounted()
+          ReactTestUtils.renderIntoDocument
+          shallow renderer
+          EOF
+
+          # Scan for deprecated patterns in JS/JSX files
+          DEPRECATED_FOUND=false
+          DEPRECATED_DETAILS=""
+          
+          # Check for deprecated lifecycle methods
+          if grep -r "componentWillMount\|componentWillReceiveProps\|componentWillUpdate" \
+             --include="*.js" --include="*.jsx" src/ 2>/dev/null; then
+            DEPRECATED_FOUND=true
+            DEPRECATED_DETAILS="${DEPRECATED_DETAILS}\n### Deprecated Lifecycle Methods Found:\n"
+            DEPRECATED_DETAILS="${DEPRECATED_DETAILS}\`\`\`\n"
+            DEPRECATED_DETAILS="${DEPRECATED_DETAILS}$(grep -rn "componentWillMount\|componentWillReceiveProps\|componentWillUpdate" \
+              --include="*.js" --include="*.jsx" src/ 2>/dev/null | head -20)\n"
+            DEPRECATED_DETAILS="${DEPRECATED_DETAILS}\`\`\`\n"
+          fi
+          
+          # Check for UNSAFE_ prefixed methods (still deprecated but explicit)
+          if grep -r "UNSAFE_componentWill" --include="*.js" --include="*.jsx" src/ 2>/dev/null; then
+            DEPRECATED_FOUND=true
+            DEPRECATED_DETAILS="${DEPRECATED_DETAILS}\n### UNSAFE_ Methods Found:\n"
+            DEPRECATED_DETAILS="${DEPRECATED_DETAILS}\`\`\`\n"
+            DEPRECATED_DETAILS="${DEPRECATED_DETAILS}$(grep -rn "UNSAFE_componentWill" \
+              --include="*.js" --include="*.jsx" src/ 2>/dev/null | head -20)\n"
+            DEPRECATED_DETAILS="${DEPRECATED_DETAILS}\`\`\`\n"
+          fi
+          
+          # Check for React.createClass (very old)
+          if grep -r "React\.createClass\|createReactClass" --include="*.js" --include="*.jsx" src/ 2>/dev/null; then
+            DEPRECATED_FOUND=true
+            DEPRECATED_DETAILS="${DEPRECATED_DETAILS}\n### React.createClass Usage Found:\n"
+            DEPRECATED_DETAILS="${DEPRECATED_DETAILS}\`\`\`\n"
+            DEPRECATED_DETAILS="${DEPRECATED_DETAILS}$(grep -rn "React\.createClass\|createReactClass" \
+              --include="*.js" --include="*.jsx" src/ 2>/dev/null | head -10)\n"
+            DEPRECATED_DETAILS="${DEPRECATED_DETAILS}\`\`\`\n"
+          fi
+          
+          # Check for string refs (deprecated)
+          if grep -r 'ref="[^"]' --include="*.js" --include="*.jsx" src/ 2>/dev/null | grep -v "// " | grep -v "/\*"; then
+            DEPRECATED_FOUND=true
+            DEPRECATED_DETAILS="${DEPRECATED_DETAILS}\n### String Refs Found (use callback refs or createRef):\n"
+            DEPRECATED_DETAILS="${DEPRECATED_DETAILS}\`\`\`\n"
+            DEPRECATED_DETAILS="${DEPRECATED_DETAILS}$(grep -rn 'ref="[^"]' \
+              --include="*.js" --include="*.jsx" src/ 2>/dev/null | grep -v "// " | grep -v "/\*" | head -10)\n"
+            DEPRECATED_DETAILS="${DEPRECATED_DETAILS}\`\`\`\n"
+          fi
+          
+          if [ "$DEPRECATED_FOUND" = true ]; then
+            echo "deprecated_found=true" >> $GITHUB_OUTPUT
+            echo "deprecated_details<<EOF" >> $GITHUB_OUTPUT
+            echo -e "$DEPRECATED_DETAILS" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+            exit 1
+          else
+            echo "✅ No deprecated React patterns found!"
+            echo "deprecated_found=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+      # ============================================================
+      # 2. AI-GENERATED CODE DETECTION (VIBE CODE)
+      # ============================================================
+      - name: Detect AI-generated code patterns
+        id: ai_detection
+        continue-on-error: true
+        run: |
+          echo "🤖 Scanning for AI-generated code markers..."
+          
+          AI_MARKERS_FOUND=false
+          AI_DETAILS=""
+          
+          # Common AI-generated code patterns
+          # 1. Overly verbose comments typical of AI
+          AI_VERBOSE_COMMENTS=$(grep -r "// This function\|// This method\|// Helper function to\|// Utility function\|// This will\|// This is used to" \
+            --include="*.js" --include="*.jsx" src/ 2>/dev/null | wc -l)
+          
+          if [ "$AI_VERBOSE_COMMENTS" -gt 50 ]; then
+            AI_MARKERS_FOUND=true
+            AI_DETAILS="${AI_DETAILS}\n### ⚠️ Excessive Verbose Comments ($AI_VERBOSE_COMMENTS found):\n"
+            AI_DETAILS="${AI_DETAILS}High number of AI-style verbose comments detected.\n"
+            AI_DETAILS="${AI_DETAILS}\`\`\`\n"
+            AI_DETAILS="${AI_DETAILS}$(grep -rn "// This function\|// This method\|// Helper function to" \
+              --include="*.js" --include="*.jsx" src/ 2>/dev/null | head -10)\n"
+            AI_DETAILS="${AI_DETAILS}\`\`\`\n"
+          fi
+          
+          # 2. Check for common AI placeholder text
+          if grep -ri "TODO: Implement\|FIXME: This is a placeholder\|// Add your code here\|// Your code here" \
+             --include="*.js" --include="*.jsx" src/ 2>/dev/null; then
+            AI_MARKERS_FOUND=true
+            AI_DETAILS="${AI_DETAILS}\n### AI Placeholder Comments:\n"
+            AI_DETAILS="${AI_DETAILS}\`\`\`\n"
+            AI_DETAILS="${AI_DETAILS}$(grep -rni "TODO: Implement\|FIXME: This is a placeholder" \
+              --include="*.js" --include="*.jsx" src/ 2>/dev/null | head -10)\n"
+            AI_DETAILS="${AI_DETAILS}\`\`\`\n"
+          fi
+          
+          # 3. Check for suspiciously perfect JSDoc patterns
+          JSDOC_COUNT=$(grep -r "/\*\*" --include="*.js" --include="*.jsx" src/ 2>/dev/null | wc -l)
+          JSDOC_PARAM_COUNT=$(grep -r "@param\|@returns\|@throws" --include="*.js" --include="*.jsx" src/ 2>/dev/null | wc -l)
+          
+          if [ "$JSDOC_COUNT" -gt 100 ] && [ "$JSDOC_PARAM_COUNT" -gt 200 ]; then
+            AI_DETAILS="${AI_DETAILS}\n### ℹ️ High JSDoc Usage:\n"
+            AI_DETAILS="${AI_DETAILS}Detected $JSDOC_COUNT JSDoc blocks with $JSDOC_PARAM_COUNT parameter docs.\n"
+            AI_DETAILS="${AI_DETAILS}This might indicate AI-generated documentation. Please verify quality.\n"
+          fi
+          
+          # 4. Check for overly descriptive variable names (AI tendency)
+          if grep -r "const \w\{30,\}\|let \w\{30,\}\|function \w\{30,\}" \
+             --include="*.js" --include="*.jsx" src/ 2>/dev/null; then
+            AI_MARKERS_FOUND=true
+            AI_DETAILS="${AI_DETAILS}\n### Overly Long Identifiers:\n"
+            AI_DETAILS="${AI_DETAILS}\`\`\`\n"
+            AI_DETAILS="${AI_DETAILS}$(grep -rn "const \w\{30,\}\|let \w\{30,\}\|function \w\{30,\}" \
+              --include="*.js" --include="*.jsx" src/ 2>/dev/null | head -5)\n"
+            AI_DETAILS="${AI_DETAILS}\`\`\`\n"
+          fi
+          
+          # 5. Check for AI service markers (accidental inclusions)
+          if grep -ri "ChatGPT\|Claude\|GPT-4\|Copilot generated\|AI generated" \
+             --include="*.js" --include="*.jsx" src/ 2>/dev/null; then
+            AI_MARKERS_FOUND=true
+            AI_DETAILS="${AI_DETAILS}\n### 🚨 AI Service Mentions Found:\n"
+            AI_DETAILS="${AI_DETAILS}\`\`\`\n"
+            AI_DETAILS="${AI_DETAILS}$(grep -rni "ChatGPT\|Claude\|GPT-4\|Copilot generated\|AI generated" \
+              --include="*.js" --include="*.jsx" src/ 2>/dev/null)\n"
+            AI_DETAILS="${AI_DETAILS}\`\`\`\n"
+          fi
+          
+          if [ "$AI_MARKERS_FOUND" = true ]; then
+            echo "ai_detected=true" >> $GITHUB_OUTPUT
+            echo "ai_details<<EOF" >> $GITHUB_OUTPUT
+            echo -e "$AI_DETAILS" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "✅ No obvious AI-generated code markers found!"
+            echo "ai_detected=false" >> $GITHUB_OUTPUT
+          fi
+
+      # ============================================================
+      # 3. DUPLICATE CODE DETECTION
+      # ============================================================
+      - name: Install duplicate detection tool
+        run: npm install -g jscpd
+
+      - name: Detect duplicate/copy-pasted code
+        id: duplicate_detection
+        continue-on-error: true
+        run: |
+          echo "🔎 Scanning for duplicate code blocks..."
+          
+          # Run jscpd with custom configuration
+          cat > .jscpd.json << 'EOF'
+          {
+            "threshold": 5,
+            "minLines": 10,
+            "minTokens": 50,
+            "ignore": [
+              "**/*.min.js",
+              "**/node_modules/**",
+              "**/build/**",
+              "**/dist/**",
+              "**/test/**"
+            ],
+            "reporters": ["console", "json"],
+            "format": ["javascript", "jsx"],
+            "output": "./jscpd-report"
+          }
+          EOF
+          
+          mkdir -p jscpd-report
+          
+          # Run duplicate detection
+          jscpd src/ --config .jscpd.json > jscpd-output.txt 2>&1 || true
+          
+          # Check if duplicates were found
+          if [ -f "jscpd-report/jscpd-report.json" ]; then
+            DUPLICATE_COUNT=$(jq '.statistics.duplicates' jscpd-report/jscpd-report.json 2>/dev/null || echo "0")
+            DUPLICATE_PERCENTAGE=$(jq '.statistics.percentage' jscpd-report/jscpd-report.json 2>/dev/null || echo "0")
+            
+            if [ "$DUPLICATE_COUNT" -gt 0 ]; then
+              echo "duplicates_found=true" >> $GITHUB_OUTPUT
+              echo "duplicate_count=$DUPLICATE_COUNT" >> $GITHUB_OUTPUT
+              echo "duplicate_percentage=$DUPLICATE_PERCENTAGE" >> $GITHUB_OUTPUT
+              
+              # Extract top duplicates
+              DUPLICATE_SUMMARY=$(jq -r '.duplicates[:5] | .[] | "File: \(.firstFile.name):\(.firstFile.start)-\(.firstFile.end) duplicated in \(.secondFile.name):\(.secondFile.start)-\(.secondFile.end) (\(.lines) lines)"' \
+                jscpd-report/jscpd-report.json 2>/dev/null || echo "Unable to parse duplicates")
+              
+              echo "duplicate_summary<<EOF" >> $GITHUB_OUTPUT
+              echo "$DUPLICATE_SUMMARY" >> $GITHUB_OUTPUT
+              echo "EOF" >> $GITHUB_OUTPUT
+              
+              echo "⚠️ Found $DUPLICATE_COUNT duplicate code blocks ($DUPLICATE_PERCENTAGE% duplication)"
+            else
+              echo "duplicates_found=false" >> $GITHUB_OUTPUT
+              echo "✅ No significant code duplication found!"
+            fi
+          else
+            echo "duplicates_found=false" >> $GITHUB_OUTPUT
+            echo "✅ No duplicate code detected!"
+          fi
+
+      # ============================================================
+      # 4. SECURITY & ETHICS CHECK
+      # ============================================================
+      - name: Check for unethical code patterns
+        id: ethics_check
+        continue-on-error: true
+        run: |
+          echo "🔒 Scanning for security vulnerabilities and unethical patterns..."
+          
+          ETHICS_VIOLATIONS=false
+          ETHICS_DETAILS=""
+          
+          # 1. Check for hardcoded credentials/secrets (CRITICAL SECURITY CHECK)
+          echo "Checking for hardcoded secrets..."
+          if grep -r "password\s*=\s*['\"].\+['\"]\|api_key\s*=\s*['\"].\+['\"]\|secret\s*=\s*['\"].\+['\"]\|token\s*=\s*['\"].\+['\"]" \
+             --include="*.js" --include="*.jsx" src/ 2>/dev/null | grep -v "// " | grep -v "password: ''" | grep -v "password: \"\"" | grep -v "token: ''"; then
+            ETHICS_VIOLATIONS=true
+            ETHICS_DETAILS="${ETHICS_DETAILS}\n### 🚨 CRITICAL: Potential Hardcoded Credentials Found!\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}**This is a severe security risk!** Never commit real credentials to source code.\n\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}$(grep -rn "password\s*=\s*['\"].\+['\"]\|api_key\s*=\s*['\"].\+['\"]\|secret\s*=\s*['\"].\+['\"]" \
+              --include="*.js" --include="*.jsx" src/ 2>/dev/null | grep -v "// " | grep -v "password: ''" | grep -v "password: \"\"" | grep -v "token: ''" | head -10)\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}**Action Required:**\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}- Remove any real credentials immediately\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}- Use environment variables instead\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}- If real secrets were committed, rotate them immediately\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}- Consider using GitHub Secrets or a secrets manager\n\n"
+          fi
+          
+          # 2. Check for eval() usage (security risk)
+          if grep -r "eval(" --include="*.js" --include="*.jsx" src/ 2>/dev/null | grep -v "// "; then
+            ETHICS_VIOLATIONS=true
+            ETHICS_DETAILS="${ETHICS_DETAILS}\n### ⚠️ eval() Usage Detected:\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}$(grep -rn "eval(" --include="*.js" --include="*.jsx" src/ 2>/dev/null | grep -v "// " | head -10)\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+          fi
+          
+          # 3. Check for dangerous innerHTML usage without sanitization
+          if grep -r "dangerouslySetInnerHTML\|innerHTML\s*=" --include="*.js" --include="*.jsx" src/ 2>/dev/null; then
+            ETHICS_VIOLATIONS=true
+            ETHICS_DETAILS="${ETHICS_DETAILS}\n### ⚠️ Potentially Unsafe HTML Injection:\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}$(grep -rn "dangerouslySetInnerHTML\|innerHTML\s*=" \
+              --include="*.js" --include="*.jsx" src/ 2>/dev/null | head -10)\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}Make sure these are properly sanitized to prevent XSS attacks.\n"
+          fi
+          
+          # 4. Check for console.log in production code (not unethical but bad practice)
+          CONSOLE_COUNT=$(grep -r "console\.(log\|debug\|info)" --include="*.js" --include="*.jsx" src/ 2>/dev/null | wc -l)
+          if [ "$CONSOLE_COUNT" -gt 100 ]; then
+            ETHICS_DETAILS="${ETHICS_DETAILS}\n### ℹ️ Excessive Console Statements:\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}Found $CONSOLE_COUNT console.log statements. Consider using a proper logging library.\n"
+          fi
+          
+          # 5. Check for TODO/FIXME that might indicate incomplete security implementations
+          if grep -ri "TODO.*security\|FIXME.*auth\|TODO.*sanitize\|FIXME.*XSS" \
+             --include="*.js" --include="*.jsx" src/ 2>/dev/null; then
+            ETHICS_VIOLATIONS=true
+            ETHICS_DETAILS="${ETHICS_DETAILS}\n### 🚨 Incomplete Security TODOs:\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}$(grep -rni "TODO.*security\|FIXME.*auth\|TODO.*sanitize\|FIXME.*XSS" \
+              --include="*.js" --include="*.jsx" src/ 2>/dev/null)\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+          fi
+          
+          # 6. Check for disabled security features
+          if grep -r "eslint-disable.*security\|@ts-ignore.*security\|skipLibCheck.*true" \
+             --include="*.js" --include="*.jsx" --include="*.ts" --include="*.tsx" src/ 2>/dev/null; then
+            ETHICS_VIOLATIONS=true
+            ETHICS_DETAILS="${ETHICS_DETAILS}\n### ⚠️ Disabled Security Checks:\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}$(grep -rn "eslint-disable.*security\|@ts-ignore.*security" \
+              --include="*.js" --include="*.jsx" src/ 2>/dev/null)\n"
+            ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+          fi
+          
+          if [ "$ETHICS_VIOLATIONS" = true ]; then
+            echo "ethics_violations=true" >> $GITHUB_OUTPUT
+            echo "ethics_details<<EOF" >> $GITHUB_OUTPUT
+            echo -e "$ETHICS_DETAILS" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "✅ No obvious security or ethical violations found!"
+            echo "ethics_violations=false" >> $GITHUB_OUTPUT
+          fi
+
+      # ============================================================
+      # 5. GENERATE SUMMARY REPORT
+      # ============================================================
+      - name: Generate code quality report
+        if: always()
+        id: report
+        uses: actions/github-script@v7
+        env:
+          DEPRECATED_FOUND: ${{ steps.react_deprecated.outputs.deprecated_found }}
+          DEPRECATED_DETAILS: ${{ steps.react_deprecated.outputs.deprecated_details }}
+          AI_DETECTED: ${{ steps.ai_detection.outputs.ai_detected }}
+          AI_DETAILS: ${{ steps.ai_detection.outputs.ai_details }}
+          DUPLICATES_FOUND: ${{ steps.duplicate_detection.outputs.duplicates_found }}
+          DUPLICATE_COUNT: ${{ steps.duplicate_detection.outputs.duplicate_count }}
+          DUPLICATE_PERCENTAGE: ${{ steps.duplicate_detection.outputs.duplicate_percentage }}
+          DUPLICATE_SUMMARY: ${{ steps.duplicate_detection.outputs.duplicate_summary }}
+          ETHICS_VIOLATIONS: ${{ steps.ethics_check.outputs.ethics_violations }}
+          ETHICS_DETAILS: ${{ steps.ethics_check.outputs.ethics_details }}
+        with:
+          script: |
+            const deprecatedFound = process.env.DEPRECATED_FOUND === 'true';
+            const deprecatedDetails = process.env.DEPRECATED_DETAILS || '';
+            const aiDetected = process.env.AI_DETECTED === 'true';
+            const aiDetails = process.env.AI_DETAILS || '';
+            const duplicatesFound = process.env.DUPLICATES_FOUND === 'true';
+            const duplicateCount = process.env.DUPLICATE_COUNT || '0';
+            const duplicatePercentage = process.env.DUPLICATE_PERCENTAGE || '0';
+            const duplicateSummary = process.env.DUPLICATE_SUMMARY || '';
+            const ethicsViolations = process.env.ETHICS_VIOLATIONS === 'true';
+            const ethicsDetails = process.env.ETHICS_DETAILS || '';
+            
+            const hasIssues = deprecatedFound || aiDetected || duplicatesFound || ethicsViolations;
+            
+            let report = `## 🔍 Code Quality Analysis Report\n\n`;
+            
+            if (!hasIssues) {
+              report += `### ✅ All Checks Passed!\n\n`;
+              report += `No code quality issues detected. Great work! 🎉\n\n`;
+              report += `- ✅ No deprecated React patterns\n`;
+              report += `- ✅ No obvious AI-generated code markers\n`;
+              report += `- ✅ No significant code duplication\n`;
+              report += `- ✅ No security or ethical violations\n`;
+            } else {
+              report += `### Issues Detected\n\n`;
+              
+              if (deprecatedFound) {
+                report += `## ❌ Deprecated React Patterns\n\n`;
+                report += `${deprecatedDetails}\n\n`;
+                report += `**Recommendation:** Migrate to modern React patterns (hooks, function components)\n\n`;
+                report += `---\n\n`;
+              } else {
+                report += `- ✅ No deprecated React patterns\n`;
+              }
+              
+              if (aiDetected) {
+                report += `## ⚠️ AI-Generated Code Markers\n\n`;
+                report += `${aiDetails}\n\n`;
+                report += `**Recommendation:** Review AI-generated code for quality and correctness\n\n`;
+                report += `---\n\n`;
+              } else {
+                report += `- ✅ No obvious AI-generated code markers\n`;
+              }
+              
+              if (duplicatesFound) {
+                report += `## 🔄 Code Duplication Detected\n\n`;
+                report += `**Statistics:**\n`;
+                report += `- Duplicate blocks: ${duplicateCount}\n`;
+                report += `- Duplication percentage: ${duplicatePercentage}%\n\n`;
+                report += `**Top Duplicates:**\n\`\`\`\n${duplicateSummary}\n\`\`\`\n\n`;
+                report += `**Recommendation:** Refactor duplicated code into reusable functions/components\n\n`;
+                report += `---\n\n`;
+              } else {
+                report += `- ✅ No significant code duplication\n`;
+              }
+              
+              if (ethicsViolations) {
+                report += `## 🚨 Security & Ethics Violations\n\n`;
+                report += `${ethicsDetails}\n\n`;
+                report += `**Recommendation:** Address security issues immediately before merging\n\n`;
+                report += `---\n\n`;
+              } else {
+                report += `- ✅ No security or ethical violations\n`;
+              }
+            }
+            
+            report += `\n---\n`;
+            report += `*🤖 Automated code quality check performed by GitHub Actions*\n`;
+            report += `*Run ID: [${context.runId}](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})*\n`;
+            
+            // Post comment on PR if this is a pull request
+            if (context.payload.pull_request) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body: report
+              });
+            }
+            
+            // Set output for subsequent steps
+            core.setOutput('has_issues', hasIssues);
+            core.setOutput('report', report);
+            
+            // Fail the check if critical issues found (deprecated or ethics violations)
+            if (deprecatedFound || ethicsViolations) {
+              core.setFailed('Critical code quality issues detected');
+            }
+
+      - name: Upload detailed reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-quality-reports
+          path: |
+            jscpd-report/
+            jscpd-output.txt
+          retention-days: 30
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### 🔍 Code Quality Check Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.report.outputs.has_issues }}" = "true" ]; then
+            echo "⚠️ **Issues detected!** Review the report above." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ **All checks passed!** Your code looks great!" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📊 Full report available in PR comments or workflow artifacts." >> $GITHUB_STEP_SUMMARY

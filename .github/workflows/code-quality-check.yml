@@ -33,6 +33,37 @@ jobs:
         run: npm ci
 
       # ============================================================
+      # 0. GET CHANGED FILES (PR only)
+      # ============================================================
+      - name: Get changed files
+        id: changed_files
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              per_page: 100
+            });
+            
+            const jsFiles = files
+              .filter(f => f.status !== 'removed')
+              .filter(f => /\.(js|jsx)$/.test(f.filename))
+              .map(f => f.filename)
+              .join('\n');
+            
+            console.log(`Found ${jsFiles.split('\n').filter(Boolean).length} JS/JSX files changed in PR`);
+            console.log(`Files:\n${jsFiles}`);
+            
+            // Save to file for use in bash steps
+            require('fs').writeFileSync('/tmp/changed_files.txt', jsFiles);
+            
+            return jsFiles;
+          result-encoding: string
+
+      # ============================================================
       # 1. DEPRECATED REACT FUNCTIONS CHECK
       # ============================================================
       - name: Check for deprecated React functions
@@ -41,64 +72,58 @@ jobs:
         run: |
           echo "🔍 Scanning for deprecated React lifecycle methods and patterns..."
           
-          # Create patterns file for deprecated React APIs
-          cat > /tmp/deprecated-react-patterns.txt << 'EOF'
-          componentWillMount
-          componentWillReceiveProps
-          componentWillUpdate
-          UNSAFE_componentWillMount
-          UNSAFE_componentWillReceiveProps
-          UNSAFE_componentWillUpdate
-          React.createClass
-          ReactDOM.findDOMNode
-          String refs (ref="string")
-          isMounted()
-          ReactTestUtils.renderIntoDocument
-          shallow renderer
-          EOF
+          # Determine which files to scan
+          if [ "${{ github.event_name }}" = "pull_request" ] && [ -f /tmp/changed_files.txt ]; then
+            FILES=$(cat /tmp/changed_files.txt | tr '\n' ' ')
+            if [ -z "$FILES" ]; then
+              echo "No JS/JSX files changed in this PR"
+              echo "deprecated_found=false" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+            echo "Scanning only changed files in PR: $FILES"
+            SCAN_TARGET="$FILES"
+          else
+            echo "Scanning entire src/ directory (push to main/develop)"
+            SCAN_TARGET="src/"
+          fi
 
           # Scan for deprecated patterns in JS/JSX files
           DEPRECATED_FOUND=false
           DEPRECATED_DETAILS=""
           
           # Check for deprecated lifecycle methods
-          if grep -r "componentWillMount\|componentWillReceiveProps\|componentWillUpdate" \
-             --include="*.js" --include="*.jsx" src/ 2>/dev/null; then
+          if echo "$SCAN_TARGET" | xargs grep -l "componentWillMount\|componentWillReceiveProps\|componentWillUpdate" 2>/dev/null; then
             DEPRECATED_FOUND=true
             DEPRECATED_DETAILS="${DEPRECATED_DETAILS}\n### Deprecated Lifecycle Methods Found:\n"
             DEPRECATED_DETAILS="${DEPRECATED_DETAILS}\`\`\`\n"
-            DEPRECATED_DETAILS="${DEPRECATED_DETAILS}$(grep -rn "componentWillMount\|componentWillReceiveProps\|componentWillUpdate" \
-              --include="*.js" --include="*.jsx" src/ 2>/dev/null | head -20)\n"
+            DEPRECATED_DETAILS="${DEPRECATED_DETAILS}$(echo "$SCAN_TARGET" | xargs grep -n "componentWillMount\|componentWillReceiveProps\|componentWillUpdate" 2>/dev/null | head -20)\n"
             DEPRECATED_DETAILS="${DEPRECATED_DETAILS}\`\`\`\n"
           fi
           
           # Check for UNSAFE_ prefixed methods (still deprecated but explicit)
-          if grep -r "UNSAFE_componentWill" --include="*.js" --include="*.jsx" src/ 2>/dev/null; then
+          if echo "$SCAN_TARGET" | xargs grep -l "UNSAFE_componentWill" 2>/dev/null; then
             DEPRECATED_FOUND=true
             DEPRECATED_DETAILS="${DEPRECATED_DETAILS}\n### UNSAFE_ Methods Found:\n"
             DEPRECATED_DETAILS="${DEPRECATED_DETAILS}\`\`\`\n"
-            DEPRECATED_DETAILS="${DEPRECATED_DETAILS}$(grep -rn "UNSAFE_componentWill" \
-              --include="*.js" --include="*.jsx" src/ 2>/dev/null | head -20)\n"
+            DEPRECATED_DETAILS="${DEPRECATED_DETAILS}$(echo "$SCAN_TARGET" | xargs grep -n "UNSAFE_componentWill" 2>/dev/null | head -20)\n"
             DEPRECATED_DETAILS="${DEPRECATED_DETAILS}\`\`\`\n"
           fi
           
           # Check for React.createClass (very old)
-          if grep -r "React\.createClass\|createReactClass" --include="*.js" --include="*.jsx" src/ 2>/dev/null; then
+          if echo "$SCAN_TARGET" | xargs grep -l "React\.createClass\|createReactClass" 2>/dev/null; then
             DEPRECATED_FOUND=true
             DEPRECATED_DETAILS="${DEPRECATED_DETAILS}\n### React.createClass Usage Found:\n"
             DEPRECATED_DETAILS="${DEPRECATED_DETAILS}\`\`\`\n"
-            DEPRECATED_DETAILS="${DEPRECATED_DETAILS}$(grep -rn "React\.createClass\|createReactClass" \
-              --include="*.js" --include="*.jsx" src/ 2>/dev/null | head -10)\n"
+            DEPRECATED_DETAILS="${DEPRECATED_DETAILS}$(echo "$SCAN_TARGET" | xargs grep -n "React\.createClass\|createReactClass" 2>/dev/null | head -10)\n"
             DEPRECATED_DETAILS="${DEPRECATED_DETAILS}\`\`\`\n"
           fi
           
-          # Check for string refs (deprecated)
-          if grep -r 'ref="[^"]' --include="*.js" --include="*.jsx" src/ 2>/dev/null | grep -v "// " | grep -v "/\*"; then
+          # Check for string refs (deprecated) - Fixed regex pattern
+          if echo "$SCAN_TARGET" | xargs grep -E 'ref="[^"]+"' 2>/dev/null; then
             DEPRECATED_FOUND=true
             DEPRECATED_DETAILS="${DEPRECATED_DETAILS}\n### String Refs Found (use callback refs or createRef):\n"
             DEPRECATED_DETAILS="${DEPRECATED_DETAILS}\`\`\`\n"
-            DEPRECATED_DETAILS="${DEPRECATED_DETAILS}$(grep -rn 'ref="[^"]' \
-              --include="*.js" --include="*.jsx" src/ 2>/dev/null | grep -v "// " | grep -v "/\*" | head -10)\n"
+            DEPRECATED_DETAILS="${DEPRECATED_DETAILS}$(echo "$SCAN_TARGET" | xargs grep -nE 'ref="[^"]+"' 2>/dev/null | head -10)\n"
             DEPRECATED_DETAILS="${DEPRECATED_DETAILS}\`\`\`\n"
           fi
           
@@ -123,33 +148,66 @@ jobs:
         run: |
           echo "🤖 Scanning for AI-generated code markers..."
           
+          # Determine which files to scan
+          if [ "${{ github.event_name }}" = "pull_request" ] && [ -f /tmp/changed_files.txt ]; then
+            FILES=$(cat /tmp/changed_files.txt | tr '\n' ' ')
+            if [ -z "$FILES" ]; then
+              echo "No JS/JSX files changed in this PR"
+              echo "ai_detected=false" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+            echo "Scanning only changed files in PR"
+            SCAN_TARGET="$FILES"
+          else
+            echo "Scanning entire src/ directory (push to main/develop)"
+            SCAN_TARGET="src/"
+          fi
+          
           AI_MARKERS_FOUND=false
           AI_DETAILS=""
           
           # Common AI-generated code patterns
           # 1. Overly verbose comments typical of AI
-          AI_VERBOSE_COMMENTS=$(grep -r "// This function\|// This method\|// Helper function to\|// Utility function\|// This will\|// This is used to" \
-            --include="*.js" --include="*.jsx" src/ 2>/dev/null | wc -l)
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            AI_VERBOSE_COMMENTS=$(echo "$SCAN_TARGET" | xargs grep -h "// This function\|// This method\|// Helper function to\|// Utility function\|// This will\|// This is used to" 2>/dev/null | wc -l)
+          else
+            AI_VERBOSE_COMMENTS=$(grep -r "// This function\|// This method\|// Helper function to\|// Utility function\|// This will\|// This is used to" \
+              --include="*.js" --include="*.jsx" src/ 2>/dev/null | wc -l)
+          fi
           
-          if [ "$AI_VERBOSE_COMMENTS" -gt 50 ]; then
+          if [ "$AI_VERBOSE_COMMENTS" -gt 10 ]; then
             AI_MARKERS_FOUND=true
             AI_DETAILS="${AI_DETAILS}\n### ⚠️ Excessive Verbose Comments ($AI_VERBOSE_COMMENTS found):\n"
             AI_DETAILS="${AI_DETAILS}High number of AI-style verbose comments detected.\n"
             AI_DETAILS="${AI_DETAILS}\`\`\`\n"
-            AI_DETAILS="${AI_DETAILS}$(grep -rn "// This function\|// This method\|// Helper function to" \
-              --include="*.js" --include="*.jsx" src/ 2>/dev/null | head -10)\n"
+            if [ "${{ github.event_name }}" = "pull_request" ]; then
+              AI_DETAILS="${AI_DETAILS}$(echo "$SCAN_TARGET" | xargs grep -n "// This function\|// This method\|// Helper function to" 2>/dev/null | head -10)\n"
+            else
+              AI_DETAILS="${AI_DETAILS}$(grep -rn "// This function\|// This method\|// Helper function to" \
+                --include="*.js" --include="*.jsx" src/ 2>/dev/null | head -10)\n"
+            fi
             AI_DETAILS="${AI_DETAILS}\`\`\`\n"
           fi
           
           # 2. Check for common AI placeholder text
-          if grep -ri "TODO: Implement\|FIXME: This is a placeholder\|// Add your code here\|// Your code here" \
-             --include="*.js" --include="*.jsx" src/ 2>/dev/null; then
-            AI_MARKERS_FOUND=true
-            AI_DETAILS="${AI_DETAILS}\n### AI Placeholder Comments:\n"
-            AI_DETAILS="${AI_DETAILS}\`\`\`\n"
-            AI_DETAILS="${AI_DETAILS}$(grep -rni "TODO: Implement\|FIXME: This is a placeholder" \
-              --include="*.js" --include="*.jsx" src/ 2>/dev/null | head -10)\n"
-            AI_DETAILS="${AI_DETAILS}\`\`\`\n"
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            if echo "$SCAN_TARGET" | xargs grep -i "TODO: Implement\|FIXME: This is a placeholder\|// Add your code here\|// Your code here" 2>/dev/null; then
+              AI_MARKERS_FOUND=true
+              AI_DETAILS="${AI_DETAILS}\n### AI Placeholder Comments:\n"
+              AI_DETAILS="${AI_DETAILS}\`\`\`\n"
+              AI_DETAILS="${AI_DETAILS}$(echo "$SCAN_TARGET" | xargs grep -ni "TODO: Implement\|FIXME: This is a placeholder" 2>/dev/null | head -10)\n"
+              AI_DETAILS="${AI_DETAILS}\`\`\`\n"
+            fi
+          else
+            if grep -ri "TODO: Implement\|FIXME: This is a placeholder\|// Add your code here\|// Your code here" \
+               --include="*.js" --include="*.jsx" src/ 2>/dev/null; then
+              AI_MARKERS_FOUND=true
+              AI_DETAILS="${AI_DETAILS}\n### AI Placeholder Comments:\n"
+              AI_DETAILS="${AI_DETAILS}\`\`\`\n"
+              AI_DETAILS="${AI_DETAILS}$(grep -rni "TODO: Implement\|FIXME: This is a placeholder" \
+                --include="*.js" --include="*.jsx" src/ 2>/dev/null | head -10)\n"
+              AI_DETAILS="${AI_DETAILS}\`\`\`\n"
+            fi
           fi
           
           # 3. Check for suspiciously perfect JSDoc patterns
@@ -206,29 +264,24 @@ jobs:
         run: |
           echo "🔎 Scanning for duplicate code blocks..."
           
-          # Run jscpd with custom configuration
-          cat > .jscpd.json << 'EOF'
-          {
-            "threshold": 5,
-            "minLines": 10,
-            "minTokens": 50,
-            "ignore": [
-              "**/*.min.js",
-              "**/node_modules/**",
-              "**/build/**",
-              "**/dist/**",
-              "**/test/**"
-            ],
-            "reporters": ["console", "json"],
-            "format": ["javascript", "jsx"],
-            "output": "./jscpd-report"
-          }
-          EOF
-          
           mkdir -p jscpd-report
           
-          # Run duplicate detection
-          jscpd src/ --config .jscpd.json > jscpd-output.txt 2>&1 || true
+          # Determine what to scan
+          if [ "${{ github.event_name }}" = "pull_request" ] && [ -f /tmp/changed_files.txt ]; then
+            FILES=$(cat /tmp/changed_files.txt | tr '\n' ' ')
+            if [ -z "$FILES" ]; then
+              echo "No JS/JSX files changed in this PR"
+              echo "duplicates_found=false" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+            echo "Scanning only changed files in PR for duplicates"
+            # Run duplicate detection on changed files only
+            jscpd $FILES --config .jscpd.json > jscpd-output.txt 2>&1 || true
+          else
+            echo "Scanning entire src/ directory for duplicates"
+            # Run duplicate detection on entire src/
+            jscpd src/ --config .jscpd.json > jscpd-output.txt 2>&1 || true
+          fi
           
           # Check if duplicates were found
           if [ -f "jscpd-report/jscpd-report.json" ]; then
@@ -274,34 +327,62 @@ jobs:
           echo "Checking for hardcoded secrets..."
           HARDCODED_SECRETS_FOUND=false
           HARDCODED_SECRETS_DETAILS=""
+          REDACTED_FINDINGS=""
           
-          if grep -r "password\s*=\s*['\"].\+['\"]\|api_key\s*=\s*['\"].\+['\"]\|secret\s*=\s*['\"].\+['\"]\|token\s*=\s*['\"].\+['\"]" \
-             --include="*.js" --include="*.jsx" src/ 2>/dev/null | grep -v "// " | grep -v "password: ''" | grep -v "password: \"\"" | grep -v "token: ''"; then
-            ETHICS_VIOLATIONS=true
-            HARDCODED_SECRETS_FOUND=true
-            
-            # Capture the found secrets with full context
-            FOUND_SECRETS=$(grep -rn "password\s*=\s*['\"].\+['\"]\|api_key\s*=\s*['\"].\+['\"]\|secret\s*=\s*['\"].\+['\"]\|token\s*=\s*['\"]" \
-              --include="*.js" --include="*.jsx" src/ 2>/dev/null | grep -v "// " | grep -v "password: ''" | grep -v "password: \"\"" | grep -v "token: ''" | head -10)
-            
-            ETHICS_DETAILS="${ETHICS_DETAILS}\n### 🚨 CRITICAL SECURITY VULNERABILITY: Hardcoded Credentials Found!\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}**⚠️ IMMEDIATE ACTION REQUIRED - SECURITY BREACH DETECTED ⚠️**\n\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}Hardcoded credentials have been detected in the source code. This is a **CRITICAL SECURITY VULNERABILITY**.\n\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}**Found Credentials (REDACTED FOR SECURITY):**\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}${FOUND_SECRETS}\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}**IMMEDIATE ACTION REQUIRED:**\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}1. 🚨 **IMMEDIATELY REVOKE/ROTATE** all exposed credentials\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}2. 🔒 **DELETE** the exposed keys from your service provider\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}3. 🗑️ **REMOVE** hardcoded secrets from code immediately\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}4. 🔐 Use environment variables or GitHub Secrets instead\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}5. 📋 A security advisory will be created for this issue\n\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}**All repository members will be notified of this security issue.**\n\n"
-            
-            # Store secrets details for security advisory
-            HARDCODED_SECRETS_DETAILS="$FOUND_SECRETS"
+          # Determine which files to scan
+          if [ "${{ github.event_name }}" = "pull_request" ] && [ -f /tmp/changed_files.txt ]; then
+            FILES=$(cat /tmp/changed_files.txt | tr '\n' ' ')
+            if [ -z "$FILES" ]; then
+              echo "No JS/JSX files changed in this PR - skipping secrets check"
+            else
+              echo "Scanning only changed files in PR for hardcoded secrets"
+              # Use -E for extended regex, scan only changed files
+              SCAN_CMD="echo \"$FILES\" | xargs grep -En"
+            fi
+          else
+            echo "Scanning entire src/ directory for hardcoded secrets"
+            SCAN_CMD="grep -rEn"
+            FILES="src/"
           fi
+          
+          # Fixed regex pattern with -E flag
+          # Matches: password="value", api_key="value", secret="value", token="value"
+          # Also matches: password: "value" (object property syntax)
+          if [ -n "$FILES" ]; then
+            SECRET_PATTERN='(password|api_key|secret|token)\s*[:=]\s*["047][^"047]{3,}["047]'
+            
+            if eval "$SCAN_CMD \"$SECRET_PATTERN\" $FILES" 2>/dev/null | grep -v "password\s*[:=]\s*[\"047][\"047]" | grep -v "token\s*[:=]\s*[\"047][\"047]"; then
+              ETHICS_VIOLATIONS=true
+              HARDCODED_SECRETS_FOUND=true
+              
+              # Capture findings but REDACT the actual secret values
+              FOUND_SECRETS=$(eval "$SCAN_CMD \"$SECRET_PATTERN\" $FILES" 2>/dev/null | grep -v "password\s*[:=]\s*[\"047][\"047]" | grep -v "token\s*[:=]\s*[\"047][\"047]" | head -10)
+              
+              # Redact actual secret values for security
+              REDACTED_FINDINGS=$(echo "$FOUND_SECRETS" | sed -E 's/(password|api_key|secret|token)(\s*[:=]\s*["047])[^"047]+(["047])/\1\2***REDACTED***\3/gi')
+              
+              ETHICS_DETAILS="${ETHICS_DETAILS}\n### 🚨 CRITICAL SECURITY VULNERABILITY: Hardcoded Credentials Found!\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}**⚠️ IMMEDIATE ACTION REQUIRED - SECURITY BREACH DETECTED ⚠️**\n\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}Hardcoded credentials have been detected in the source code. This is a **CRITICAL SECURITY VULNERABILITY**.\n\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}**Location of Credentials (values REDACTED for security):**\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}```\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}${REDACTED_FINDINGS}\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}```\n\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}**IMMEDIATE ACTION REQUIRED:**\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}1. 🚨 **IMMEDIATELY REVOKE/ROTATE** all exposed credentials\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}2. 🔒 **DELETE** the exposed keys from your service provider\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}3. 🗑️ **REMOVE** hardcoded secrets from code immediately\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}4. 🔐 Use environment variables or GitHub Secrets instead\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}5. 📋 A security advisory will be created for this issue\n\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}**All repository members will be notified of this security issue.**\n\n"
+              
+              # Store REDACTED details for security advisory
+              HARDCODED_SECRETS_DETAILS="$REDACTED_FINDINGS"
+            fi
+          fi
+          
+          # Output hardcoded secrets info for later steps
+          echo "hardcoded_secrets_found=$HARDCODED_SECRETS_FOUND" >> $GITHUB_OUTPUT
           
           # Output hardcoded secrets info for later steps
           echo "hardcoded_secrets_found=$HARDCODED_SECRETS_FOUND" >> $GITHUB_OUTPUT

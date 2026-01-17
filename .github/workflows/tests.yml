@@ -283,7 +283,7 @@ jobs:
 
           // Helper function to open menus
           async function tryOpenMenus(page) {
-            console.log('📂 Attempting to open all menus...');
+            console.log('📂 Attempting to open a menu...');
             
             const menuBarButtons = [
               '[class*="menu-bar"] [class*="menu-bar-item"]',
@@ -405,7 +405,7 @@ jobs:
                   
                   if (!found) {
                     // Try in modal containers
-                    locator = page.locator('[role="dialog"], [class*="modal"]').locator('text=' + targetText);
+                    locator = page.locator('[role="dialog"], [class*="modal"]').getByText(targetText, { exact: false });
                     found = await locator.count() > 0;
                   }
                 }
@@ -425,6 +425,9 @@ jobs:
                 if (!found) {
                   console.log('🔓 Strategy 5: Trying to open dropdowns and expand sections...');
                   
+                  const strategyStartTime = Date.now();
+                  const STRATEGY_TIMEOUT = 5000; // 5 seconds max for this strategy
+                  
                   // Try clicking expandable elements
                   const expandables = [
                     '[aria-expanded="false"]',
@@ -435,10 +438,14 @@ jobs:
                   ];
                   
                   for (const selector of expandables) {
+                    if (Date.now() - strategyStartTime > STRATEGY_TIMEOUT) break;
+                    
                     try {
                       const elements = page.locator(selector);
                       const count = await elements.count();
                       for (let j = 0; j < Math.min(count, 3); j++) {
+                        if (Date.now() - strategyStartTime > STRATEGY_TIMEOUT) break;
+                        
                         const elem = elements.nth(j);
                         if (await elem.isVisible({ timeout: 500 })) {
                           await elem.click({ timeout: 1000 });
@@ -553,13 +560,14 @@ jobs:
           `;
               } else {
                 testCode += `
+                const screenshotBaseName = \`component-${i + 1}\`;
                 // Take screenshot for component without label
                 console.log('📸 Taking screenshot of current page state...');
                 await page.screenshot({ 
-                  path: \`test-results/component-${i + 1}.png\`,
+                  path: \`test-results/\${screenshotBaseName}.png\`,
                   fullPage: false 
                 });
-                console.log('📊 Screenshot saved: component-${i + 1}.png');
+                console.log(\`📊 Screenshot saved: \${screenshotBaseName}.png\`);
           `;
               }
 

@@ -224,6 +224,97 @@ jobs:
 
           const BASE_URL = 'http://localhost:8080';
 
+          // Helper function to trigger modals that might contain components
+          async function tryTriggerModal(page, componentFile) {
+            // For security manager modals, try to trigger them by interacting with extensions
+            if (componentFile.includes('security-manager')) {
+              console.log('🔐 Attempting to trigger security manager modal...');
+              
+              // Try to load an unsafe extension or trigger security prompt
+              try {
+                // Click on extension button to open extension library
+                const extensionButton = page.locator('[class*="extension-button"]').first();
+                if (await extensionButton.isVisible({ timeout: 2000 })) {
+                  await extensionButton.click();
+                  await page.waitForTimeout(1500);
+                  
+                  // Look for any extension that might trigger security
+                  const extensionTiles = page.locator('[class*="extension-tile"]');
+                  const count = await extensionTiles.count();
+                  if (count > 0) {
+                    // Try clicking first extension
+                    await extensionTiles.first().click({ timeout: 2000 });
+                    await page.waitForTimeout(2000);
+                  }
+                }
+              } catch (e) {
+                console.log('Could not trigger security modal via extensions:', e.message);
+              }
+            }
+            
+            // For other modal types, try clicking buttons that might open them
+            if (componentFile.includes('modal') && !componentFile.includes('security-manager')) {
+              console.log('🪟 Attempting to open modal...');
+              
+              // Common modal triggers
+              const modalTriggers = [
+                '[class*="settings"]',
+                '[aria-label*="settings" i]',
+                '[class*="library"]',
+                '[aria-label*="library" i]',
+                'button:has-text("Settings")',
+                'button:has-text("Library")'
+              ];
+              
+              for (const trigger of modalTriggers) {
+                try {
+                  const button = page.locator(trigger).first();
+                  if (await button.isVisible({ timeout: 1000 })) {
+                    await button.click();
+                    await page.waitForTimeout(1500);
+                    break;
+                  }
+                } catch (e) {
+                  // Continue to next trigger
+                }
+              }
+            }
+          }
+
+          // Helper function to open menus
+          async function tryOpenMenus(page) {
+            console.log('📂 Attempting to open all menus...');
+            
+            const menuBarButtons = [
+              '[class*="menu-bar"] [class*="menu-bar-item"]',
+              '[class*="menubar"] button',
+              '[role="menubar"] button'
+            ];
+            
+            for (const selector of menuBarButtons) {
+              try {
+                const buttons = page.locator(selector);
+                const count = await buttons.count();
+                
+                for (let i = 0; i < Math.min(count, 5); i++) {
+                  try {
+                    const btn = buttons.nth(i);
+                    if (await btn.isVisible({ timeout: 500 })) {
+                      console.log(\`🖱️  Clicking menu item \${i + 1}\`);
+                      await btn.click({ timeout: 1000 });
+                      await page.waitForTimeout(800);
+                      return; // Found and clicked a menu
+                    }
+                  } catch (e) {
+                    // Continue to next button
+                  }
+                }
+              } catch (e) {
+                // Continue to next selector
+              }
+            }
+          }
+
           test.describe('Auto-Generated Component Tests', () => {
             test.beforeEach(async ({ page }) => {
               await page.goto(\`\${BASE_URL}/editor.html\`);
@@ -264,24 +355,29 @@ jobs:
 
               try {
                 console.log('🧪 Testing component: ${comp.label || comp.type}');
+                console.log('📁 Component file: ${comp.file}');
           `;
 
               if (comp.label) {
                 testCode += `
                 // Find component by text: ${comp.label}
                 const targetText = '${comp.label.replace(/'/g, "\\'")}';
+                const componentFile = '${comp.file}';
                 
                 // Strategy 1: Direct text search
                 let locator = page.getByText(targetText, { exact: false });
+                let found = await locator.count() > 0;
                 
-                // If not found, try alternative strategies for different component types
-                if (await locator.count() === 0) {
-                  // Strategy 2: Search in common container elements
+                // Strategy 2: Search in common container elements
+                if (!found) {
+                  console.log('🔍 Strategy 2: Searching in common containers...');
                   const containers = [
                     '[role="menuitem"]',
                     '[class*="menu"] [class*="item"]',
                     '[class*="button"]',
                     '[role="button"]',
+                    '[role="dialog"]',
+                    '[class*="modal"]',
                     'button',
                     '.gui-toolbar',
                     '[class*="toolbar"]'
@@ -289,51 +385,100 @@ jobs:
                   
                   for (const containerSelector of containers) {
                     locator = page.locator(containerSelector).filter({ hasText: targetText });
-                    if (await locator.count() > 0) break;
-                  }
-                }
-                
-                // Strategy 3: For menu items, try opening menus first
-                if (await locator.count() === 0 && '${comp.type}' === 'menu-item') {
-                  console.log('🔓 Attempting to open menu to find menu item...');
-                  
-                  // Try common menu openers
-                  const menuOpeners = [
-                    '[aria-label="Menu"]',
-                    '[class*="menu-button"]',
-                    '[role="button"]:has-text("Menu")',
-                    '.gui-menu-bar',
-                    '[class*="menubar"] button'
-                  ];
-                  
-                  for (const opener of menuOpeners) {
-                    try {
-                      const menuButton = page.locator(opener).first();
-                      if (await menuButton.isVisible({ timeout: 500 })) {
-                        console.log('🖱️  Clicking menu opener:', opener);
-                        await menuButton.click({ timeout: 2000 });
-                        await page.waitForTimeout(1000);
-                        break;
-                      }
-                    } catch (e) {
-                      // Continue to next opener
+                    if (await locator.count() > 0) {
+                      found = true;
+                      console.log(\`✓ Found in container: \${containerSelector}\`);
+                      break;
                     }
                   }
-                  
-                  // Now try to find the menu item again
-                  locator = page.getByText(targetText, { exact: false });
                 }
                 
-                if (await locator.count() === 0) {
-                  console.warn('⚠️  Component not found:', targetText);
+                // Strategy 3: Try to trigger modals if component is in a modal file
+                if (!found && componentFile.includes('modal')) {
+                  console.log('🪟 Strategy 3: Attempting to trigger modal...');
+                  await tryTriggerModal(page, componentFile);
+                  await page.waitForTimeout(1000);
                   
-                  // Take a screenshot of current state for debugging
+                  // Search again after triggering modal
+                  locator = page.getByText(targetText, { exact: false });
+                  found = await locator.count() > 0;
+                  
+                  if (!found) {
+                    // Try in modal containers
+                    locator = page.locator('[role="dialog"], [class*="modal"]').locator('text=' + targetText);
+                    found = await locator.count() > 0;
+                  }
+                }
+                
+                // Strategy 4: For menu items, try opening menus
+                if (!found && ('${comp.type}' === 'menu-item' || componentFile.includes('menu'))) {
+                  console.log('📂 Strategy 4: Attempting to open menus...');
+                  await tryOpenMenus(page);
+                  await page.waitForTimeout(1000);
+                  
+                  // Search again after opening menu
+                  locator = page.getByText(targetText, { exact: false });
+                  found = await locator.count() > 0;
+                }
+                
+                // Strategy 5: Try clicking various UI elements that might reveal the component
+                if (!found) {
+                  console.log('🔓 Strategy 5: Trying to open dropdowns and expand sections...');
+                  
+                  // Try clicking expandable elements
+                  const expandables = [
+                    '[aria-expanded="false"]',
+                    '[class*="dropdown"]',
+                    '[class*="accordion"]',
+                    'details:not([open])',
+                    '[class*="collapsible"]'
+                  ];
+                  
+                  for (const selector of expandables) {
+                    try {
+                      const elements = page.locator(selector);
+                      const count = await elements.count();
+                      for (let j = 0; j < Math.min(count, 3); j++) {
+                        const elem = elements.nth(j);
+                        if (await elem.isVisible({ timeout: 500 })) {
+                          await elem.click({ timeout: 1000 });
+                          await page.waitForTimeout(500);
+                          
+                          // Check if component is now visible
+                          locator = page.getByText(targetText, { exact: false });
+                          if (await locator.count() > 0) {
+                            found = true;
+                            console.log(\`✓ Found after expanding: \${selector}\`);
+                            break;
+                          }
+                        }
+                      }
+                      if (found) break;
+                    } catch (e) {
+                      // Continue to next expandable
+                    }
+                  }
+                }
+                
+                // Take screenshot regardless of whether component was found
+                const screenshotBaseName = \`component-${i + 1}\`;
+                
+                if (!found) {
+                  console.warn('⚠️  Component not found after all strategies:', targetText);
+                  console.log('📸 Taking screenshot of current page state...');
+                  
+                  // Take full page screenshot showing current state
                   await page.screenshot({ 
-                    path: \`test-results/component-${i + 1}-not-found.png\`,
+                    path: \`test-results/\${screenshotBaseName}-not-found.png\`,
                     fullPage: true 
                   });
+                  
+                  console.log(\`📊 Screenshot saved: \${screenshotBaseName}-not-found.png\`);
                   return;
                 }
+                
+                // Component was found! Proceed with highlighting and screenshot
+                console.log('✅ Component found!');
                 
                 // Get the first matching element
                 const element = locator.first();
@@ -375,17 +520,21 @@ jobs:
                 
                 // Take focused screenshot
                 await page.waitForTimeout(500); // Let highlight render
+                console.log(\`📸 Taking screenshot: \${screenshotBaseName}.png\`);
+                
                 await element.screenshot({ 
-                  path: \`test-results/component-${i + 1}.png\`,
+                  path: \`test-results/\${screenshotBaseName}.png\`,
                   animations: 'disabled'
                 }).catch(async (e) => {
                   console.warn('⚠️  Element screenshot failed:', e.message);
                   // Fallback to page screenshot with element outline
                   await page.screenshot({ 
-                    path: \`test-results/component-${i + 1}-fallback.png\`,
+                    path: \`test-results/\${screenshotBaseName}-fallback.png\`,
                     fullPage: false 
                   });
                 });
+                
+                console.log(\`📊 Screenshot saved: \${screenshotBaseName}.png\`);
                 
                 // Clean up highlight
                 await element.evaluate((el) => {
@@ -405,10 +554,12 @@ jobs:
               } else {
                 testCode += `
                 // Take screenshot for component without label
+                console.log('📸 Taking screenshot of current page state...');
                 await page.screenshot({ 
                   path: \`test-results/component-${i + 1}.png\`,
                   fullPage: false 
                 });
+                console.log('📊 Screenshot saved: component-${i + 1}.png');
           `;
               }
 
@@ -424,10 +575,12 @@ jobs:
                 console.log(\`❌ Failed to test component: \${error.message}\`);
                 
                 // Take error screenshot for debugging
+                console.log('📸 Taking error screenshot...');
                 await page.screenshot({ 
                   path: \`test-results/component-${i + 1}-error.png\`,
                   fullPage: true 
                 });
+                console.log(\`📊 Error screenshot saved: component-${i + 1}-error.png\`);
               }
             });
           `;

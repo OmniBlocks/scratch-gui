@@ -59,9 +59,9 @@
     },
     {
       "name": "extension-library.png",
-      "diffPixels": 0,
-      "diffPercentage": "0.00",
-      "hasDiff": false,
+      "diffPixels": 2538,
+      "diffPercentage": "0.28",
+      "hasDiff": true,
       "skipped": false
     },
     {

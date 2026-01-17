@@ -281,9 +281,9 @@ jobs:
             }
           }
 
-          // Helper function to open menus
-          async function tryOpenMenus(page) {
-            console.log('📂 Attempting to open a menu...');
+          // Helper function to open menus and search for component
+          async function tryOpenMenus(page, targetText) {
+            console.log('📂 Attempting to open menus to find component...');
             
             const menuBarButtons = [
               '[class*="menu-bar"] [class*="menu-bar-item"]',
@@ -303,7 +303,17 @@ jobs:
                       console.log(\`🖱️  Clicking menu item \${i + 1}\`);
                       await btn.click({ timeout: 1000 });
                       await page.waitForTimeout(800);
-                      return; // Found and clicked a menu
+                      
+                      // Check if component is now visible in this menu
+                      const locator = page.getByText(targetText, { exact: false });
+                      if (await locator.count() > 0) {
+                        console.log(\`✓ Found component in menu \${i + 1}\`);
+                        return true;
+                      }
+                      
+                      // Close menu by clicking elsewhere or pressing Escape
+                      await page.keyboard.press('Escape');
+                      await page.waitForTimeout(300);
                     }
                   } catch (e) {
                     // Continue to next button
@@ -313,6 +323,7 @@ jobs:
                 // Continue to next selector
               }
             }
+            return false;
           }
 
           test.describe('Auto-Generated Component Tests', () => {
@@ -413,12 +424,12 @@ jobs:
                 // Strategy 4: For menu items, try opening menus
                 if (!found && ('${comp.type}' === 'menu-item' || componentFile.includes('menu'))) {
                   console.log('📂 Strategy 4: Attempting to open menus...');
-                  await tryOpenMenus(page);
-                  await page.waitForTimeout(1000);
+                  found = await tryOpenMenus(page, targetText);
                   
-                  // Search again after opening menu
-                  locator = page.getByText(targetText, { exact: false });
-                  found = await locator.count() > 0;
+                  if (found) {
+                    // Component found in one of the menus
+                    locator = page.getByText(targetText, { exact: false });
+                  }
                 }
                 
                 // Strategy 5: Try clicking various UI elements that might reveal the component

@@ -183,6 +183,7 @@ const mapStateToProps = state => {
         fontsModalVisible: state.scratchGui.modals.fontsModal,
         unknownPlatformModalVisible: state.scratchGui.modals.unknownPlatformModal,
         invalidProjectModalVisible: state.scratchGui.modals.invalidProjectModal,
+        exportJustModalVisible: state.scratchGui.modals.exportJustModal,
         vm: state.scratchGui.vm
     };
 };

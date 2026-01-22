@@ -2,6 +2,17 @@ const path = require('path');
 module.exports = {
     root: true,
     extends: ['scratch', 'scratch/es6', 'scratch/react', 'plugin:import/errors'],
+    parser: '@babel/eslint-parser',
+    parserOptions: {
+        requireConfigFile: false,
+        sourceType: 'module',
+        ecmaFeatures: {
+            jsx: true
+        },
+        babelOptions: {
+            presets: ['@babel/preset-react']
+        }
+    },
     env: {
         browser: true
     },

@@ -62,31 +62,30 @@ const base = {
     },
     resolve: {
         symlinks: false,
+        extensions: ['.mjs', '.js', '.jsx', '.json'],
         alias: {
             'text-encoding$': path.resolve(__dirname, 'src/lib/tw-text-encoder'),
             'scratch-render-fonts$': path.resolve(__dirname, 'src/lib/tw-scratch-render-fonts')
         }
     },
     module: {
-        rules: [{
-            test: /\.jsx?$/,
-            loader: 'babel-loader',
-            include: [
-                path.resolve(__dirname, 'src'),
-                /node_modules[\\/]scratch-[^\\/]+[\\/]src/,
-                /node_modules[\\/]pify/,
-                /node_modules[\\/]@vernier[\\/]godirect/
-            ],
-            options: {
-                // Explicitly disable babelrc so we don't catch various config
-                // in much lower dependencies.
-                babelrc: false,
-                plugins: [
-                    ['react-intl', {
-                        messagesDir: './translations/messages/'
-                    }]],
-                presets: ['@babel/preset-env', '@babel/preset-react']
-            }
+        rules: [
+            {
+                test: /\.m?jsx?$/,
+                loader: 'babel-loader',
+                include: [
+                    path.resolve(__dirname, 'src'),
+                    /node_modules[\\/]scratch-[^\\/]+[\\/]src/
+                ],
+                options: {
+                    babelrc: false,
+                    plugins: [
+                        ['react-intl', {
+                            messagesDir: './translations/messages/'
+                        }]
+                    ],
+                    presets: ['@babel/preset-env', '@babel/preset-react']
+                }
         },
         {
             test: /\.css$/,
@@ -113,11 +112,22 @@ const base = {
                     }
                 }
             }]
-        }]
+        },
+        {
+            resourceQuery: /pyodide/,
+            loader: "file-loader",
+            options: {
+                name: "static/pyodide/[name].[ext]"
+            }
+            }]
     },
     plugins: [
         new CopyWebpackPlugin({
             patterns: [
+                {
+                    from: path.dirname(require.resolve('pyodide/pyodide.js')),
+                    to: 'static/pyodide'
+                },
                 {
                     from: 'node_modules/scratch-blocks/media',
                     to: 'static/blocks-media/default'
@@ -146,6 +156,7 @@ module.exports = [
     defaultsDeep({}, base, {
         entry: {
             'editor': './src/playground/editor.jsx',
+            'python': './src/playground/python.jsx',
             'player': './src/playground/player.jsx',
             'fullscreen': './src/playground/fullscreen.jsx',
             'embed': './src/playground/embed.jsx',
@@ -190,6 +201,14 @@ module.exports = [
                 template: 'src/playground/index.ejs',
                 filename: 'editor.html',
                 title: `${APP_NAME} - The Ultimate MultiLanguage IDE | Editor`,
+                isEditor: true,
+                ...htmlWebpackPluginCommon
+            }),
+            new HtmlWebpackPlugin({
+                chunks: ['python'],
+                template: 'src/playground/index.ejs',
+                filename: 'python.html',
+                title: `${APP_NAME} - The Ultimate MultiLanguage IDE | Python`,
                 isEditor: true,
                 ...htmlWebpackPluginCommon
             }),

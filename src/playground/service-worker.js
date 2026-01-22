@@ -2,7 +2,7 @@
 /* eslint-disable func-style, require-jsdoc, no-use-before-define */
 const CACHE_NAME = 'omniblocks-v1';
 // bump to clear old entries with bad paths
-const STATIC_CACHE = 'omniblocks-static-v4';
+const STATIC_CACHE = 'omniblocks-static-v5';
 const DYNAMIC_CACHE = 'omniblocks-dynamic-v2';
 
 // --- URL helpers: make all paths scope-relative so GH Pages subpaths work ---
@@ -40,7 +40,14 @@ const STATIC_ASSETS = mapURLs([
     'static/player/samples.js', 'static/player/samples2.js', 'static/player/samples3.js',
     'static/player/wario_samples.js', 'static/player/nintaribox_samples.js',
     'static/player/kirby_samples.js', 'static/player/drumsamples.js',
-    'static/player/mario_paintbox_samples.js'
+    'static/player/mario_paintbox_samples.js',
+    'static/pyodide/pyodide.js',
+    'static/pyodide/pyodide.wasm',
+    'static/pyodide/packages.json',
+    'static/pyodide/python_stdlib.zip'
+
+
+
 ]);
 
 // canonical song editor URL for aliasing navigations

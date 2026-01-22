@@ -31,7 +31,7 @@ const LanguageSelector = ({currentLocale, label, onChange}) => (
 
 LanguageSelector.propTypes = {
     currentLocale: PropTypes.string,
-    label: PropTypes.string,
+    label: PropTypes.string,       
     onChange: PropTypes.func
 };
 

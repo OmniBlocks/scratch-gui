@@ -8,8 +8,10 @@ import MediaQuery from 'react-responsive';
 import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
 import tabStyles from 'react-tabs/style/react-tabs.css';
 import VM from 'scratch-vm';
-
-import Blocks from '../../containers/blocks.jsx';
+// nanoscript will ebe added tomorrow trust me  
+//67
+import BlockComponent from '../../containers/blocks.jsx';
+import CodeEditor from '../../containers/code-editor.jsx';
 import CostumeTab from '../../containers/costume-tab.jsx';
 import TargetPane from '../../containers/target-pane.jsx';
 import SoundTab from '../../containers/sound-tab.jsx';
@@ -19,7 +21,7 @@ import Box from '../box/box.jsx';
 import MenuBar from '../menu-bar/menu-bar.jsx';
 import CostumeLibrary from '../../containers/costume-library.jsx';
 import BackdropLibrary from '../../containers/backdrop-library.jsx';
-import Watermark from '../../containers/watermark.jsx';
+import Watermark from '../../containers/watermark.jsx'; 
 import SongsTab from '../../containers/songs-tab.jsx';
 import Backpack from '../../containers/backpack.jsx';
 import BrowserModal from '../browser-modal/browser-modal.jsx';
@@ -87,6 +89,7 @@ const GUIComponent = props => {
         blocksId,
         blocksTabVisible,
         cardsVisible,
+        codingStyle = "blocks",
         canChangeLanguage,
         canChangeTheme,
         canCreateNew,
@@ -165,6 +168,8 @@ const GUIComponent = props => {
         vm,
         ...componentProps
     } = omit(props, 'dispatch');
+    const Blocks = codingStyle === "blocks" ? BlockComponent : CodeEditor;
+    console.log(codingStyle);
     if (children) {
         return <Box {...componentProps}>{children}</Box>;
     }
@@ -574,6 +579,7 @@ GUIComponent.defaultProps = {
     canManageFiles: true,
     canRemix: false,
     canSave: false,
+    codingStyle: 'blocks',
     canCreateCopy: false,
     canShare: false,
     canUseCloud: false,

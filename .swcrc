@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json.schemastore.org/swcrc",
+  "jsc": {
+    "parser": {
+      "syntax": "ecmascript",
+      "jsx": true,
+      "dynamicImport": true,
+      "decorators": false
+    },
+    "transform": {
+      "react": {
+        "runtime": "classic",
+        "pragma": "React.createElement",
+        "pragmaFrag": "React.Fragment",
+        "throwIfNamespace": true,
+        "development": false,
+        "useBuiltins": false
+      }
+    }
+  },
+  "env": {
+    "targets": {
+      "chrome": "102",
+      "edge": "18",
+      "firefox": "68",
+      "safari": "12",
+      "ios": "12"
+    },
+    "mode": "usage",
+    "coreJs": "2.5.7"
+  }
+}

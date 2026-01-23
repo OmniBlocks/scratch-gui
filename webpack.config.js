@@ -90,6 +90,9 @@ const base = {
                         }
                     }
                 },
+                module: {
+                    type: 'es6'
+                },
                 env: {
                     targets: {
                         chrome: '102',

@@ -573,11 +573,13 @@ jobs:
             const secretsDetails = process.env.HARDCODED_SECRETS_DETAILS || '';
             
             try {
-              // Create a security advisory
+              // Create a DRAFT security advisory (not public until fixed)
+              // This prevents premature disclosure before the PR is fixed
               const advisory = await github.rest.securityAdvisories.createRepositoryAdvisory({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 summary: '🚨 CRITICAL: Hardcoded Credentials Detected in Source Code',
+                state: 'draft', // Keep private until fixed
                 description: `## CRITICAL SECURITY VULNERABILITY
             
             Hardcoded credentials have been detected in the source code during automated security scanning.
@@ -709,14 +711,34 @@ jobs:
             
             // Also create an issue for tracking
             try {
-              await github.rest.issues.create({
+              // First create issue without assignees to avoid failures
+              const issueResponse = await github.rest.issues.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 title: `🚨 CRITICAL: Hardcoded Credentials Detected (${advisoryId})`,
                 body: securityMessage,
-                labels: ['security', 'critical', 'needs-immediate-attention'],
-                assignees: collaborators.data.slice(0, 10).map(c => c.login) // Assign first 10 collaborators
+                labels: ['security', 'critical', 'needs-immediate-attention']
               });
+              
+              const issueNumber = issueResponse.data.number;
+              console.log(`Tracking issue created: #${issueNumber}`);
+              
+              // Try to assign collaborators individually to handle failures gracefully
+              const potentialAssignees = collaborators.data.slice(0, 10);
+              for (const collaborator of potentialAssignees) {
+                try {
+                  await github.rest.issues.addAssignees({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: issueNumber,
+                    assignees: [collaborator.login]
+                  });
+                  console.log(`Assigned @${collaborator.login} to tracking issue`);
+                } catch (assigneeError) {
+                  console.warn(`Failed to assign @${collaborator.login}:`, assigneeError.message || assigneeError);
+                  // Continue with next assignee
+                }
+              }
             } catch (error) {
               console.error('Failed to create tracking issue:', error);
             }
@@ -750,10 +772,22 @@ jobs:
             
             if (botComment) {
               // Update the comment to add security advisory link
-              const updatedBody = botComment.body.replace(
-                /## 🚨 Security & Ethics Violations/,
-                `## 🚨 Security & Ethics Violations\n\n**🔗 Security Advisory Created:** [${advisoryId}](${advisoryUrl})\n`
-              );
+              // Use append strategy to be more robust
+              let updatedBody = botComment.body;
+              
+              // Avoid adding advisory link multiple times
+              if (!updatedBody.includes(advisoryUrl)) {
+                // Try to find the security violations section
+                if (updatedBody.includes('## 🚨 Security & Ethics Violations')) {
+                  updatedBody = updatedBody.replace(
+                    /## 🚨 Security & Ethics Violations/,
+                    `## 🚨 Security & Ethics Violations\n\n**🔗 Security Advisory Created (DRAFT):** [${advisoryId}](${advisoryUrl})\n*Advisory is in draft mode and private until issue is resolved.*\n`
+                  );
+                } else {
+                  // If section not found, append to end
+                  updatedBody += `\n\n---\n\n**🔗 Security Advisory Created (DRAFT):** [${advisoryId}](${advisoryUrl})\n*Advisory is in draft mode and private until issue is resolved.*`;
+                }
+              }
               
               await github.rest.issues.updateComment({
                 owner: context.repo.owner,

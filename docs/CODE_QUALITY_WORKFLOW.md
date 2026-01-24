@@ -49,10 +49,11 @@ Uses `jscpd` to find copy-pasted code blocks:
 
 Scans for security vulnerabilities and unsafe patterns:
 
-- **🚨 CRITICAL: Hardcoded Secrets**
-  - Detects: `password = "..."`, `api_key = "..."`, `secret = "..."`, `token = "..."`
-  - **Action Required**: Remove immediately and rotate any exposed credentials
+- **🚨 CRITICAL: Hardcoded Secrets (Automated Security Check)**
+  - Detects patterns like `password = "..."`, `api_key = "..."`, `secret = "..."`, `token = "..."`
+  - **Action Required**: Remove any detected secrets immediately and rotate any exposed credentials
   - Use environment variables or GitHub Secrets instead
+  - Creates a DRAFT security advisory (private until fixed)
 
 - **⚠️ eval() Usage**
   - Allows arbitrary code execution (security risk)
@@ -241,9 +242,9 @@ If you need to temporarily disable a check:
 
 ### Q: Will this block my PR from merging?
 
-**A**: Yes, if **critical issues** are found:
-- Deprecated React patterns (requires migration)
-- Security violations (hardcoded secrets, eval, etc.)
+**A**: It depends on what was found:
+- **Security violations** (hardcoded secrets, use of `eval`, etc.) will **block** your PR until fixed.
+- **Deprecated React patterns** may **warn or block** depending on configuration. The workflow currently fails on these patterns, but since there are 11 known legacy usages inherited from upstream Scratch/TurboWarp, the workflow only scans changed files in PRs to avoid blocking existing code.
 
 Non-critical issues (AI markers, some duplicates) will warn but won't block.
 

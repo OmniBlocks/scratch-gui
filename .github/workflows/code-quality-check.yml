@@ -41,14 +41,15 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const { data: files } = await github.rest.pulls.listFiles({
+            // Paginate through all changed files (not just first 100)
+            const allFiles = await github.paginate(github.rest.pulls.listFiles, {
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.payload.pull_request.number,
               per_page: 100
             });
             
-            const jsFiles = files
+            const jsFiles = allFiles
               .filter(f => f.status !== 'removed')
               .filter(f => /\.(js|jsx)$/.test(f.filename))
               .map(f => f.filename)
@@ -210,9 +211,14 @@ jobs:
             fi
           fi
           
-          # 3. Check for suspiciously perfect JSDoc patterns
-          JSDOC_COUNT=$(grep -r "/\*\*" --include="*.js" --include="*.jsx" src/ 2>/dev/null | wc -l)
-          JSDOC_PARAM_COUNT=$(grep -r "@param\|@returns\|@throws" --include="*.js" --include="*.jsx" src/ 2>/dev/null | wc -l)
+          # 3. Check for suspiciously perfect JSDoc patterns (scoped to PR files)
+          if [ "${{ github.event_name }}" = "pull_request" ] && [ -n "$FILES" ]; then
+            JSDOC_COUNT=$(echo "$FILES" | xargs grep -h "/\*\*" 2>/dev/null | wc -l)
+            JSDOC_PARAM_COUNT=$(echo "$FILES" | xargs grep -h "@param\|@returns\|@throws" 2>/dev/null | wc -l)
+          else
+            JSDOC_COUNT=$(grep -r "/\*\*" --include="*.js" --include="*.jsx" src/ 2>/dev/null | wc -l)
+            JSDOC_PARAM_COUNT=$(grep -r "@param\|@returns\|@throws" --include="*.js" --include="*.jsx" src/ 2>/dev/null | wc -l)
+          fi
           
           if [ "$JSDOC_COUNT" -gt 100 ] && [ "$JSDOC_PARAM_COUNT" -gt 200 ]; then
             AI_DETAILS="${AI_DETAILS}\n### ℹ️ High JSDoc Usage:\n"
@@ -220,26 +226,44 @@ jobs:
             AI_DETAILS="${AI_DETAILS}This might indicate AI-generated documentation. Please verify quality.\n"
           fi
           
-          # 4. Check for overly descriptive variable names (AI tendency)
-          if grep -r "const \w\{30,\}\|let \w\{30,\}\|function \w\{30,\}" \
-             --include="*.js" --include="*.jsx" src/ 2>/dev/null; then
-            AI_MARKERS_FOUND=true
-            AI_DETAILS="${AI_DETAILS}\n### Overly Long Identifiers:\n"
-            AI_DETAILS="${AI_DETAILS}\`\`\`\n"
-            AI_DETAILS="${AI_DETAILS}$(grep -rn "const \w\{30,\}\|let \w\{30,\}\|function \w\{30,\}" \
-              --include="*.js" --include="*.jsx" src/ 2>/dev/null | head -5)\n"
-            AI_DETAILS="${AI_DETAILS}\`\`\`\n"
+          # 4. Check for overly descriptive variable names (AI tendency) - scoped to PR files
+          if [ "${{ github.event_name }}" = "pull_request" ] && [ -n "$FILES" ]; then
+            if echo "$FILES" | xargs grep -E "const \w{30,}|let \w{30,}|function \w{30,}" 2>/dev/null; then
+              AI_MARKERS_FOUND=true
+              AI_DETAILS="${AI_DETAILS}\n### Overly Long Identifiers:\n"
+              AI_DETAILS="${AI_DETAILS}\`\`\`\n"
+              AI_DETAILS="${AI_DETAILS}$(echo "$FILES" | xargs grep -En "const \w{30,}|let \w{30,}|function \w{30,}" 2>/dev/null | head -5)\n"
+              AI_DETAILS="${AI_DETAILS}\`\`\`\n"
+            fi
+          else
+            if grep -rE "const \w{30,}|let \w{30,}|function \w{30,}" --include="*.js" --include="*.jsx" src/ 2>/dev/null; then
+              AI_MARKERS_FOUND=true
+              AI_DETAILS="${AI_DETAILS}\n### Overly Long Identifiers:\n"
+              AI_DETAILS="${AI_DETAILS}\`\`\`\n"
+              AI_DETAILS="${AI_DETAILS}$(grep -rEn "const \w{30,}|let \w{30,}|function \w{30,}" \
+                --include="*.js" --include="*.jsx" src/ 2>/dev/null | head -5)\n"
+              AI_DETAILS="${AI_DETAILS}\`\`\`\n"
+            fi
           fi
           
-          # 5. Check for AI service markers (accidental inclusions)
-          if grep -ri "ChatGPT\|Claude\|GPT-4\|Copilot generated\|AI generated" \
-             --include="*.js" --include="*.jsx" src/ 2>/dev/null; then
-            AI_MARKERS_FOUND=true
-            AI_DETAILS="${AI_DETAILS}\n### 🚨 AI Service Mentions Found:\n"
-            AI_DETAILS="${AI_DETAILS}\`\`\`\n"
-            AI_DETAILS="${AI_DETAILS}$(grep -rni "ChatGPT\|Claude\|GPT-4\|Copilot generated\|AI generated" \
-              --include="*.js" --include="*.jsx" src/ 2>/dev/null)\n"
-            AI_DETAILS="${AI_DETAILS}\`\`\`\n"
+          # 5. Check for AI service markers (accidental inclusions) - scoped to PR files
+          if [ "${{ github.event_name }}" = "pull_request" ] && [ -n "$FILES" ]; then
+            if echo "$FILES" | xargs grep -iE "ChatGPT|Claude|GPT-4|Copilot generated|AI generated" 2>/dev/null; then
+              AI_MARKERS_FOUND=true
+              AI_DETAILS="${AI_DETAILS}\n### 🚨 AI Service Mentions Found:\n"
+              AI_DETAILS="${AI_DETAILS}\`\`\`\n"
+              AI_DETAILS="${AI_DETAILS}$(echo "$FILES" | xargs grep -inE "ChatGPT|Claude|GPT-4|Copilot generated|AI generated" 2>/dev/null)\n"
+              AI_DETAILS="${AI_DETAILS}\`\`\`\n"
+            fi
+          else
+            if grep -riE "ChatGPT|Claude|GPT-4|Copilot generated|AI generated" --include="*.js" --include="*.jsx" src/ 2>/dev/null; then
+              AI_MARKERS_FOUND=true
+              AI_DETAILS="${AI_DETAILS}\n### 🚨 AI Service Mentions Found:\n"
+              AI_DETAILS="${AI_DETAILS}\`\`\`\n"
+              AI_DETAILS="${AI_DETAILS}$(grep -rniE "ChatGPT|Claude|GPT-4|Copilot generated|AI generated" \
+                --include="*.js" --include="*.jsx" src/ 2>/dev/null)\n"
+              AI_DETAILS="${AI_DETAILS}\`\`\`\n"
+            fi
           fi
           
           if [ "$AI_MARKERS_FOUND" = true ]; then
@@ -336,30 +360,36 @@ jobs:
               echo "No JS/JSX files changed in this PR - skipping secrets check"
             else
               echo "Scanning only changed files in PR for hardcoded secrets"
-              # Use -E for extended regex, scan only changed files
-              SCAN_CMD="echo \"$FILES\" | xargs grep -En"
             fi
           else
             echo "Scanning entire src/ directory for hardcoded secrets"
-            SCAN_CMD="grep -rEn"
             FILES="src/"
           fi
           
-          # Fixed regex pattern with -E flag
-          # Matches: password="value", api_key="value", secret="value", token="value"
-          # Also matches: password: "value" (object property syntax)
+          # Fixed regex pattern with -E flag for extended regex
+          # Matches both single and double quotes: password="value", password='value', api_key="value", etc.
+          # Also matches object property syntax: password: "value"
           if [ -n "$FILES" ]; then
-            SECRET_PATTERN='(password|api_key|secret|token)\s*[:=]\s*["047][^"047]{3,}["047]'
+            SECRET_PATTERN='(password|api_key|secret|token)\s*[:=]\s*["\047][^"\047]{3,}["\047]'
             
-            if eval "$SCAN_CMD \"$SECRET_PATTERN\" $FILES" 2>/dev/null | grep -v "password\s*[:=]\s*[\"047][\"047]" | grep -v "token\s*[:=]\s*[\"047][\"047]"; then
+            # Run grep directly (no eval) and filter out empty strings
+            if [ "${{ github.event_name }}" = "pull_request" ]; then
+              # For PRs, use xargs with changed files
+              SCAN_RESULT=$(echo "$FILES" | xargs grep -En "$SECRET_PATTERN" 2>/dev/null | grep -v 'password\s*[:=]\s*["\047]["\047]' | grep -v 'token\s*[:=]\s*["\047]["\047]' || true)
+            else
+              # For pushes to main/develop, scan src/ recursively
+              SCAN_RESULT=$(grep -rEn "$SECRET_PATTERN" src/ 2>/dev/null | grep -v 'password\s*[:=]\s*["\047]["\047]' | grep -v 'token\s*[:=]\s*["\047]["\047]' || true)
+            fi
+            
+            if [ -n "$SCAN_RESULT" ]; then
               ETHICS_VIOLATIONS=true
               HARDCODED_SECRETS_FOUND=true
               
-              # Capture findings but REDACT the actual secret values
-              FOUND_SECRETS=$(eval "$SCAN_CMD \"$SECRET_PATTERN\" $FILES" 2>/dev/null | grep -v "password\s*[:=]\s*[\"047][\"047]" | grep -v "token\s*[:=]\s*[\"047][\"047]" | head -10)
+              # Capture findings (limit to 10)
+              FOUND_SECRETS=$(echo "$SCAN_RESULT" | head -10)
               
-              # Redact actual secret values for security
-              REDACTED_FINDINGS=$(echo "$FOUND_SECRETS" | sed -E 's/(password|api_key|secret|token)(\s*[:=]\s*["047])[^"047]+(["047])/\1\2***REDACTED***\3/gi')
+              # Redact actual secret values for security (handle both single and double quotes)
+              REDACTED_FINDINGS=$(echo "$FOUND_SECRETS" | sed -E 's/(password|api_key|secret|token)(\s*[:=]\s*["\047])[^"\047]+(["\047])/\1\2***REDACTED***\3/gi')
               
               ETHICS_DETAILS="${ETHICS_DETAILS}\n### 🚨 CRITICAL SECURITY VULNERABILITY: Hardcoded Credentials Found!\n"
               ETHICS_DETAILS="${ETHICS_DETAILS}**⚠️ IMMEDIATE ACTION REQUIRED - SECURITY BREACH DETECTED ⚠️**\n\n"
@@ -392,53 +422,98 @@ jobs:
             echo "EOF" >> $GITHUB_OUTPUT
           fi
           
-          # 2. Check for eval() usage (security risk)
-          if grep -r "eval(" --include="*.js" --include="*.jsx" src/ 2>/dev/null | grep -v "// "; then
-            ETHICS_VIOLATIONS=true
-            ETHICS_DETAILS="${ETHICS_DETAILS}\n### ⚠️ eval() Usage Detected:\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}$(grep -rn "eval(" --include="*.js" --include="*.jsx" src/ 2>/dev/null | grep -v "// " | head -10)\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+          # 2. Check for eval() usage (security risk) - scoped to PR files
+          if [ "${{ github.event_name }}" = "pull_request" ] && [ -n "$FILES" ]; then
+            if echo "$FILES" | xargs grep "eval(" 2>/dev/null | grep -v "// "; then
+              ETHICS_VIOLATIONS=true
+              ETHICS_DETAILS="${ETHICS_DETAILS}\n### ⚠️ eval() Usage Detected:\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}$(echo "$FILES" | xargs grep -n "eval(" 2>/dev/null | grep -v "// " | head -10)\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+            fi
+          else
+            if grep -r "eval(" --include="*.js" --include="*.jsx" src/ 2>/dev/null | grep -v "// "; then
+              ETHICS_VIOLATIONS=true
+              ETHICS_DETAILS="${ETHICS_DETAILS}\n### ⚠️ eval() Usage Detected:\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}$(grep -rn "eval(" --include="*.js" --include="*.jsx" src/ 2>/dev/null | grep -v "// " | head -10)\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+            fi
           fi
           
-          # 3. Check for dangerous innerHTML usage without sanitization
-          if grep -r "dangerouslySetInnerHTML\|innerHTML\s*=" --include="*.js" --include="*.jsx" src/ 2>/dev/null; then
-            ETHICS_VIOLATIONS=true
-            ETHICS_DETAILS="${ETHICS_DETAILS}\n### ⚠️ Potentially Unsafe HTML Injection:\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}$(grep -rn "dangerouslySetInnerHTML\|innerHTML\s*=" \
-              --include="*.js" --include="*.jsx" src/ 2>/dev/null | head -10)\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}Make sure these are properly sanitized to prevent XSS attacks.\n"
+          # 3. Check for dangerous innerHTML usage without sanitization - scoped to PR files
+          if [ "${{ github.event_name }}" = "pull_request" ] && [ -n "$FILES" ]; then
+            if echo "$FILES" | xargs grep -E "dangerouslySetInnerHTML|innerHTML\s*=" 2>/dev/null; then
+              ETHICS_VIOLATIONS=true
+              ETHICS_DETAILS="${ETHICS_DETAILS}\n### ⚠️ Potentially Unsafe HTML Injection:\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}$(echo "$FILES" | xargs grep -nE "dangerouslySetInnerHTML|innerHTML\s*=" 2>/dev/null | head -10)\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}Make sure these are properly sanitized to prevent XSS attacks.\n"
+            fi
+          else
+            if grep -rE "dangerouslySetInnerHTML|innerHTML\s*=" --include="*.js" --include="*.jsx" src/ 2>/dev/null; then
+              ETHICS_VIOLATIONS=true
+              ETHICS_DETAILS="${ETHICS_DETAILS}\n### ⚠️ Potentially Unsafe HTML Injection:\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}$(grep -rnE "dangerouslySetInnerHTML|innerHTML\s*=" \
+                --include="*.js" --include="*.jsx" src/ 2>/dev/null | head -10)\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}Make sure these are properly sanitized to prevent XSS attacks.\n"
+            fi
           fi
           
           # 4. Check for console.log in production code (not unethical but bad practice)
-          CONSOLE_COUNT=$(grep -r "console\.(log\|debug\|info)" --include="*.js" --include="*.jsx" src/ 2>/dev/null | wc -l)
+          if [ "${{ github.event_name }}" = "pull_request" ] && [ -n "$FILES" ]; then
+            CONSOLE_COUNT=$(echo "$FILES" | xargs grep -E "console\.(log|debug|info)" 2>/dev/null | wc -l)
+          else
+            CONSOLE_COUNT=$(grep -rE "console\.(log|debug|info)" --include="*.js" --include="*.jsx" src/ 2>/dev/null | wc -l)
+          fi
           if [ "$CONSOLE_COUNT" -gt 100 ]; then
             ETHICS_DETAILS="${ETHICS_DETAILS}\n### ℹ️ Excessive Console Statements:\n"
             ETHICS_DETAILS="${ETHICS_DETAILS}Found $CONSOLE_COUNT console.log statements. Consider using a proper logging library.\n"
           fi
           
-          # 5. Check for TODO/FIXME that might indicate incomplete security implementations
-          if grep -ri "TODO.*security\|FIXME.*auth\|TODO.*sanitize\|FIXME.*XSS" \
-             --include="*.js" --include="*.jsx" src/ 2>/dev/null; then
-            ETHICS_VIOLATIONS=true
-            ETHICS_DETAILS="${ETHICS_DETAILS}\n### 🚨 Incomplete Security TODOs:\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}$(grep -rni "TODO.*security\|FIXME.*auth\|TODO.*sanitize\|FIXME.*XSS" \
-              --include="*.js" --include="*.jsx" src/ 2>/dev/null)\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+          # 5. Check for TODO/FIXME that might indicate incomplete security implementations - scoped to PR files
+          if [ "${{ github.event_name }}" = "pull_request" ] && [ -n "$FILES" ]; then
+            if echo "$FILES" | xargs grep -iE "TODO.*security|FIXME.*auth|TODO.*sanitize|FIXME.*XSS" 2>/dev/null; then
+              ETHICS_VIOLATIONS=true
+              ETHICS_DETAILS="${ETHICS_DETAILS}\n### 🚨 Incomplete Security TODOs:\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}$(echo "$FILES" | xargs grep -niE "TODO.*security|FIXME.*auth|TODO.*sanitize|FIXME.*XSS" 2>/dev/null)\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+            fi
+          else
+            if grep -riE "TODO.*security|FIXME.*auth|TODO.*sanitize|FIXME.*XSS" \
+               --include="*.js" --include="*.jsx" src/ 2>/dev/null; then
+              ETHICS_VIOLATIONS=true
+              ETHICS_DETAILS="${ETHICS_DETAILS}\n### 🚨 Incomplete Security TODOs:\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}$(grep -rniE "TODO.*security|FIXME.*auth|TODO.*sanitize|FIXME.*XSS" \
+                --include="*.js" --include="*.jsx" src/ 2>/dev/null)\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+            fi
           fi
           
-          # 6. Check for disabled security features
-          if grep -r "eslint-disable.*security\|@ts-ignore.*security\|skipLibCheck.*true" \
-             --include="*.js" --include="*.jsx" --include="*.ts" --include="*.tsx" src/ 2>/dev/null; then
-            ETHICS_VIOLATIONS=true
-            ETHICS_DETAILS="${ETHICS_DETAILS}\n### ⚠️ Disabled Security Checks:\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}$(grep -rn "eslint-disable.*security\|@ts-ignore.*security" \
-              --include="*.js" --include="*.jsx" src/ 2>/dev/null)\n"
-            ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+          # 6. Check for disabled security features - scoped to PR files
+          if [ "${{ github.event_name }}" = "pull_request" ] && [ -n "$FILES" ]; then
+            if echo "$FILES" | xargs grep -E "eslint-disable.*security|@ts-ignore.*security|skipLibCheck.*true" 2>/dev/null; then
+              ETHICS_VIOLATIONS=true
+              ETHICS_DETAILS="${ETHICS_DETAILS}\n### ⚠️ Disabled Security Checks:\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}$(echo "$FILES" | xargs grep -nE "eslint-disable.*security|@ts-ignore.*security" 2>/dev/null)\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+            fi
+          else
+            if grep -rE "eslint-disable.*security|@ts-ignore.*security|skipLibCheck.*true" \
+               --include="*.js" --include="*.jsx" --include="*.ts" --include="*.tsx" src/ 2>/dev/null; then
+              ETHICS_VIOLATIONS=true
+              ETHICS_DETAILS="${ETHICS_DETAILS}\n### ⚠️ Disabled Security Checks:\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}$(grep -rnE "eslint-disable.*security|@ts-ignore.*security" \
+                --include="*.js" --include="*.jsx" src/ 2>/dev/null)\n"
+              ETHICS_DETAILS="${ETHICS_DETAILS}\`\`\`\n"
+            fi
           fi
           
           if [ "$ETHICS_VIOLATIONS" = true ]; then
@@ -540,14 +615,26 @@ jobs:
             report += `*🤖 Automated code quality check performed by GitHub Actions*\n`;
             report += `*Run ID: [${context.runId}](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})*\n`;
             
-            // Post comment on PR if this is a pull request
+            // Post comment on PR if this is a pull request (skip for forks due to permissions)
             if (context.payload.pull_request) {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.payload.pull_request.number,
-                body: report
-              });
+              const isFork = context.payload.pull_request.head.repo.fork || 
+                             context.payload.pull_request.head.repo.full_name !== `${context.repo.owner}/${context.repo.repo}`;
+              
+              if (!isFork) {
+                try {
+                  await github.rest.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: context.payload.pull_request.number,
+                    body: report
+                  });
+                } catch (error) {
+                  console.warn('Failed to create comment (possibly due to permissions):', error.message);
+                  // Don't fail the workflow if comment creation fails
+                }
+              } else {
+                console.log('Skipping PR comment for fork PR due to read-only token');
+              }
             }
             
             // Set output for subsequent steps

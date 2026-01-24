@@ -163,7 +163,7 @@ function MyComponent() {
 
 **Before:**
 ```js
-const apiKey = "sk-1234567890abcdef";
+const apiKey = process.env.API_KEY || "YOUR_API_KEY_HERE";
 fetch(`https://api.example.com?key=${apiKey}`);
 ```
 

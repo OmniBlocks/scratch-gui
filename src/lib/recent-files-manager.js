@@ -36,6 +36,12 @@ export const saveRecentFiles = files => {
 
 /**
  * Add a file to recent files list
+ * NOTE: This function only stores file metadata (name and timestamp), not the
+ * FileSystemFileHandle itself. Due to localStorage limitations, handles cannot
+ * be serialized. For actual file reopening functionality, the application would
+ * need to use IndexedDB to store handles, or implement a user-triggered prompt
+ * to request file access permission when the user wants to reopen a recent file.
+ * 
  * @param {FileSystemFileHandle} fileHandle The file handle from File System Access API
  * @returns {Array} Updated array of recent files metadata
  */

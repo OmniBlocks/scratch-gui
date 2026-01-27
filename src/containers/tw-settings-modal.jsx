@@ -6,6 +6,8 @@ import {connect} from 'react-redux';
 import {closeSettingsModal} from '../reducers/modals';
 import SettingsModalComponent from '../components/tw-settings-modal/settings-modal.jsx';
 import {defaultStageSize} from '../reducers/custom-stage-size';
+import {setAutoOpenEnabled} from '../reducers/tw';
+import {saveAutoOpenSetting} from '../lib/recent-files-manager';
 
 const messages = defineMessages({
     newFramerate: {
@@ -174,8 +176,6 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     onClose: () => dispatch(closeSettingsModal()),
     onAutoOpenChange: enabled => {
-        const {setAutoOpenEnabled} = require('../reducers/tw');
-        const {saveAutoOpenSetting} = require('../lib/recent-files-manager');
         dispatch(setAutoOpenEnabled(enabled));
         saveAutoOpenSetting(enabled);
     }

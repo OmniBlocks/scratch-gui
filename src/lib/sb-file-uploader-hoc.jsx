@@ -5,7 +5,8 @@ import {intlShape, injectIntl} from 'react-intl';
 import {connect} from 'react-redux';
 import log from '../lib/log';
 import sharedMessages from './shared-messages';
-import {setFileHandle, setProjectError} from '../reducers/tw';
+import {setFileHandle, setProjectError, addRecentFile as addRecentFileAction} from '../reducers/tw';
+import {addRecentFile as addToRecentFiles} from '../lib/recent-files-manager';
 
 import {
     LoadingStates,
@@ -148,9 +149,7 @@ const SBFileUploaderHOC = function (WrappedComponent) {
                         if (this.fileToUpload.name.endsWith('.sb3')) {
                             this.props.onSetFileHandle(handle);
                             // Add to recent files when opening
-                            const {addRecentFile: addToRecentFiles} = require('../lib/recent-files-manager');
                             const recentFiles = addToRecentFiles(handle);
-                            const {addRecentFile} = require('../reducers/tw');
                             this.props.onAddRecentFile(recentFiles);
                         } else {
                             this.props.onSetFileHandle(null);
@@ -328,10 +327,7 @@ const SBFileUploaderHOC = function (WrappedComponent) {
         // noticed by componentDidUpdate()
         requestProjectUpload: loadingState => dispatch(requestProjectUpload(loadingState)),
         onSetFileHandle: fileHandle => dispatch(setFileHandle(fileHandle)),
-        onAddRecentFile: recentFiles => {
-            const {addRecentFile} = require('../reducers/tw');
-            dispatch(addRecentFile(recentFiles));
-        }
+        onAddRecentFile: recentFiles => dispatch(addRecentFileAction(recentFiles))
     });
     // Allow incoming props to override redux-provided props. Used to mock in tests.
     const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign(

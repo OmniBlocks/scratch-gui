@@ -338,7 +338,7 @@ const AutoOpen = props => (
         help={
             <FormattedMessage
                 // eslint-disable-next-line max-len
-                defaultMessage="Automatically opens your most recently saved file when the editor loads. This uses the File System Access API to remember files you've saved. Your browser must support this feature."
+                defaultMessage="Remembers your most recently saved files. When enabled, you can quickly reopen them. This uses the File System Access API to track file names. Your browser must support this feature."
                 description="Auto-Open setting help"
                 id="tw.settingsModal.autoOpenHelp"
             />

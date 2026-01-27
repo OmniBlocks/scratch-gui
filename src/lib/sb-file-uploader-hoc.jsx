@@ -148,9 +148,12 @@ const SBFileUploaderHOC = function (WrappedComponent) {
                     if (handle) {
                         if (this.fileToUpload.name.endsWith('.sb3')) {
                             this.props.onSetFileHandle(handle);
-                            // Add to recent files when opening
-                            const recentFiles = addToRecentFiles(handle);
-                            this.props.onAddRecentFile(recentFiles);
+                            // Add to recent files when opening (async)
+                            addToRecentFiles(handle).then(recentFiles => {
+                                this.props.onAddRecentFile(recentFiles);
+                            }).catch(err => {
+                                console.error('Failed to add recent file:', err);
+                            });
                         } else {
                             this.props.onSetFileHandle(null);
                         }

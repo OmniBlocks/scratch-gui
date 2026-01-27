@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 import {addRecentFile, setAutoOpenEnabled} from '../reducers/tw';
-import {loadRecentFiles, loadAutoOpenSetting} from '../lib/recent-files-manager';
+import {loadRecentFilesMetadata, loadAutoOpenSetting} from '../lib/recent-files-manager';
 
 /**
  * HOC to handle auto-opening of recent files on startup
@@ -11,10 +11,10 @@ import {loadRecentFiles, loadAutoOpenSetting} from '../lib/recent-files-manager'
  */
 const AutoOpenHOC = function (WrappedComponent) {
     class AutoOpenComponent extends React.Component {
-        componentDidMount () {
-            // Load settings from localStorage on mount
+        async componentDidMount () {
+            // Load settings from localStorage and IndexedDB on mount
             const autoOpenEnabled = loadAutoOpenSetting();
-            const recentFiles = loadRecentFiles();
+            const recentFiles = await loadRecentFilesMetadata();
             
             this.props.onSetAutoOpenEnabled(autoOpenEnabled);
             this.props.onSetRecentFiles(recentFiles);

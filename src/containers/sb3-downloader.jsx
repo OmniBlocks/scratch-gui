@@ -111,9 +111,12 @@ class SB3Downloader extends React.Component {
             });
             await this.saveToHandle(handle);
             this.props.onSetFileHandle(handle);
-            // Add to recent files
-            const recentFiles = addToRecentFiles(handle);
-            this.props.onAddRecentFile(recentFiles);
+            // Add to recent files (async)
+            addToRecentFiles(handle).then(recentFiles => {
+                this.props.onAddRecentFile(recentFiles);
+            }).catch(err => {
+                console.error('Failed to add recent file:', err);
+            });
             const title = getProjectTitleFromFilename(handle.name);
             if (title) {
                 this.props.onSetProjectTitle(title);

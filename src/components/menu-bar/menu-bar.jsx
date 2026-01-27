@@ -81,6 +81,7 @@ import {
     closeErrorsMenu
 } from '../../reducers/menus';
 import {setFileHandle} from '../../reducers/tw.js';
+import {getFileHandleByName} from '../../lib/recent-files-manager';
 
 import collectMetadata from '../../lib/collect-metadata';
 
@@ -228,7 +229,8 @@ class MenuBar extends React.Component {
             'handleKeyPress',
             'handleRestoreOption',
             'getSaveToComputerHandler',
-            'restoreOptionMessage'
+            'restoreOptionMessage',
+            'handleClickRecentFile'
         ]);
     }
     componentDidMount () {
@@ -359,6 +361,71 @@ class MenuBar extends React.Component {
                 this.props.onProjectTelemetryEvent('projectDidSave', metadata);
             }
         };
+    }
+    async handleClickRecentFile (fileName) {
+        try {
+            // Close the file menu
+            this.props.onRequestCloseFile();
+            
+            // Get the file handle from IndexedDB
+            const fileHandle = await getFileHandleByName(fileName);
+            if (!fileHandle) {
+                console.error('File handle not found for:', fileName);
+                return;
+            }
+            
+            // Request permission to read the file
+            const permission = await fileHandle.queryPermission({mode: 'read'});
+            if (permission !== 'granted') {
+                const newPermission = await fileHandle.requestPermission({mode: 'read'});
+                if (newPermission !== 'granted') {
+                    console.error('Permission denied to read file:', fileName);
+                    return;
+                }
+            }
+            
+            // Read the file
+            const file = await fileHandle.getFile();
+            const reader = new FileReader();
+            
+            reader.onload = () => {
+                // Trigger the file upload with the file content
+                if (this.props.onStartSelectingFileUpload) {
+                    // Create a synthetic file input event
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    const fileInput = document.createElement('input');
+                    fileInput.type = 'file';
+                    fileInput.files = dataTransfer.files;
+                    
+                    // Store the handle for future saves
+                    if (this.props.onSetFileHandle) {
+                        this.props.onSetFileHandle(fileHandle);
+                    }
+                    
+                    // Trigger the upload
+                    this.props.onStartSelectingFileUpload();
+                    // Simulate the file selection
+                    setTimeout(() => {
+                        const realFileInput = document.querySelector('input[type="file"]');
+                        if (realFileInput) {
+                            const dt = new DataTransfer();
+                            dt.items.add(file);
+                            realFileInput.files = dt.files;
+                            realFileInput.dispatchEvent(new Event('change', {bubbles: true}));
+                        }
+                    }, 100);
+                }
+            };
+            
+            reader.onerror = error => {
+                console.error('Error reading file:', error);
+            };
+            
+            reader.readAsArrayBuffer(file);
+        } catch (error) {
+            console.error('Error opening recent file:', error);
+        }
     }
     restoreOptionMessage (deletedItem) {
         switch (deletedItem) {
@@ -735,19 +802,7 @@ class MenuBar extends React.Component {
                                             {this.props.recentFiles.slice(0, 5).map((file, index) => (
                                                 <MenuItem
                                                     key={`recent-${index}`}
-                                                    onClick={() => {
-                                                        // Note: This shows the file name but can't actually open it
-                                                        // due to File System Access API security restrictions.
-                                                        // A future implementation would use IndexedDB to store handles.
-                                                        this.props.intl.formatMessage(
-                                                            {
-                                                                defaultMessage: 'Cannot reopen {filename} - file handles not stored',
-                                                                description: 'Error when trying to reopen recent file',
-                                                                id: 'tw.menuBar.cannotReopenFile'
-                                                            },
-                                                            {filename: file.name}
-                                                        );
-                                                    }}
+                                                    onClick={() => this.handleClickRecentFile(file.name)}
                                                 >
                                                     {file.name}
                                                 </MenuItem>
@@ -1214,7 +1269,8 @@ MenuBar.propTypes = {
         name: PropTypes.string,
         timestamp: PropTypes.number
     })),
-    autoOpenEnabled: PropTypes.bool
+    autoOpenEnabled: PropTypes.bool,
+    onSetFileHandle: PropTypes.func
 };
 
 MenuBar.defaultProps = {
@@ -1292,7 +1348,8 @@ const mapDispatchToProps = dispatch => ({
     onClickSave: () => dispatch(manualUpdateProject()),
     onClickSaveAsCopy: () => dispatch(saveProjectAsCopy()),
     onSeeCommunity: () => dispatch(setPlayer(true)),
-    onSetTimeTravelMode: mode => dispatch(setTimeTravel(mode))
+    onSetTimeTravelMode: mode => dispatch(setTimeTravel(mode)),
+    onSetFileHandle: handle => dispatch(setFileHandle(handle))
 });
 
 export default compose(

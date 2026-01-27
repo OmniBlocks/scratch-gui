@@ -343,7 +343,6 @@ const AutoOpen = props => (
                 id="tw.settingsModal.autoOpenHelp"
             />
         }
-        slug="auto-open"
     />
 );
 

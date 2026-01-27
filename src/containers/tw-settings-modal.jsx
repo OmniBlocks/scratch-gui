@@ -174,10 +174,10 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     onClose: () => dispatch(closeSettingsModal()),
     onAutoOpenChange: enabled => {
-        const {saveAutoOpenSetting, setAutoOpenEnabled} = require('../reducers/tw');
+        const {setAutoOpenEnabled} = require('../reducers/tw');
+        const {saveAutoOpenSetting} = require('../lib/recent-files-manager');
         dispatch(setAutoOpenEnabled(enabled));
-        const {saveAutoOpenSetting: saveToStorage} = require('../lib/recent-files-manager');
-        saveToStorage(enabled);
+        saveAutoOpenSetting(enabled);
     }
 });
 

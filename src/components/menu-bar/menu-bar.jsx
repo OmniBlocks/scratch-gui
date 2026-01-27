@@ -723,6 +723,37 @@ class MenuBar extends React.Component {
                                             )}
                                         </SB3FolderExporter>
                                     </MenuSection>
+                                    {this.props.autoOpenEnabled && this.props.recentFiles && this.props.recentFiles.length > 0 && (
+                                        <MenuSection>
+                                            <MenuItem className={styles.menuSectionHeader}>
+                                                <FormattedMessage
+                                                    defaultMessage="Recent Files"
+                                                    description="Section header for recent files in file menu"
+                                                    id="tw.menuBar.recentFiles"
+                                                />
+                                            </MenuItem>
+                                            {this.props.recentFiles.slice(0, 5).map((file, index) => (
+                                                <MenuItem
+                                                    key={`recent-${index}`}
+                                                    onClick={() => {
+                                                        // Note: This shows the file name but can't actually open it
+                                                        // due to File System Access API security restrictions.
+                                                        // A future implementation would use IndexedDB to store handles.
+                                                        this.props.intl.formatMessage(
+                                                            {
+                                                                defaultMessage: 'Cannot reopen {filename} - file handles not stored',
+                                                                description: 'Error when trying to reopen recent file',
+                                                                id: 'tw.menuBar.cannotReopenFile'
+                                                            },
+                                                            {filename: file.name}
+                                                        );
+                                                    }}
+                                                >
+                                                    {file.name}
+                                                </MenuItem>
+                                            ))}
+                                        </MenuSection>
+                                    )}
                                     {this.props.onClickPackager && (
                                         <MenuSection>
                                             <MenuItem
@@ -1178,7 +1209,12 @@ MenuBar.propTypes = {
     showComingSoon: PropTypes.bool,
     username: PropTypes.string,
     userOwnsProject: PropTypes.bool,
-    vm: PropTypes.instanceOf(VM).isRequired
+    vm: PropTypes.instanceOf(VM).isRequired,
+    recentFiles: PropTypes.arrayOf(PropTypes.shape({
+        name: PropTypes.string,
+        timestamp: PropTypes.number
+    })),
+    autoOpenEnabled: PropTypes.bool
 };
 
 MenuBar.defaultProps = {
@@ -1217,7 +1253,9 @@ const mapStateToProps = (state, ownProps) => {
         mode1920: isTimeTravel1920(state),
         mode1990: isTimeTravel1990(state),
         mode2020: isTimeTravel2020(state),
-        modeNow: isTimeTravelNow(state)
+        modeNow: isTimeTravelNow(state),
+        recentFiles: state.scratchGui.tw.recentFiles || [],
+        autoOpenEnabled: state.scratchGui.tw.autoOpenEnabled || false
     };
 };
 

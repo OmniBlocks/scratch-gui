@@ -6,8 +6,9 @@ import {projectTitleInitialState, setProjectTitle} from '../reducers/project-tit
 import downloadBlob from '../lib/download-blob';
 import {setProjectUnchanged} from '../reducers/project-changed';
 import {showStandardAlert, showAlertWithTimeout} from '../reducers/alerts';
-import {setFileHandle} from '../reducers/tw';
+import {setFileHandle, addRecentFile} from '../reducers/tw';
 import {getIsShowingProject} from '../reducers/project-state';
+import {addRecentFile as addToRecentFiles} from '../lib/recent-files-manager';
 import log from '../lib/log';
 
 // from sb-file-uploader-hoc.jsx
@@ -110,6 +111,9 @@ class SB3Downloader extends React.Component {
             });
             await this.saveToHandle(handle);
             this.props.onSetFileHandle(handle);
+            // Add to recent files
+            const recentFiles = addToRecentFiles(handle);
+            this.props.onAddRecentFile(recentFiles);
             const title = getProjectTitleFromFilename(handle.name);
             if (title) {
                 this.props.onSetProjectTitle(title);
@@ -291,7 +295,8 @@ SB3Downloader.propTypes = {
     onShowSaveSuccessAlert: PropTypes.func,
     onShowSaveErrorAlert: PropTypes.func,
     onProjectUnchanged: PropTypes.func,
-    showSaveFilePicker: PropTypes.func
+    showSaveFilePicker: PropTypes.func,
+    onAddRecentFile: PropTypes.func
 };
 SB3Downloader.defaultProps = {
     className: '',
@@ -312,7 +317,8 @@ const mapDispatchToProps = dispatch => ({
     onShowSavingAlert: () => showAlertWithTimeout(dispatch, 'saving'),
     onShowSaveSuccessAlert: () => showAlertWithTimeout(dispatch, 'twSaveToDiskSuccess'),
     onShowSaveErrorAlert: () => dispatch(showStandardAlert('savingError')),
-    onProjectUnchanged: () => dispatch(setProjectUnchanged())
+    onProjectUnchanged: () => dispatch(setProjectUnchanged()),
+    onAddRecentFile: recentFiles => dispatch(addRecentFile(recentFiles))
 });
 
 export default connect(

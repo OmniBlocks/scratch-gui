@@ -325,6 +325,28 @@ const DisableCompiler = props => (
     />
 );
 
+const AutoOpen = props => (
+    <BooleanSetting
+        {...props}
+        label={
+            <FormattedMessage
+                defaultMessage="Auto-Open Last File"
+                description="Auto-Open setting"
+                id="tw.settingsModal.autoOpen"
+            />
+        }
+        help={
+            <FormattedMessage
+                // eslint-disable-next-line max-len
+                defaultMessage="Automatically opens your most recently saved file when the editor loads. This uses the File System Access API to remember files you've saved. Your browser must support this feature."
+                description="Auto-Open setting help"
+                id="tw.settingsModal.autoOpenHelp"
+            />
+        }
+        slug="auto-open"
+    />
+);
+
 const CustomStageSize = ({
     customStageSizeEnabled,
     stageWidth,
@@ -499,6 +521,17 @@ const SettingsModalComponent = props => (
                 value={props.disableCompiler}
                 onChange={props.onDisableCompilerChange}
             />
+            <Header>
+                <FormattedMessage
+                    defaultMessage="File Management"
+                    description="Settings modal section"
+                    id="tw.settingsModal.fileManagement"
+                />
+            </Header>
+            <AutoOpen
+                value={props.autoOpenEnabled}
+                onChange={props.onAutoOpenChange}
+            />
             {!props.isEmbedded && (
                 <StoreProjectOptions
                     {...props}
@@ -528,7 +561,10 @@ SettingsModalComponent.propTypes = {
     warpTimer: PropTypes.bool,
     onWarpTimerChange: PropTypes.func,
     disableCompiler: PropTypes.bool,
-    onDisableCompilerChange: PropTypes.func
+    onDisableCompilerChange: PropTypes.func,
+    onStoreProjectOptions: PropTypes.func,
+    autoOpenEnabled: PropTypes.bool,
+    onAutoOpenChange: PropTypes.func
 };
 
 export default injectIntl(SettingsModalComponent);

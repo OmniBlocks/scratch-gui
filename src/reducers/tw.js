@@ -17,6 +17,8 @@ const SET_HAS_CLOUD_VARIABLES = 'tw/SET_HAS_CLOUD_VARIABLES';
 const SET_CLOUD_HOST = 'tw/SET_CLOUD_HOST';
 const SET_PLATFORM_MISMATCH_DETAILS = 'tw/SET_PLATFORM_MISMATCH_DETAILS';
 const SET_PROJECT_ERROR = 'tw/SET_PROJECT_ERROR';
+const ADD_RECENT_FILE = 'tw/ADD_RECENT_FILE';
+const SET_AUTO_OPEN_ENABLED = 'tw/SET_AUTO_OPEN_ENABLED';
 
 export const initialState = {
     framerate: 30,
@@ -52,7 +54,9 @@ export const initialState = {
         platform: null,
         callback: null
     },
-    projectError: null
+    projectError: null,
+    recentFiles: [],
+    autoOpenEnabled: false
 };
 
 const reducer = function (state, action) {
@@ -139,6 +143,14 @@ const reducer = function (state, action) {
     case SET_PROJECT_ERROR:
         return Object.assign({}, state, {
             projectError: action.projectError
+        });
+    case ADD_RECENT_FILE:
+        return Object.assign({}, state, {
+            recentFiles: action.recentFiles
+        });
+    case SET_AUTO_OPEN_ENABLED:
+        return Object.assign({}, state, {
+            autoOpenEnabled: action.autoOpenEnabled
         });
     default:
         return state;
@@ -278,6 +290,20 @@ const setProjectError = function (projectError) {
     };
 };
 
+const addRecentFile = function (recentFiles) {
+    return {
+        type: ADD_RECENT_FILE,
+        recentFiles
+    };
+};
+
+const setAutoOpenEnabled = function (autoOpenEnabled) {
+    return {
+        type: SET_AUTO_OPEN_ENABLED,
+        autoOpenEnabled
+    };
+};
+
 export {
     reducer as default,
     initialState as twInitialState,
@@ -299,5 +325,7 @@ export {
     setHasCloudVariables,
     setCloudHost,
     setPlatformMismatchDetails,
-    setProjectError
+    setProjectError,
+    addRecentFile,
+    setAutoOpenEnabled
 };

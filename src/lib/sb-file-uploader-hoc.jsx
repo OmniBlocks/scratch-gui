@@ -147,6 +147,11 @@ const SBFileUploaderHOC = function (WrappedComponent) {
                     if (handle) {
                         if (this.fileToUpload.name.endsWith('.sb3')) {
                             this.props.onSetFileHandle(handle);
+                            // Add to recent files when opening
+                            const {addRecentFile: addToRecentFiles} = require('../lib/recent-files-manager');
+                            const recentFiles = addToRecentFiles(handle);
+                            const {addRecentFile} = require('../reducers/tw');
+                            this.props.onAddRecentFile(recentFiles);
                         } else {
                             this.props.onSetFileHandle(null);
                         }
@@ -281,7 +286,8 @@ const SBFileUploaderHOC = function (WrappedComponent) {
                 draw: PropTypes.func
             })
         }),
-        onSetFileHandle: PropTypes.func
+        onSetFileHandle: PropTypes.func,
+        onAddRecentFile: PropTypes.func
     };
     SBFileUploaderComponent.defaultProps = {
         showOpenFilePicker: typeof showOpenFilePicker === 'function' ? window.showOpenFilePicker.bind(window) : null
@@ -321,7 +327,11 @@ const SBFileUploaderHOC = function (WrappedComponent) {
         // project data. When this is done, the project state transition will be
         // noticed by componentDidUpdate()
         requestProjectUpload: loadingState => dispatch(requestProjectUpload(loadingState)),
-        onSetFileHandle: fileHandle => dispatch(setFileHandle(fileHandle))
+        onSetFileHandle: fileHandle => dispatch(setFileHandle(fileHandle)),
+        onAddRecentFile: recentFiles => {
+            const {addRecentFile} = require('../reducers/tw');
+            dispatch(addRecentFile(recentFiles));
+        }
     });
     // Allow incoming props to override redux-provided props. Used to mock in tests.
     const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign(

@@ -30,7 +30,8 @@ class UsernameModal extends React.Component {
             'handleStageWidthChange',
             'handleStageHeightChange',
             'handleDisableCompilerChange',
-            'handleStoreProjectOptions'
+            'handleStoreProjectOptions',
+            'handleAutoOpenChange'
         ]);
     }
     handleFramerateChange (e) {
@@ -85,6 +86,9 @@ class UsernameModal extends React.Component {
     handleStoreProjectOptions () {
         this.props.vm.storeProjectOptions();
     }
+    handleAutoOpenChange (e) {
+        this.props.onAutoOpenChange(e.target.checked);
+    }
     render () {
         const {
             /* eslint-disable no-unused-vars */
@@ -114,6 +118,7 @@ class UsernameModal extends React.Component {
                     this.props.customStageSize.height !== defaultStageSize.height
                 }
                 onStoreProjectOptions={this.handleStoreProjectOptions}
+                onAutoOpenChange={this.handleAutoOpenChange}
                 {...props}
             />
         );
@@ -123,6 +128,7 @@ class UsernameModal extends React.Component {
 UsernameModal.propTypes = {
     intl: intlShape,
     onClose: PropTypes.func,
+    onAutoOpenChange: PropTypes.func,
     vm: PropTypes.shape({
         renderer: PropTypes.shape({
             setUseHighQualityRender: PropTypes.func
@@ -146,7 +152,8 @@ UsernameModal.propTypes = {
         width: PropTypes.number,
         height: PropTypes.number
     }),
-    disableCompiler: PropTypes.bool
+    disableCompiler: PropTypes.bool,
+    autoOpenEnabled: PropTypes.bool
 };
 
 const mapStateToProps = state => ({
@@ -160,11 +167,18 @@ const mapStateToProps = state => ({
     removeLimits: !state.scratchGui.tw.runtimeOptions.miscLimits,
     warpTimer: state.scratchGui.tw.compilerOptions.warpTimer,
     customStageSize: state.scratchGui.customStageSize,
-    disableCompiler: !state.scratchGui.tw.compilerOptions.enabled
+    disableCompiler: !state.scratchGui.tw.compilerOptions.enabled,
+    autoOpenEnabled: state.scratchGui.tw.autoOpenEnabled
 });
 
 const mapDispatchToProps = dispatch => ({
-    onClose: () => dispatch(closeSettingsModal())
+    onClose: () => dispatch(closeSettingsModal()),
+    onAutoOpenChange: enabled => {
+        const {saveAutoOpenSetting, setAutoOpenEnabled} = require('../reducers/tw');
+        dispatch(setAutoOpenEnabled(enabled));
+        const {saveAutoOpenSetting: saveToStorage} = require('../lib/recent-files-manager');
+        saveToStorage(enabled);
+    }
 });
 
 export default injectIntl(connect(

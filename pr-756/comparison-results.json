@@ -1,5 +1,5 @@
 {
-  "changesDetected": true,
+  "changesDetected": false,
   "results": [
     {
       "name": "editor-initial.png",
@@ -45,9 +45,9 @@
     },
     {
       "name": "songs-tab.png",
-      "diffPixels": 35768,
-      "diffPercentage": "3.88",
-      "hasDiff": true,
+      "diffPixels": 0,
+      "diffPercentage": "0.00",
+      "hasDiff": false,
       "skipped": false
     },
     {

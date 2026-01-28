@@ -1,0 +1,2 @@
+(window.webpackJsonpGUI=window.webpackJsonpGUI||[]).push([[58],{1836:function(n,s,t){"use strict";t.r(s),t.d(s,"resources",function(){return e});const e={"userscript.js":async function(n){let{addon:s}=n;s.tab.traps.vm.setCompilerOptions({enabled:!1})}}}}]);
+//# sourceMappingURL=addon-entry-tw-disable-compiler.a74a86bb36252dea60bd.js.map

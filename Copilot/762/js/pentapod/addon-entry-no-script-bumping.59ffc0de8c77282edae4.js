@@ -1,0 +1,2 @@
+(window.webpackJsonpGUI=window.webpackJsonpGUI||[]).push([[46],{1821:function(o,s,t){"use strict";t.r(s),t.d(s,"resources",function(){return n});const n={"userscript.js":async function(o){let{addon:s,console:t}=o;const n=await s.tab.traps.getBlockly(),c=n.BlockSvg.prototype.bumpNeighbours_;n.BlockSvg.prototype.bumpNeighbours_=function(){s.self.disabled&&c.call(this)}}}}}]);
+//# sourceMappingURL=addon-entry-no-script-bumping.59ffc0de8c77282edae4.js.map

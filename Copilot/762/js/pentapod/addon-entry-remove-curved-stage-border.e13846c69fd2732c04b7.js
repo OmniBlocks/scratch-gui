@@ -1,0 +1,2 @@
+(window.webpackJsonpGUI=window.webpackJsonpGUI||[]).push([[50],{1744:function(r,n,s){"use strict";s.r(n),s.d(n,"resources",function(){return o});var e=s(1745);const o={"remove-borders.css":s.n(e).a}},1745:function(r,n,s){(r.exports=s(10)(!1)).push([r.i,'[class*="stage_stage"] {\n  border-radius: 0rem !important;\n}\n\n[class*="stage_green-flag-overlay-wrapper"] {\n  border-radius: 0rem !important;\n}\n',""])}}]);
+//# sourceMappingURL=addon-entry-remove-curved-stage-border.e13846c69fd2732c04b7.js.map

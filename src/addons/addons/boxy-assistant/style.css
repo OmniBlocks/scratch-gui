@@ -1,0 +1,184 @@
+/* Boxy AI Assistant Styles */
+
+/* Container that overlays the entire editor */
+.boxy-assistant-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none; /* Allow clicks to pass through container */
+  z-index: 9999;
+  overflow: hidden;
+}
+
+/* Boxy character */
+.boxy-character {
+  position: absolute;
+  width: 150px;
+  height: 156px;
+  pointer-events: auto; /* Enable interactions on Boxy */
+  cursor: move;
+  transition: transform 0.3s ease;
+  transform-origin: center center;
+  user-select: none;
+}
+
+.boxy-character.dragging {
+  transition: none;
+  cursor: grabbing;
+}
+
+.boxy-character:hover {
+  filter: drop-shadow(0 0 10px rgba(0, 186, 135, 0.5));
+}
+
+.boxy-svg-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.boxy-svg-wrapper svg {
+  width: 100%;
+  height: auto;
+}
+
+/* Boxy's eyes - for future animations */
+.boxy-eye {
+  transition: fill 0.2s ease;
+}
+
+.boxy-character.excited .boxy-eye {
+  fill: #ff69b4; /* Star eyes color */
+}
+
+/* Text bubble */
+.boxy-text-bubble {
+  position: absolute;
+  bottom: 170px;
+  right: 180px;
+  max-width: 300px;
+  min-width: 200px;
+  background: linear-gradient(135deg, #0067bb 0%, #00ba87 100%);
+  border-radius: 20px;
+  padding: 15px 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  pointer-events: auto;
+  animation: bubbleAppear 0.3s ease;
+  z-index: 10000;
+}
+
+@keyframes bubbleAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Bubble tail */
+.boxy-text-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  right: 20px;
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-top: 15px solid #00ba87;
+}
+
+.boxy-bubble-content {
+  color: white;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.boxy-message {
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Animation states */
+.boxy-character.waving {
+  animation: wave 0.6s ease;
+}
+
+@keyframes wave {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-15deg);
+  }
+  75% {
+    transform: rotate(15deg);
+  }
+}
+
+.boxy-character.bouncing {
+  animation: bounce 0.5s ease;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+/* Thinking animation */
+.boxy-character.thinking::before {
+  content: "...";
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 103, 187, 0.9);
+  color: white;
+  padding: 5px 15px;
+  border-radius: 15px;
+  font-size: 20px;
+  font-weight: bold;
+  animation: thinking 1.5s infinite;
+}
+
+@keyframes thinking {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .boxy-character {
+    width: 100px;
+    height: 104px;
+  }
+
+  .boxy-text-bubble {
+    max-width: 200px;
+    font-size: 12px;
+    padding: 10px 15px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .boxy-text-bubble {
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
+  }
+}

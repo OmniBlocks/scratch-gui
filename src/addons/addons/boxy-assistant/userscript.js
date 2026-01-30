@@ -368,18 +368,33 @@ export default async function ({ addon, console }) {
       addChatMessage(message, "user");
       input.value = "";
 
-      // Check for vibe coding request
-      if (message.toLowerCase().includes("write") && (message.toLowerCase().includes("code") || message.toLowerCase().includes("program"))) {
-        addChatMessage("Sorry, buddy. I can suggest things to you, help you learn a concept, or brainstorm fun things, but if you're here to vibe code, this ain't the place for you, pal. 😊", "bot");
-        return;
-      }
-
       // Show thinking state
       addChatMessage("...", "bot", true);
 
       try {
-        // Call Pollinations AI API
-        const response = await fetch(`https://text.pollinations.ai/prompt/${encodeURIComponent(message)}`, {
+        // Build system prompt with Boxy's personality and guidelines
+        const systemPrompt = `You are Boxy, a friendly AI assistant designed to help kids learn coding in OmniBlocks (a Scratch-based platform). 
+
+Your role:
+- Help users understand coding concepts
+- Suggest approaches and brainstorm ideas
+- Guide users through problem-solving
+- Explain how blocks and features work
+- Encourage learning and experimentation
+
+Important rules:
+- NEVER write complete code for users - they must learn by doing
+- If asked to "write code" or "make a program", politely refuse and offer to teach them how instead
+- Use simple, kid-friendly language
+- Be encouraging and supportive
+- Keep responses concise and focused
+
+Your catchphrase when refusing to write code: "Sorry, buddy. I can suggest things to you, help you learn a concept, or brainstorm fun things, but if you're here to vibe code, this ain't the place for you, pal."
+
+User's question: ${message}`;
+
+        // Call Pollinations AI API with system prompt
+        const response = await fetch(`https://text.pollinations.ai/prompt/${encodeURIComponent(systemPrompt)}`, {
           headers: {
             'Authorization': `Bearer ${apiKey}`
           }

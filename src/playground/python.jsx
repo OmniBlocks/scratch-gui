@@ -6,7 +6,7 @@ const Python = () => {
     const script = document.createElement("script");
     script.src = pyodideURL;
     script.onload = async () => {
-    const pyodide = await loadPyodide({
+    const pyodide = await window.loadPyodide({
         indexURL: pyodideURL.replace(/pyodide\.js$/, "")
     });
     };

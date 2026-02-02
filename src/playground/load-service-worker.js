@@ -1,4 +1,5 @@
-import log from '../lib/log';
+// todo: reimplement for vite
+/* import log from '../lib/log';
 import serviceWorker from '!!file-loader?name=sw.js!./service-worker.js';
 
 let loaded = false;
@@ -91,4 +92,10 @@ if (typeof window !== 'undefined') {
 export {
     loadServiceWorker,
     isOffline
-};
+}; */
+export function loadServiceWorker() {
+    return;
+}
+export function isOffline() {
+    return false;
+}

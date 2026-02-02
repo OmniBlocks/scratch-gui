@@ -47,10 +47,10 @@ import {isRendererSupported, isBrowserSupported} from '../../lib/tw-environment-
 
 import styles from './gui.css';
 import addExtensionIcon from './icon--extensions.svg';
-import codeIcon from '!../../lib/tw-recolor/build!./icon--code.svg';
-import costumesIcon from '!../../lib/tw-recolor/build!./icon--costumes.svg';
-import soundsIcon from '!../../lib/tw-recolor/build!./icon--sounds.svg';
-import songsIcon from '!../../lib/tw-recolor/build!./icon--songs.svg';
+import codeIcon from './icon--code.svg';
+import costumesIcon from './icon--costumes.svg';
+import soundsIcon from './icon--sounds.svg';
+import songsIcon from './icon--songs.svg';
 const messages = defineMessages({
     addExtension: {
         id: 'gui.gui.addExtension',

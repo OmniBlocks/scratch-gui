@@ -1,60 +1,60 @@
 {
-  "changesDetected": true,
+  "changesDetected": false,
   "results": [
     {
       "name": "editor-initial.png",
-      "diffPixels": 15538,
-      "diffPercentage": "1.69",
-      "hasDiff": true,
+      "diffPixels": 0,
+      "diffPercentage": "0.00",
+      "hasDiff": false,
       "skipped": false
     },
     {
       "name": "blocks-workspace.png",
-      "diffPixels": 2060,
-      "diffPercentage": "0.40",
-      "hasDiff": true,
+      "diffPixels": 0,
+      "diffPercentage": "0.00",
+      "hasDiff": false,
       "skipped": false
     },
     {
       "name": "stage-sprites.png",
-      "diffPixels": 11835,
-      "diffPercentage": "3.48",
-      "hasDiff": true,
+      "diffPixels": 0,
+      "diffPercentage": "0.00",
+      "hasDiff": false,
       "skipped": false
     },
     {
       "name": "code-tab.png",
-      "diffPixels": 20019,
-      "diffPercentage": "2.17",
-      "hasDiff": true,
+      "diffPixels": 0,
+      "diffPercentage": "0.00",
+      "hasDiff": false,
       "skipped": false
     },
     {
       "name": "costumes-tab.png",
-      "diffPixels": 19933,
-      "diffPercentage": "2.16",
-      "hasDiff": true,
+      "diffPixels": 0,
+      "diffPercentage": "0.00",
+      "hasDiff": false,
       "skipped": false
     },
     {
       "name": "sounds-tab.png",
-      "diffPixels": 20932,
-      "diffPercentage": "2.27",
-      "hasDiff": true,
+      "diffPixels": 0,
+      "diffPercentage": "0.00",
+      "hasDiff": false,
       "skipped": false
     },
     {
       "name": "songs-tab.png",
-      "diffPixels": 61760,
-      "diffPercentage": "6.70",
-      "hasDiff": true,
+      "diffPixels": 0,
+      "diffPercentage": "0.00",
+      "hasDiff": false,
       "skipped": false
     },
     {
       "name": "player-view.png",
-      "diffPixels": 3801,
-      "diffPercentage": "0.23",
-      "hasDiff": true,
+      "diffPixels": 0,
+      "diffPercentage": "0.00",
+      "hasDiff": false,
       "skipped": false
     },
     {
@@ -66,9 +66,9 @@
     },
     {
       "name": "advanced-settings.png",
-      "diffPixels": 21663,
-      "diffPercentage": "2.35",
-      "hasDiff": true,
+      "diffPixels": 0,
+      "diffPercentage": "0.00",
+      "hasDiff": false,
       "skipped": false
     }
   ]

@@ -5,7 +5,7 @@ first_proj:
 error_01:
 Oops! That project couldn't be shared. Refresh and try again!
 error_02:
-"The editor has encountered a internal issue and has crashed. Please check the error on the editor and send a bug reoprt."
+The editor has encountered an internal issue and has crashed. Please check the error on the editor and send a bug report.
 tempbanned:
 "We're sorry, but you have been banned from OmniBlocks. Reason: {REASON4BAN}. {MODNOTE} This ban is temporary. You will be unbanned on {UNBANDATE}."
 permbanned:

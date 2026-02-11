@@ -1,0 +1,4 @@
+welcome:
+"Hello, {USERNAME}! Welcome to OmniBlocks!"
+first_proj:
+"Congrats! You shared your first project!"

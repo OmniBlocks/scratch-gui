@@ -3,7 +3,7 @@ welcome:
 first_proj:
 "Congrats! You shared your first project!"
 error_01:
-"Oops! That project couldnt be shared. Refresh and try again!"
+Oops! That project couldn't be shared. Refresh and try again!
 error_02:
 "The editor has encountered a internal issue and has crashed. Please check the error on the editor and send a bug reoprt."
 tempbanned:

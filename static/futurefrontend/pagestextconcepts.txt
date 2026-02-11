@@ -2,3 +2,11 @@ welcome:
 "Hello, {USERNAME}! Welcome to OmniBlocks!"
 first_proj:
 "Congrats! You shared your first project!"
+error_01:
+"Oops! That project couldnt be shared. Refresh and try again!"
+error_02:
+"The editor has encountered a internal issue and has crashed. Please check the error on the editor and send a bug reoprt."
+tempbanned:
+"We're sorry, but you have been banned from OmniBlocks. Reason: {REASON4BAN}. {MODNOTE} This ban is temporary. You will be unbanned on {UNBANDATE}."
+permbanned:
+"We're sorry, but you have been banned from OmniBlocks. Reason: {REASON4BAN}. {MODNOTE} This ban is permanent. You will not be unbanned. If you belive this is a mistake, please contact us."

@@ -9,4 +9,4 @@ The editor has encountered an internal issue and has crashed. Please check the e
 tempbanned:
 "We're sorry, but you have been banned from OmniBlocks. Reason: {REASON4BAN}. {MODNOTE} This ban is temporary. You will be unbanned on {UNBANDATE}."
 permbanned:
-"We're sorry, but you have been banned from OmniBlocks. Reason: {REASON4BAN}. {MODNOTE} This ban is permanent. You will not be unbanned. If you belive this is a mistake, please contact us."
+We're sorry, but you have been banned from OmniBlocks. Reason: {REASON4BAN}. {MODNOTE} This ban is permanent. You will not be unbanned. If you believe this is a mistake, please contact us.

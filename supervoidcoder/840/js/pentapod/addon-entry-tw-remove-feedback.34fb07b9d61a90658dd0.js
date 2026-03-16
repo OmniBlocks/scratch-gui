@@ -1,0 +1,2 @@
+(window.webpackJsonpGUI=window.webpackJsonpGUI||[]).push([[60],{1765:function(n,e,s){"use strict";s.r(e),s.d(e,"resources",function(){return o});var c=s(1766);const o={"remove-feedback.css":s.n(c).a}},1766:function(n,e,s){(n.exports=s(10)(!1)).push([n.i,'a[class^="menu-bar_feedback-link_"] {\n  display: none;\n}\n',""])}}]);
+//# sourceMappingURL=addon-entry-tw-remove-feedback.34fb07b9d61a90658dd0.js.map

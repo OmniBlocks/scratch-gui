@@ -81,12 +81,14 @@ const addons = [
     'tw-disable-cloud-variables',
     'tw-disable-compiler',
     'editor-stepping',
-    'qcode'
+    'qcode',
+    'boxy-ai'
 ];
 
 const newAddons = [
     'expanded-backpack',
-    'qcode'
+    'qcode',
+    'boxy-ai'
 ];
 
 // eslint-disable-next-line import/no-commonjs

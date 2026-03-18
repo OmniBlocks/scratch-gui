@@ -80,6 +80,7 @@ import _tw_disable_cloud_variables from "../addons/tw-disable-cloud-variables/_m
 import _tw_disable_compiler from "../addons/tw-disable-compiler/_manifest_entry.js";
 import _editor_stepping from "../addons/editor-stepping/_manifest_entry.js";
 import santa from "../addons/santa/_manifest_entry.js";
+import _boxy_ai from "../addons/boxy-ai/_manifest_entry.js";
 export default {
   santa,
   "cat-blocks": _cat_blocks,
@@ -162,4 +163,5 @@ export default {
   "tw-disable-cloud-variables": _tw_disable_cloud_variables,
   "tw-disable-compiler": _tw_disable_compiler,
   "editor-stepping": _editor_stepping,
+  "boxy-ai": _boxy_ai,
 };

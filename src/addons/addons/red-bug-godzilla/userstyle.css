@@ -1,0 +1,61 @@
+.sa-red-bug-godzilla {
+  position: fixed;
+  width: 90px;
+  height: 90px;
+  background-image: var(--sa-red-bug-godzilla-image);
+  background-size: contain;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  pointer-events: none;
+  z-index: 10000;
+  left: -120px;
+  bottom: 12px;
+  transform: translateX(0) translateY(0) scaleX(1);
+  opacity: 0;
+}
+
+.sa-red-bug-godzilla[data-visible="true"] {
+  opacity: 1;
+}
+
+.sa-red-bug-godzilla[data-variant="blue"] {
+  filter: hue-rotate(205deg) saturate(145%);
+}
+
+.sa-red-bug-godzilla[data-variant="green"] {
+  filter: hue-rotate(100deg) saturate(140%);
+}
+
+.sa-red-bug-godzilla--stomping {
+  animation: sa-red-bug-godzilla-stomp 7s cubic-bezier(0.18, 0.7, 0.25, 1) 1;
+}
+
+@keyframes sa-red-bug-godzilla-stomp {
+  0% {
+    transform: translateX(0) translateY(0) scaleX(1);
+  }
+
+  12% {
+    transform: translateX(18vw) translateY(-10px) scaleX(1);
+  }
+
+  24% {
+    transform: translateX(34vw) translateY(0) scaleX(1);
+  }
+
+  36% {
+    transform: translateX(50vw) translateY(-12px) scaleX(1);
+  }
+
+  48% {
+    transform: translateX(66vw) translateY(0) scaleX(1);
+  }
+
+  62% {
+    transform: translateX(80vw) translateY(-8px) scaleX(1);
+  }
+
+  100% {
+    transform: translateX(calc(100vw + 140px)) translateY(0) scaleX(1);
+  }
+}

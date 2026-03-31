@@ -216,6 +216,19 @@ class SettingsStore extends EventTargetShim {
         if (Object.prototype.hasOwnProperty.call(storage, 'enabled')) {
             return storage.enabled;
         }
+        return this.getAddonDefaultEnabled(addonId, manifest);
+    }
+
+    /**
+     * @private
+     */
+    getAddonDefaultEnabled (addonId, manifest) {
+        if (addonId === 'red-bug-godzilla') {
+            const now = new Date();
+            if (now.getMonth() === 3 && now.getDate() === 1) {
+                return true;
+            }
+        }
         return !!manifest.enabledByDefault;
     }
 
@@ -249,7 +262,7 @@ class SettingsStore extends EventTargetShim {
         const manifest = this.getAddonManifest(addonId);
         const oldValue = this.getAddonEnabled(addonId);
         if (enabled === null) {
-            enabled = !!manifest.enabledByDefault;
+            enabled = this.getAddonDefaultEnabled(addonId, manifest);
             delete storage.enabled;
         } else if (typeof enabled === 'boolean') {
             storage.enabled = enabled;

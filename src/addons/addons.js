@@ -81,12 +81,15 @@ const addons = [
     'tw-disable-cloud-variables',
     'tw-disable-compiler',
     'editor-stepping',
-    'qcode'
+    'qcode',
+    'april-fools-bug',
+    'santa'
 ];
 
 const newAddons = [
     'expanded-backpack',
-    'qcode'
+    'qcode',
+    'april-fools-bug'
 ];
 
 // eslint-disable-next-line import/no-commonjs

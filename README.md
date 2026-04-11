@@ -1,4 +1,7 @@
-# OmniBlocks - The Ultimate MultiLanguage IDE
+# This repository is deprecated! Please see https://github.com/OmniBlocks/monorepo
+
+---
+
 # OmniBlocks/scratch-gui
 ![Build Status](https://github.com/OmniBlocks/scratch-gui/workflows/CI/badge.svg)
 ![GitHub issues](https://img.shields.io/github/issues/OmniBlocks/scratch-gui)

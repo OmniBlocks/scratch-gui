@@ -117,11 +117,22 @@ const base = {
                     }
                 }
             }]
-        }]
+        },
+        {
+            test: /pyodide\.js$/,
+            loader: "file-loader",
+            options: {
+                name: "static/pyodide/[name].[ext]"
+            }
+            }]
     },
     plugins: [
         new CopyWebpackPlugin({
             patterns: [
+                {
+                    from: path.dirname(require.resolve('pyodide/pyodide.js')),
+                    to: 'static/pyodide'
+                },
                 {
                     from: 'node_modules/scratch-blocks/media',
                     to: 'static/blocks-media/default'
@@ -150,6 +161,7 @@ module.exports = [
     defaultsDeep({}, base, {
         entry: {
             'editor': './src/playground/editor.jsx',
+            'python': './src/playground/python.jsx',
             'player': './src/playground/player.jsx',
             'fullscreen': './src/playground/fullscreen.jsx',
             'embed': './src/playground/embed.jsx',
@@ -194,6 +206,14 @@ module.exports = [
                 template: 'src/playground/index.ejs',
                 filename: 'editor.html',
                 title: `${APP_NAME} - The Ultimate MultiLanguage IDE | Editor`,
+                isEditor: true,
+                ...htmlWebpackPluginCommon
+            }),
+            new HtmlWebpackPlugin({
+                chunks: ['python'],
+                template: 'src/playground/index.ejs',
+                filename: 'python.html',
+                title: `${APP_NAME} - The Ultimate MultiLanguage IDE | Python`,
                 isEditor: true,
                 ...htmlWebpackPluginCommon
             }),
